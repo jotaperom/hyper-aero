@@ -1,4 +1,6 @@
 import QtQuick
+import Quickshell
+import Quickshell.Io
 import "Registry.js" as Reg
 import "Lang.js" as L
 
@@ -9,10 +11,16 @@ Item {
     readonly property int cell: 48
     readonly property int margin: 16
     readonly property int gap: 6
-    readonly property int cols: Math.max(1, Math.floor((width - margin * 2) / cell))
-    readonly property int rows: Math.max(1, Math.floor((height - margin * 2) / cell))
-    readonly property real ox: Math.round((width - cols * cell) / 2)
-    readonly property real oy: Math.round((height - rows * cell) / 2)
+    property real stableW: 0
+    property real stableH: 0
+    property var ids: []
+    property string hudVariant: ""
+    property var hudWidths: ({})
+    property bool predicting: false
+    readonly property int cols: Math.max(1, Math.floor((stableW - margin * 2) / cell))
+    readonly property int rows: Math.max(1, Math.floor((stableH - margin * 2) / cell))
+    readonly property real ox: Math.round((stableW - cols * cell) / 2)
+    readonly property real oy: Math.round((stableH - rows * cell) / 2)
     signal editRequested()
 
     function fit(spec) {
@@ -22,8 +30,56 @@ Item {
         return { id: spec.id, c: Math.max(0, Math.min(cols - w, spec.c)), r: Math.max(0, Math.min(rows - h, spec.r)), w: w, h: h }
     }
 
+    function specOf(id) {
+        var l = core.layout || []
+        for (var i = 0; i < l.length; i++) {
+            if (l[i].id === id) return l[i]
+        }
+        return { id: id, c: 0, r: 0, w: 1, h: 1 }
+    }
+
+    function syncIds() {
+        var l = core.layout || []
+        var n = []
+        for (var i = 0; i < l.length; i++) n.push(l[i].id)
+        if (n.join("|") !== ids.join("|")) ids = n
+    }
+
+    function applySize(w, h) {
+        stableW = w
+        stableH = h
+        maybeDefaults()
+        sizeUp()
+    }
+
+    function settle() {
+        if (width < 1 || height < 1) return
+        applySize(width, height)
+        if (hudVariant.length) {
+            var m = hudWidths
+            m[hudVariant] = width
+            hudWidths = m
+        }
+    }
+
+    function hudSize(v) {
+        return v === "telemetry" ? 282 : (v === "telemetry-slim" ? 60 : 0)
+    }
+
+    function hudChanged(v) {
+        if (!v.length || v === hudVariant) return
+        var old = hudVariant
+        hudVariant = v
+        if (!old.length || stableW <= 0) return
+        var target = hudWidths[v] !== undefined ? hudWidths[v] : stableW + hudSize(old) - hudSize(v)
+        predicting = true
+        settleTimer.stop()
+        predictTimer.restart()
+        applySize(target, stableH)
+    }
+
     function maybeDefaults() {
-        if (core.loaded && core.fresh && width > 200 && height > 200) {
+        if (core.loaded && core.fresh && stableW > 200 && stableH > 200) {
             core.fresh = false
             core.savedCols = cols
             core.savedRows = rows
@@ -32,15 +88,37 @@ Item {
     }
 
     function sizeUp() {
-        if (core.loaded && !core.fresh && width > 200 && height > 200) core.adapt(cols, rows)
+        if (core.loaded && !core.fresh && stableW > 200 && stableH > 200) core.adapt(cols, rows)
     }
 
-    onWidthChanged: { maybeDefaults(); sizeUp() }
-    onHeightChanged: { maybeDefaults(); sizeUp() }
+    onWidthChanged: if (stableW <= 0) settle(); else if (!predicting) settleTimer.restart()
+    onHeightChanged: if (stableH <= 0) settle(); else if (!predicting) settleTimer.restart()
+    Component.onCompleted: syncIds()
+    Timer {
+        id: settleTimer
+        interval: 140
+        onTriggered: desk.settle()
+    }
+    Timer {
+        id: predictTimer
+        interval: 900
+        onTriggered: {
+            desk.predicting = false
+            desk.settle()
+        }
+    }
+    FileView {
+        path: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/aero-hud.variant"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: desk.hudChanged(text().trim())
+    }
     Connections {
         target: desk.core
         function onFreshChanged() { desk.maybeDefaults() }
         function onLoadedChanged() { desk.maybeDefaults(); desk.sizeUp() }
+        function onLayoutChanged() { desk.syncIds() }
     }
 
     MouseArea {
@@ -60,16 +138,18 @@ Item {
         Behavior on opacity { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
 
         Repeater {
-            model: desk.core.layout
+            model: desk.ids
             delegate: WidgetFrame {
                 required property var modelData
                 required property int index
-                readonly property var spec: desk.fit(modelData)
+                readonly property var spec: desk.fit(desk.specOf(modelData))
                 x: desk.ox + spec.c * desk.cell + desk.gap
                 y: desk.oy + spec.r * desk.cell + desk.gap
                 width: spec.w * desk.cell - desk.gap * 2
                 height: spec.h * desk.cell - desk.gap * 2
-                wid: modelData.id
+                Behavior on x { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }
+                Behavior on y { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }
+                wid: modelData
                 core: desk.core
                 opacity: 0
                 Component.onCompleted: appear.start()
