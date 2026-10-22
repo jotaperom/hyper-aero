@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
+import "Lang.js" as L
 
 ShellRoot {
     id: shell
@@ -86,7 +87,7 @@ ShellRoot {
             try {
                 return JSON.parse(text)
             } catch (err) {
-                return { ok: false, msg: "Error inesperado" }
+                return { ok: false, msg: L.t("Error inesperado") }
             }
         }
 

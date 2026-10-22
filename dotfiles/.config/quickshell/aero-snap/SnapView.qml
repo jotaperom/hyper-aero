@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: v
@@ -99,7 +100,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             y: 72
-            text: "ESCRITORIO " + (v.flip ? (v.flip.ws < 10 ? "0" : "") + v.flip.ws : "")
+            text: L.t("ESCRITORIO ") + (v.flip ? (v.flip.ws < 10 ? "0" : "") + v.flip.ws : "")
             font.family: "Michroma"
             font.pixelSize: 13
             font.letterSpacing: 1
@@ -125,7 +126,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             y: 124
-            text: v.flip && v.flip.p >= 1 ? "Soltá para moverla" : "Mantené para cambiar"
+            text: v.flip && v.flip.p >= 1 ? L.t("Soltá para moverla") : L.t("Mantené para cambiar")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 11
@@ -197,7 +198,7 @@ Item {
             readonly property var last: strip.tiles.length ? strip.tiles[strip.tiles.length - 1] : null
             x: last ? last.x + last.w + 14 : 0
             y: last ? last.y + (last.h - height) / 2 : 0
-            text: "Soltá sobre un escritorio para moverla"
+            text: L.t("Soltá sobre un escritorio para moverla")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 12

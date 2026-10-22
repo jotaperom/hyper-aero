@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell.Widgets
+import "Lang.js" as L
 
 Item {
     id: w
@@ -112,7 +113,7 @@ Item {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            text: anim.status === AnimatedImage.Error ? "No pude abrir ese archivo" : (drop.containsDrag ? "Soltalo aquí" : "Tocá para elegir un GIF")
+            text: anim.status === AnimatedImage.Error ? L.t("No pude abrir ese archivo") : (drop.containsDrag ? L.t("Soltalo aquí") : L.t("Tocá para elegir un GIF"))
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 13
@@ -124,7 +125,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: w.height > 140
-            text: "o arrastralo desde Archivos"
+            text: L.t("o arrastralo desde Archivos")
             font.family: "Exo 2"
             font.pixelSize: 11
             color: w.pal.muted

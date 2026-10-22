@@ -65,7 +65,7 @@ def bluetooth():
 
 def warm():
     out = run([NIGHT_DECK, "status"], timeout=3) or ""
-    m = re.search(r"Luz cálida:\s*(\d+)\s*K", out)
+    m = re.search(r"(?:Luz cálida|Warm light):\s*(\d+)\s*K", out)
     return {"warm": bool(m), "kelvin": int(m.group(1)) if m else 0}
 
 

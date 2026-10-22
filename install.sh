@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-VERSION="1.0.0"
+VERSION="1.1.0"
 UPSTREAM="jotaperom/hyper-aero"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 C="$HOME/.config"
@@ -32,13 +32,84 @@ ok()   { printf '%s✓%s %s\n' "$c_ok" "$c_0" "$*"; }
 warn() { printf '%s!%s %s\n' "$c_w" "$c_0" "$*"; }
 die()  { printf '%s✗%s %s\n' "$c_e" "$c_0" "$*"; exit 1; }
 
+declare -A TR=()
+
+detect_lang() {
+    local saved
+    saved=$(cat "$A/lang" 2>/dev/null)
+    case "$saved" in es|en) echo "$saved"; return ;; esac
+    case "${LC_ALL:-${LANG:-}}" in es*) echo es ;; *) echo en ;; esac
+}
+
+load_lang() {
+    TR=()
+    [ "$UI_LANG" = en ] || return 0
+    local f="$HERE/dotfiles/.config/hyper-aero/i18n/en.json" line k v
+    local re='^ *"(([^"\\]|\\.)*)": "(([^"\\]|\\.)*)",?$'
+    [ -f "$f" ] || return 0
+    while IFS= read -r line; do
+        [[ $line =~ $re ]] || continue
+        k="${BASH_REMATCH[1]}"
+        v="${BASH_REMATCH[3]}"
+        k="${k//\\\\/$'\x01'}"; k="${k//\\\"/\"}"; k="${k//$'\x01'/\\}"
+        v="${v//\\\\/$'\x01'}"; v="${v//\\\"/\"}"; v="${v//$'\x01'/\\}"
+        TR["$k"]="$v"
+    done < "$f"
+}
+
+t() {
+    local v="${TR[$1]-}"
+    printf '%s' "${v:-$1}"
+}
+
+tf() {
+    local f
+    f=$(t "$1")
+    shift
+    printf "$f" "$@"
+}
+
+profile_label() {
+    if [ "$UI_LANG" = en ]; then
+        case "$1" in completo) echo full ;; equilibrado) echo balanced ;; ligero) echo lite ;; *) echo "$1" ;; esac
+    else
+        echo "$1"
+    fi
+}
+
+profile_key() {
+    case "$1" in full|completo) echo completo ;; balanced|equilibrado) echo equilibrado ;; lite|light|ligero) echo ligero ;; *) echo "$1" ;; esac
+}
+
+UI_LANG=$(detect_lang)
+load_lang
+
 usage() {
+    if [ "$UI_LANG" = en ]; then
+        cat <<EOF
+HYPER·AERO $VERSION
+
+usage: ./install.sh [options]
+
+  --profile full|balanced|lite            performance profile (otherwise one is recommended)
+  --lang en|es                            interface language
+  --yes                                   don't ask, use the detected values
+  --no-deps                               don't install packages
+  --no-assets                             don't download the wallpapers
+  --location LAT LON                      location for the day/night cycle
+  --with-login                            install the login screen (greetd + ReGreet)
+  --with-gpu-session                      install the session for dual-GPU laptops
+  -h, --help                              this help
+EOF
+        return
+    fi
     cat <<EOF
 HYPER·AERO $VERSION
 
 uso: ./install.sh [opciones]
 
   --profile completo|equilibrado|ligero   perfil de rendimiento (si no, se recomienda uno)
+  --lang es|en                            idioma de la interfaz
   --yes                                   no preguntar, usar lo detectado
   --no-deps                               no instalar paquetes
   --no-assets                             no descargar los fondos
@@ -51,7 +122,8 @@ EOF
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --profile) PROFILE="$2"; shift ;;
+        --profile) PROFILE=$(profile_key "$2"); shift ;;
+        --lang) case "$2" in es|en) UI_LANG="$2"; LANG_SET=1; load_lang ;; *) die "--lang es|en" ;; esac; shift ;;
         --yes|-y) ASSUME_YES=1 ;;
         --no-deps) DO_DEPS=0 ;;
         --no-assets) DO_ASSETS=0 ;;
@@ -59,7 +131,7 @@ while [ $# -gt 0 ]; do
         --with-login) WITH_LOGIN=1 ;;
         --with-gpu-session) WITH_GPU=1 ;;
         -h|--help) usage; exit 0 ;;
-        *) usage; die "Opción desconocida: $1" ;;
+        *) usage; die "$(t "Opción desconocida:") $1" ;;
     esac
     shift
 done
@@ -76,20 +148,25 @@ ask() {
 
 yesno() {
     local q="$1" def="${2:-s}"
-    ask "$q (s/n)" "$def"
+    if [ "$UI_LANG" = en ]; then
+        case "$def" in s) def=y ;; esac
+        ask "$q (y/n)" "$def"
+    else
+        ask "$q (s/n)" "$def"
+    fi
     case "$REPLY" in s|S|y|Y|si|sí|yes) return 0 ;; *) return 1 ;; esac
 }
 
 banner() {
-    printf '\n%s%s  ◢ HYPER·AERO%s  %sinstalador v%s%s\n' "$c_b" "$c_bold" "$c_0" "$c_b" "$VERSION" "$c_0"
+    printf '\n%s%s  ◢ HYPER·AERO%s  %s%s v%s%s\n' "$c_b" "$c_bold" "$c_0" "$c_b" "$(t "instalador")" "$VERSION" "$c_0"
     printf '  %s\n\n' "────────────────────────────────────────────────"
 }
 
 check_base() {
-    [ "$(id -u)" -eq 0 ] && die "No corrás esto como root. Usá tu usuario normal (te pedirá sudo cuando haga falta)."
-    command -v pacman >/dev/null || die "HYPER·AERO necesita Arch Linux (o una distro basada en Arch con pacman)."
-    [ "$(uname -m)" = "x86_64" ] || warn "Solo está probado en x86_64."
-    command -v sudo >/dev/null || die "Falta sudo."
+    [ "$(id -u)" -eq 0 ] && die "$(t "No corrás esto como root. Usá tu usuario normal (te pedirá sudo cuando haga falta).")"
+    command -v pacman >/dev/null || die "$(t "HYPER·AERO necesita Arch Linux (o una distro basada en Arch con pacman).")"
+    [ "$(uname -m)" = "x86_64" ] || warn "$(t "Solo está probado en x86_64.")"
+    command -v sudo >/dev/null || die "$(t "Falta sudo.")"
 }
 
 hw_report() {
@@ -98,13 +175,13 @@ hw_report() {
     GPUS=$(lspci 2>/dev/null | grep -E "VGA|3D|Display" | sed 's/^[^ ]* [^:]*: //')
     GPU_COUNT=$(printf '%s\n' "$GPUS" | grep -c . || true)
     CPU=$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2- | sed 's/^ *//')
-    say "Equipo detectado"
-    printf '    CPU   %s (%s hilos)\n' "$CPU" "$CORES"
+    say "$(t "Equipo detectado")"
+    printf '    CPU   %s (%s %s)\n' "$CPU" "$CORES" "$(t "hilos")"
     printf '    RAM   %s GB\n' "$RAM_GB"
     printf '%s\n' "$GPUS" | sed 's/^/    GPU   /'
     echo
     if [ "$RAM_GB" -lt 6 ] || [ "$CORES" -lt 4 ]; then
-        warn "Tu equipo está por debajo de los requisitos mínimos (4 hilos y 8 GB de RAM). Puede ir lento."
+        warn "$(t "Tu equipo está por debajo de los requisitos mínimos (4 hilos y 8 GB de RAM). Puede ir lento.")"
         REC="ligero"
     elif [ "$RAM_GB" -lt 12 ] || [ "$CORES" -lt 8 ]; then
         REC="equilibrado"
@@ -116,12 +193,12 @@ hw_report() {
 
 pick_profile() {
     if [ -z "$PROFILE" ]; then
-        say "Perfiles de rendimiento: completo (todo animado), equilibrado (recomendado para la mayoría), ligero (equipos modestos)"
-        ask "Perfil" "$REC"
-        PROFILE="$REPLY"
+        say "$(t "Perfiles de rendimiento: completo (todo animado), equilibrado (recomendado para la mayoría), ligero (equipos modestos)")"
+        ask "$(t "Perfil")" "$(profile_label "$REC")"
+        PROFILE=$(profile_key "$REPLY")
     fi
-    case "$PROFILE" in completo|equilibrado|ligero) ;; *) die "Perfil inválido: $PROFILE" ;; esac
-    ok "Perfil: $PROFILE"
+    case "$PROFILE" in completo|equilibrado|ligero) ;; *) die "$(t "Perfil inválido:") $PROFILE" ;; esac
+    ok "$(t "Perfil:") $(profile_label "$PROFILE")"
 }
 
 detect_settings() {
@@ -129,7 +206,7 @@ detect_settings() {
     KB_VARIANT=$(localectl status 2>/dev/null | awk -F': ' '/X11 Variant/ { print $2 }' | cut -d, -f1)
     [ -n "$KB_LAYOUT" ] || KB_LAYOUT=$(localectl status 2>/dev/null | awk -F': ' '/VC Keymap/ { print $2 }' | sed 's/-.*//')
     [ -n "$KB_LAYOUT" ] && [ "$KB_LAYOUT" != "n/a" ] || KB_LAYOUT="us"
-    ask "Distribución de teclado (us, es, latam, de…)" "$KB_LAYOUT"
+    ask "$(t "Distribución de teclado (us, es, latam, de…)")" "$KB_LAYOUT"
     KB_LAYOUT="$REPLY"
 
     BROWSER="firefox"
@@ -153,13 +230,13 @@ detect_settings() {
         LON=$(printf '%s' "$geo" | jq -r '.longitude // empty' 2>/dev/null)
         CITY=$(printf '%s' "$geo" | jq -r '.city // empty' 2>/dev/null)
         if [ -n "$LAT" ]; then
-            say "Ubicación aproximada para el ciclo día/noche: ${CITY:-?} ($LAT, $LON)"
-            yesno "¿La uso?" s || { LAT=""; LON=""; }
+            say "$(t "Ubicación aproximada para el ciclo día/noche:") ${CITY:-?} ($LAT, $LON)"
+            yesno "$(t "¿La uso?")" s || { LAT=""; LON=""; }
         fi
         if [ -z "$LAT" ]; then
-            ask "Latitud (por ejemplo 19.43; vacío = calcular por zona horaria)" ""
+            ask "$(t "Latitud (por ejemplo 19.43; vacío = calcular por zona horaria)")" ""
             LAT="$REPLY"
-            if [ -n "$LAT" ]; then ask "Longitud (por ejemplo -99.13)" ""; LON="$REPLY"; fi
+            if [ -n "$LAT" ]; then ask "$(t "Longitud (por ejemplo -99.13)")" ""; LON="$REPLY"; fi
         fi
     fi
     if [ -z "$LAT" ] || [ -z "$LON" ]; then
@@ -170,7 +247,7 @@ detect_settings() {
     fi
     LOCALE=$(locale 2>/dev/null | awk -F= '/^LANG=/ { gsub("\"", "", $2); print $2 }' | cut -d. -f1)
     LOCALE=${LOCALE:-en_US}
-    ok "Teclado: $KB_LAYOUT${KB_VARIANT:+ ($KB_VARIANT)} · Navegador: $BROWSER · Archivos: $FILEMANAGER"
+    ok "$(t "Teclado:") $KB_LAYOUT${KB_VARIANT:+ ($KB_VARIANT)} · $(t "Navegador:") $BROWSER · $(t "Archivos:") $FILEMANAGER"
 }
 
 PKGS=(hyprland hyprlock hypridle hyprsunset xdg-desktop-portal-hyprland quickshell waybar swaync rofi kitty
@@ -185,7 +262,7 @@ aur_helper() {
 }
 
 install_deps() {
-    say "Instalando paquetes oficiales (pide tu contraseña)…"
+    say "$(t "Instalando paquetes oficiales (pide tu contraseña)…")"
     local missing=()
     for p in "${PKGS[@]}"; do pacman -Qq "$p" >/dev/null 2>&1 || missing+=("$p"); done
     local avail=() gone=()
@@ -193,7 +270,7 @@ install_deps() {
         if pacman -Si "$p" >/dev/null 2>&1; then avail+=("$p"); else gone+=("$p"); fi
     done
     if [ ${#avail[@]} -gt 0 ]; then
-        sudo pacman -S --needed --noconfirm "${avail[@]}" || die "Falló la instalación de paquetes. Revisá la salida de arriba."
+        sudo pacman -S --needed --noconfirm "${avail[@]}" || die "$(t "Falló la instalación de paquetes. Revisá la salida de arriba.")"
     fi
     local helper
     helper=$(aur_helper)
@@ -201,35 +278,35 @@ install_deps() {
     for p in "${AUR_PKGS[@]}"; do pacman -Qq "$p" >/dev/null 2>&1 || pacman -Qq "${p%-bin}" >/dev/null 2>&1 || pacman -Qq "$p-git" >/dev/null 2>&1 || aur+=("$p"); done
     if [ ${#aur[@]} -gt 0 ]; then
         if [ -z "$helper" ]; then
-            warn "Faltan paquetes del AUR: ${aur[*]}"
-            if yesno "¿Instalo yay para conseguirlos?" s; then
-                sudo pacman -S --needed --noconfirm git base-devel || die "No pude instalar git/base-devel"
+            warn "$(t "Faltan paquetes del AUR:") ${aur[*]}"
+            if yesno "$(t "¿Instalo yay para conseguirlos?")" s; then
+                sudo pacman -S --needed --noconfirm git base-devel || die "$(t "No pude instalar git/base-devel")"
                 tmp=$(mktemp -d)
-                git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin" && (cd "$tmp/yay-bin" && makepkg -si --noconfirm) || die "No pude instalar yay"
+                git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin" && (cd "$tmp/yay-bin" && makepkg -si --noconfirm) || die "$(t "No pude instalar yay")"
                 rm -rf "$tmp"
                 helper=yay
             else
-                die "Sin esos paquetes HYPER·AERO no funciona: ${aur[*]}"
+                die "$(t "Sin esos paquetes HYPER·AERO no funciona:") ${aur[*]}"
             fi
         fi
-        say "Instalando del AUR con $helper: ${aur[*]}"
-        "$helper" -S --needed --noconfirm "${aur[@]}" || die "Falló $helper. Revisá la salida de arriba."
+        say "$(tf "Instalando del AUR con %s:" "$helper") ${aur[*]}"
+        "$helper" -S --needed --noconfirm "${aur[@]}" || die "$(tf "Falló %s. Revisá la salida de arriba." "$helper")"
     fi
     for svc in NetworkManager bluetooth; do
         systemctl is-enabled "$svc" >/dev/null 2>&1 || sudo systemctl enable --now "$svc" >/dev/null 2>&1 || true
     done
-    ok "Paquetes listos"
+    ok "$(t "Paquetes listos")"
 }
 
 check_versions() {
     local hv
     hv=$(pacman -Q hyprland 2>/dev/null | awk '{print $2}' | cut -d- -f1)
     if [ -n "$hv" ] && [ "$(printf '%s\n0.56.0\n' "$hv" | sort -V | head -n1)" != "0.56.0" ]; then
-        die "Hyprland $hv es muy viejo: HYPER·AERO usa la configuración en Lua de Hyprland 0.56 o más nuevo."
+        die "$(tf "Hyprland %s es muy viejo: HYPER·AERO usa la configuración en Lua de Hyprland 0.56 o más nuevo." "$hv")"
     fi
-    command -v qs >/dev/null || die "Falta Quickshell (qs)."
-    command -v eww >/dev/null || die "Falta eww."
-    command -v mpvpaper >/dev/null || die "Falta mpvpaper."
+    command -v qs >/dev/null || die "$(t "Falta Quickshell (qs).")"
+    command -v eww >/dev/null || die "$(t "Falta eww.")"
+    command -v mpvpaper >/dev/null || die "$(t "Falta mpvpaper.")"
 }
 
 TARGETS=(hypr hyper-aero quickshell/aero-carousel quickshell/aero-desk quickshell/aero-displays quickshell/aero-phone
@@ -251,7 +328,7 @@ backup() {
     for f in .bashrc .zshrc; do
         [ -f "$HOME/$f" ] && cp -a "$HOME/$f" "$BACKUP/$f" && echo "rc $f" >> "$BACKUP/manifest"
     done
-    ok "Respaldo de tu configuración en $BACKUP"
+    ok "$(t "Respaldo de tu configuración en") $BACKUP"
 }
 
 render_copy() {
@@ -290,9 +367,11 @@ PY
 }
 
 install_files() {
-    say "Copiando la configuración…"
+    say "$(t "Copiando la configuración…")"
     local n
-    n=$(render_copy) || die "No pude copiar los archivos"
+    n=$(render_copy) || die "$(t "No pude copiar los archivos")"
+    printf '%s\n' "$UI_LANG" > "$A/lang"
+    python3 "$A/scripts/aero-lang" refresh >/dev/null 2>&1 || true
     mkdir -p "$A/theme" "$A/wallpapers" "$A/desk" "$A/studio"
     [ -f "$A/theme/accent" ] || echo blue > "$A/theme/accent"
     [ -f "$A/theme/mode" ] || echo day > "$A/theme/mode"
@@ -300,12 +379,12 @@ install_files() {
     [ -n "$CITY" ] && printf '%s\n' "$CITY" > "$A/weather-location"
     [ -f "$A/weather-location" ] || : > "$A/weather-location"
     find "$A/scripts" -type f -exec chmod 755 {} +
-    ok "$n archivos instalados"
+    ok "$(tf "%s archivos instalados" "$n")"
 
     mkdir -p "$HOME/.local/share/fonts/hyper-aero"
     cp -f "$HERE"/assets/fonts/*.ttf "$HOME/.local/share/fonts/hyper-aero/"
     fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
-    ok "Fuentes Exo 2 y Michroma"
+    ok "$(t "Fuentes Exo 2 y Michroma")"
 
     local rc snippet line
     case "$(basename "${SHELL:-bash}")" in
@@ -317,7 +396,7 @@ install_files() {
     if ! grep -qF "hyper-aero/shell/hyper-aero" "$rc"; then
         printf '\n%s\n' "$line" >> "$rc"
     fi
-    ok "Terminal: banner DECK y prompt Starship en $(basename "$rc")"
+    ok "$(tf "Terminal: banner DECK y prompt Starship en %s" "$(basename "$rc")")"
 }
 
 link_theme() {
@@ -351,23 +430,23 @@ seed_display() {
         elif [ "$w" -ge 1900 ]; then sc=1.25
         else sc=1; fi
         printf 'hl.monitor({ output = "%s", mode = "preferred", position = "0x0", scale = %s })\n' "$name" "$sc" > "$gen"
-        ok "Pantalla de la laptop ($name, $mode) al $(awk -v s="$sc" 'BEGIN { printf "%d", s * 100 }') %"
+        ok "$(tf "Pantalla de la laptop (%s, %s) al %s %%" "$name" "$mode" "$(awk -v s="$sc" 'BEGIN { printf "%d", s * 100 }')")"
         return
     done
 }
 
 install_assets() {
-    [ "$DO_ASSETS" = 1 ] || { warn "Sin fondos: corré luego ~/.config/hyper-aero/scripts/aero-assets.sh"; return; }
-    "$A/scripts/aero-assets.sh" || warn "Los fondos no quedaron listos. Corré luego: ~/.config/hyper-aero/scripts/aero-assets.sh"
+    [ "$DO_ASSETS" = 1 ] || { warn "$(t "Sin fondos: corré luego ~/.config/hyper-aero/scripts/aero-assets.sh")"; return; }
+    "$A/scripts/aero-assets.sh" || warn "$(t "Los fondos no quedaron listos. Corré luego: ~/.config/hyper-aero/scripts/aero-assets.sh")"
 }
 
 install_login() {
-    say "Pantalla de inicio de sesión (greetd + ReGreet)"
-    warn "Esto reemplaza tu gestor de inicio de sesión actual (GDM, SDDM, LightDM…)."
-    yesno "¿Seguro?" n || return
-    sudo -v || { warn "Sin permisos de sudo: no instalé la pantalla de inicio"; return; }
+    say "$(t "Pantalla de inicio de sesión (greetd + ReGreet)")"
+    warn "$(t "Esto reemplaza tu gestor de inicio de sesión actual (GDM, SDDM, LightDM…).")"
+    yesno "$(t "¿Seguro?")" n || return
+    sudo -v || { warn "$(t "Sin permisos de sudo: no instalé la pantalla de inicio")"; return; }
     local pk=(greetd greetd-regreet)
-    sudo pacman -S --needed --noconfirm "${pk[@]}" || { warn "No pude instalar greetd"; return; }
+    sudo pacman -S --needed --noconfirm "${pk[@]}" || { warn "$(t "No pude instalar greetd")"; return; }
     sudo install -d /etc/greetd /usr/share/backgrounds/hyper-aero /var/lib/hyper-aero
     [ -f /etc/greetd/config.toml ] && sudo cp -a /etc/greetd/config.toml "/etc/greetd/config.toml.pre-hyper-aero-$STAMP"
     local tmp
@@ -385,23 +464,23 @@ install_login() {
     done
     sudo systemctl enable greetd >/dev/null 2>&1
     echo "login yes" >> "$BACKUP/manifest"
-    ok "Inicio de sesión HYPER·AERO activado (se ve al reiniciar)"
+    ok "$(t "Inicio de sesión HYPER·AERO activado (se ve al reiniciar)")"
 }
 
 install_gpu_session() {
-    say "Sesión para dos tarjetas gráficas"
+    say "$(t "Sesión para dos tarjetas gráficas")"
     if [ -f /usr/share/wayland-sessions/hyper-aero.desktop ] && [ -f /usr/local/bin/hyper-aero-session ]; then
-        ok "Ya estaba instalada"
+        ok "$(t "Ya estaba instalada")"
         return 1
     fi
-    sudo -v || { warn "Sin permisos de sudo: no instalé la sesión de GPU"; return 1; }
+    sudo -v || { warn "$(t "Sin permisos de sudo: no instalé la sesión de GPU")"; return 1; }
     sudo install -m 644 "$HERE/system/session/99-hyper-aero-gpu.rules" /etc/udev/rules.d/99-hyper-aero-gpu.rules
     sudo install -m 755 "$HERE/system/session/hyper-aero-session" /usr/local/bin/hyper-aero-session
     sudo install -d /usr/share/wayland-sessions
     sudo install -m 644 "$HERE/system/session/hyper-aero.desktop" /usr/share/wayland-sessions/hyper-aero.desktop
     sudo udevadm control --reload && sudo udevadm trigger --subsystem-match=drm
     echo "gpu yes" >> "$BACKUP/manifest"
-    ok "Sesión «HYPER·AERO» disponible en la pantalla de inicio"
+    ok "$(t "Sesión «HYPER·AERO» disponible en la pantalla de inicio")"
 }
 
 write_info() {
@@ -418,25 +497,30 @@ apply_look() {
 
 finish() {
     echo
-    ok "HYPER·AERO $VERSION instalado"
+    ok "$(tf "HYPER·AERO %s instalado" "$VERSION")"
     if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-        say "Estás dentro de Hyprland: cerrá sesión (SUPER + M) y volvé a entrar para arrancar todo."
+        say "$(t "Estás dentro de Hyprland: cerrá sesión (SUPER + M) y volvé a entrar para arrancar todo.")"
     else
         if [ "$WITH_GPU" = 1 ]; then
-            say "Cerrá sesión y entrá a «HYPER·AERO» (o «Hyprland»)."
+            say "$(t "Cerrá sesión y entrá a «HYPER·AERO» (o «Hyprland»).")"
         else
-            say "Cerrá sesión y entrá a «Hyprland»."
+            say "$(t "Cerrá sesión y entrá a «Hyprland».")"
         fi
     fi
-    say "Atajos: SUPER + F1 · Perfil de rendimiento: SUPER + F2 o 'aero-profile ligero|equilibrado|completo'"
-    say "Para deshacer: $HERE/uninstall.sh"
-    say "Registro: $LOGFILE"
+    say "$(t "Atajos: SUPER + F1 · Perfil de rendimiento: SUPER + F2 o 'aero-profile ligero|equilibrado|completo'")"
+    say "$(t "Para deshacer:") $HERE/uninstall.sh"
+    say "$(t "Registro:") $LOGFILE"
 }
 
 main() {
     mkdir -p "$(dirname "$LOGFILE")"
     exec > >(tee -a "$LOGFILE") 2>&1
     banner
+    if [ -z "${LANG_SET:-}" ]; then
+        ask "Idioma / Language (es/en)" "$UI_LANG"
+        case "$REPLY" in es|en) UI_LANG="$REPLY" ;; esp*|spa*) UI_LANG=es ;; eng*) UI_LANG=en ;; esac
+        load_lang
+    fi
     check_base
     REPO_SLUG=$(git -C "$HERE" remote get-url origin 2>/dev/null | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$##')
     case "$REPO_SLUG" in */*) ;; *) REPO_SLUG="$UPSTREAM" ;; esac
@@ -448,7 +532,7 @@ main() {
     fi
     check_versions
     detect_settings
-    yesno "¿Instalo HYPER·AERO ahora? Tu configuración actual queda respaldada" s || die "Cancelado"
+    yesno "$(t "¿Instalo HYPER·AERO ahora? Tu configuración actual queda respaldada")" s || die "$(t "Cancelado")"
     ORIGINAL=$(jq -r '.backup // empty' "$A/.install.json" 2>/dev/null)
     [ -n "$ORIGINAL" ] && [ -f "$ORIGINAL/manifest" ] || ORIGINAL="$BACKUP"
     backup
@@ -459,7 +543,7 @@ main() {
     install_assets
     apply_look
     if [ "$WITH_GPU" = 0 ] && [ "${GPU_COUNT:-1}" -ge 2 ] && [ ! -f /usr/share/wayland-sessions/hyper-aero.desktop ]; then
-        yesno "Tenés dos tarjetas gráficas. ¿Instalo la sesión que usa la dedicada cuando conectás un monitor externo?" n && WITH_GPU=1
+        yesno "$(t "Tenés dos tarjetas gráficas. ¿Instalo la sesión que usa la dedicada cuando conectás un monitor externo?")" n && WITH_GPU=1
     fi
     if [ "$WITH_GPU" = 1 ] && install_gpu_session; then [ "$ORIGINAL" != "$BACKUP" ] && echo "gpu yes" >> "$ORIGINAL/manifest"; fi
     if [ "$WITH_LOGIN" = 1 ]; then install_login; [ "$ORIGINAL" != "$BACKUP" ] && grep "^dm \|^login " "$BACKUP/manifest" >> "$ORIGINAL/manifest"; fi

@@ -8,3 +8,4 @@ fi
 alias aero-profile="$HOME/.config/hyper-aero/scripts/aero-profile"
 alias aero-assets="$HOME/.config/hyper-aero/scripts/aero-assets.sh"
 alias aero-location="$HOME/.config/hyper-aero/scripts/night-deck.py location"
+alias aero-lang="$HOME/.config/hyper-aero/scripts/aero-lang"

@@ -2,6 +2,8 @@
 
 [← Volver al README](../../README.es.md) · [English](../en/FEATURES.md)
 
+La interfaz está en español o en inglés (ver [Personalizar → Idioma](CUSTOMIZING.md#idioma)).
+
 ## Temas y fondos
 
 ![Fondos](../../assets/screenshots/wallpapers.jpg)

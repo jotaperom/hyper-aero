@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 A="$HOME/.config/hyper-aero"
 WALL="$A/wallpapers"
 INFO="$A/.install.json"
@@ -26,7 +28,7 @@ download() {
     [ -n "$repo" ] || return 1
     tmp=$(mktemp -d)
     url="https://github.com/$repo/releases/download/$TAG/$FILE"
-    say "Descargando fondos: $url"
+    say "$(t "Descargando fondos:") $url"
     if curl -fL --progress-bar -o "$tmp/$FILE" "$url"; then
         tar -xzf "$tmp/$FILE" -C "$WALL" && rm -rf "$tmp" && have && return 0
     fi
@@ -36,7 +38,7 @@ download() {
 
 build() {
     [ -n "$src" ] && [ -f "$src/tools/build-wallpapers.py" ] || return 1
-    say "Generando los fondos en esta compu (tarda varios minutos)…"
+    say "$(t "Generando los fondos en esta compu (tarda varios minutos)…")"
     python3 "$src/tools/build-wallpapers.py" "$WALL"
 }
 
@@ -45,15 +47,15 @@ case "${1:-auto}" in
         build
         ;;
     *)
-        have && { say "Los fondos ya están instalados"; exit 0; }
+        have && { say "$(t "Los fondos ya están instalados")"; exit 0; }
         from_dir "$src/assets/wallpapers" || download || build
         ;;
 esac
 
 if have; then
-    say "Fondos listos en $WALL"
+    say "$(t "Fondos listos en") $WALL"
     pgrep -f "mpvpaper.*aero-motion.sock" >/dev/null && "$A/scripts/wallpaper.sh" restart
     exit 0
 fi
-say "No pude conseguir los fondos. Probá: $A/scripts/aero-assets.sh --build"
+say "$(t "No pude conseguir los fondos. Probá:") $A/scripts/aero-assets.sh --build"
 exit 1

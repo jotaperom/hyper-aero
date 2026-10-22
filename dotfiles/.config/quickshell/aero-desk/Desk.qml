@@ -1,5 +1,6 @@
 import QtQuick
 import "Registry.js" as Reg
+import "Lang.js" as L
 
 Item {
     id: desk
@@ -88,11 +89,11 @@ Item {
         pal: desk.pal
         bounds: Qt.size(desk.width, desk.height)
         items: [
-            { key: "edit", glyph: "\u{F03EB}", text: "Editar escritorio", hint: "SUPER+ALT+D" },
-            { key: "hide", glyph: "\u{F0209}", text: desk.core.hidden ? "Mostrar widgets" : "Ocultar widgets", hint: "SUPER+D" },
-            { key: "mode", glyph: "\u{F050E}", text: desk.core.night ? "Modo día" : "Modo noche", hint: "SUPER+T" },
-            { key: "accent", glyph: "\u{F03D8}", text: "Cambiar tema", hint: "" },
-            { key: "studio", glyph: "\u{F08B5}", text: "Estudio de temas", hint: "" }
+            { key: "edit", glyph: "\u{F03EB}", text: L.t("Editar escritorio"), hint: "SUPER+ALT+D" },
+            { key: "hide", glyph: "\u{F0209}", text: desk.core.hidden ? L.t("Mostrar widgets") : L.t("Ocultar widgets"), hint: "SUPER+D" },
+            { key: "mode", glyph: "\u{F050E}", text: desk.core.night ? L.t("Modo día") : L.t("Modo noche"), hint: "SUPER+T" },
+            { key: "accent", glyph: "\u{F03D8}", text: L.t("Cambiar tema"), hint: "" },
+            { key: "studio", glyph: "\u{F08B5}", text: L.t("Estudio de temas"), hint: "" }
         ]
         onPicked: function(key) {
             if (key === "edit") desk.editRequested()

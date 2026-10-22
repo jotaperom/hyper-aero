@@ -3,14 +3,14 @@
 printf '%s\n' \
     "SUPER + R              NEXUS phone (apps)" \
     "SUPER + X              NEXUS phone (control)" \
-    "SUPER + I              Hoy: reloj, clima y nota (phone)" \
+    "SUPER + I              Today: clock, weather, note (phone)" \
     "SUPER + SHIFT + R      NEXUS classic (rofi)" \
     "SUPER + Q              DECK terminal" \
     "SUPER + B              Browser" \
     "SUPER + E              Files" \
     "SUPER + C              Close window" \
     "SUPER + V              Float / tile window" \
-    "SUPER + P              Pantallas: duplicar, extender, posición" \
+    "SUPER + P              Displays: duplicate, extend, arrange" \
     "SUPER + SHIFT + P      Pseudo-tile window" \
     "SUPER + J              Flip split direction" \
     "SUPER + ARROWS         Move focus" \
@@ -39,7 +39,7 @@ printf '%s\n' \
     "SUPER + D              Desktop widgets on / off" \
     "SUPER + ALT + D        Edit desktop (grid)" \
     "SUPER + T              NIGHT DECK on / off" \
-    "SUPER + G              Temas (carrusel)" \
+    "SUPER + G              Theme carousel" \
     "SUPER + SHIFT + T      Warm light on / off" \
     "SUPER + ALT + T        Day / night automatic" \
     "SUPER + SHIFT + D      Motion wallpaper play / pause" \

@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: sp
@@ -6,14 +7,14 @@ Item {
     property var backend
     readonly property string current: backend && backend.skin ? backend.skin : "iphone"
     readonly property var list: [
-        { id: "iphone", name: "NEXUS One", desc: "Pantalla completa" },
-        { id: "flip", name: "Keitai", desc: "Flip con teclado" },
-        { id: "slider", name: "Slider", desc: "Teclado deslizable" },
-        { id: "holo", name: "Holo", desc: "Comunicador holográfico" },
-        { id: "pda", name: "Cristal", desc: "PDA transparente" },
-        { id: "orbit", name: "Órbita", desc: "Planeta con apps" },
-        { id: "aqua", name: "Acuario", desc: "Pecera de cristal" },
-        { id: "visor", name: "Visor", desc: "HUD táctico" }
+        { id: "iphone", name: "NEXUS One", desc: L.t("Pantalla completa") },
+        { id: "flip", name: "Keitai", desc: L.t("Flip con teclado") },
+        { id: "slider", name: "Slider", desc: L.t("Teclado deslizable") },
+        { id: "holo", name: "Holo", desc: L.t("Comunicador holográfico") },
+        { id: "pda", name: L.t("Cristal"), desc: L.t("PDA transparente") },
+        { id: "orbit", name: L.t("Órbita"), desc: L.t("Planeta con apps") },
+        { id: "aqua", name: L.t("Acuario"), desc: L.t("Pecera de cristal") },
+        { id: "visor", name: "Visor", desc: L.t("HUD táctico") }
     ]
     signal back()
 
@@ -50,7 +51,7 @@ Item {
         Text {
             x: 46
             anchors.verticalCenter: parent.verticalCenter
-            text: "PIELES"
+            text: L.t("PIELES")
             font.family: "Michroma"
             font.pixelSize: 18
             font.letterSpacing: 2

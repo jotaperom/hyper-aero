@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 RUN="${XDG_RUNTIME_DIR:-/tmp}"
 sock="$RUN/aero-motion.sock"
 manual="$RUN/aero-motion.manual"
 
 if [ ! -S "$sock" ]; then
-    notify-send -a "HYPER·AERO" "Fondo animado" "No está corriendo."
+    notify-send -a "HYPER·AERO" "$(t "Fondo animado")" "$(t "No está corriendo.")"
     exit 1
 fi
 
@@ -22,9 +24,9 @@ fi
 if [ "$want" = pause ]; then
     ipc '{"command":["set_property","pause",true]}' >/dev/null
     touch "$manual"
-    notify-send -a "HYPER·AERO" "Fondo animado" "En pausa" -t 2000
+    notify-send -a "HYPER·AERO" "$(t "Fondo animado")" "$(t "En pausa")" -t 2000
 else
     ipc '{"command":["set_property","pause",false]}' >/dev/null
     rm -f "$manual" "$RUN/aero-motion.guard"
-    notify-send -a "HYPER·AERO" "Fondo animado" "Reproduciendo" -t 2000
+    notify-send -a "HYPER·AERO" "$(t "Fondo animado")" "$(t "Reproduciendo")" -t 2000
 fi

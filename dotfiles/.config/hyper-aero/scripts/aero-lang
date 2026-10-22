@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import glob
+import json
+import time
+import subprocess
+
+HOME = os.path.expanduser("~")
+AERO = os.path.join(HOME, ".config", "hyper-aero")
+SCRIPTS = os.path.join(AERO, "scripts")
+I18N = os.path.join(AERO, "i18n")
+LANG = os.path.join(AERO, "lang")
+QS = os.path.join(HOME, ".config", "quickshell")
+LANGS = {"es": ("Español", "es_ES"), "en": ("English", "en_US")}
+ALIASES = {"spanish": "es", "español": "es", "espanol": "es", "english": "en", "ingles": "en", "inglés": "en"}
+
+JS = """.pragma library
+
+var LANG = {lang}
+var LOCALE = {locale}
+var M = {table}
+
+function t(s) {{
+    var v = M[s]
+    return v === undefined ? s : v
+}}
+
+function f(s) {{
+    var r = t(s)
+    for (var i = 1; i < arguments.length; i++)
+        r = r.split("%" + i).join(String(arguments[i]))
+    return r
+}}
+"""
+
+
+def current():
+    try:
+        with open(LANG, encoding="utf-8") as f:
+            v = f.read().strip()
+    except OSError:
+        v = ""
+    return v if v in LANGS else "es"
+
+
+def table(lang):
+    if lang != "en":
+        return {}
+    try:
+        with open(os.path.join(I18N, "en.json"), encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def sq(s):
+    return "'" + s.replace("'", "'\\''") + "'"
+
+
+def write(path, text):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.replace(tmp, path)
+
+
+def generate(lang):
+    os.makedirs(I18N, exist_ok=True)
+    write(LANG, lang + "\n")
+    tab = table(lang)
+    js = JS.format(lang=json.dumps(lang), locale=json.dumps(LANGS[lang][1]),
+                   table=json.dumps(tab, ensure_ascii=False, indent=0, sort_keys=True))
+    for d in sorted(glob.glob(os.path.join(QS, "aero-*"))):
+        if os.path.isdir(d):
+            write(os.path.join(d, "Lang.js"), js)
+    lines = ["AERO_T=("]
+    for k in sorted(tab):
+        lines.append(f"    [{sq(k)}]={sq(tab[k])}")
+    lines.append(")")
+    write(os.path.join(I18N, "current.sh"), "\n".join(lines) + "\n")
+
+
+def run(args, timeout=10):
+    try:
+        subprocess.run(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                       timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+
+
+def spawn(args):
+    try:
+        subprocess.Popen(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True)
+    except OSError:
+        pass
+
+
+def resident():
+    try:
+        with open(os.path.join(AERO, "profile.json"), encoding="utf-8") as f:
+            return json.load(f).get("resident", True) is not False
+    except (OSError, ValueError):
+        return True
+
+
+def live():
+    if not os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
+        return
+    for name in ("aero-studio", "aero-carousel"):
+        run(["pkill", "-f", f"qs -c {name}$"])
+    for script in ("desk.sh", "displays.sh", "snap.sh"):
+        run([os.path.join(SCRIPTS, script), "restart"], timeout=20)
+    for script in ("phone.sh", "veil.sh"):
+        if resident():
+            run([os.path.join(SCRIPTS, script), "restart"], timeout=20)
+        else:
+            run(["pkill", "-f", f"qs -c aero-{script.split('.')[0]}$"])
+    for pattern, args in (("night-deck.py daemon", [os.path.join(SCRIPTS, "night-deck.py"), "daemon"]),
+                          ("motion-guard.py", [os.path.join(SCRIPTS, "motion-guard.py")])):
+        run(["pkill", "-f", pattern])
+        time.sleep(0.3)
+        spawn(args)
+
+
+def notify(lang):
+    msg = {"es": "Idioma: Español", "en": "Language: English"}[lang]
+    run(["notify-send", "-a", "HYPER·AERO", "◢ HYPER·AERO", msg])
+
+
+def main(argv):
+    if not argv or argv[0] in ("status", "get"):
+        print(current())
+        return 0
+    if argv[0] == "list":
+        for k, (name, _) in LANGS.items():
+            print(f"{k}  {name}{'  ◀' if k == current() else ''}")
+        return 0
+    if argv[0] == "refresh":
+        generate(current())
+        return 0
+    lang = ALIASES.get(argv[0].lower(), argv[0].lower())
+    if lang not in LANGS:
+        print("uso: aero-lang [es|en|list|refresh] [--no-apply]")
+        return 1
+    generate(lang)
+    if "--no-apply" not in argv:
+        live()
+        notify(lang)
+    print(LANGS[lang][0])
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

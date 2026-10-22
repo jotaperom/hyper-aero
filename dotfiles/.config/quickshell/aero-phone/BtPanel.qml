@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: bp
@@ -15,8 +16,8 @@ Item {
         var mine = devs.filter(function(d) { return d.paired })
         var near = devs.filter(function(d) { return !d.paired })
         var out = []
-        if (mine.length) out = out.concat([{ header: "MIS DISPOSITIVOS" }], mine)
-        if (near.length) out = out.concat([{ header: "DISPONIBLES" }], near)
+        if (mine.length) out = out.concat([{ header: L.t("MIS DISPOSITIVOS") }], mine)
+        if (near.length) out = out.concat([{ header: L.t("DISPONIBLES") }], near)
         return out
     }
     readonly property int count: devs.length
@@ -37,9 +38,9 @@ Item {
     }
 
     function subFor(d) {
-        if (d.connected) return "Conectado" + (d.battery >= 0 ? "  ·  \u{F0079} " + d.battery + "%" : "")
-        if (d.paired) return "Emparejado  ·  tocá para conectar"
-        return "Nuevo  ·  tocá para emparejar"
+        if (d.connected) return L.t("Conectado") + (d.battery >= 0 ? "  ·  \u{F0079} " + d.battery + "%" : "")
+        if (d.paired) return L.t("Emparejado  ·  tocá para conectar")
+        return L.t("Nuevo  ·  tocá para emparejar")
     }
 
     function say(msg) {
@@ -101,7 +102,7 @@ Item {
         x: 18
         width: parent.width - 36
         elide: Text.ElideRight
-        text: !bp.avail ? "SIN ADAPTADOR BLUETOOTH" : (!bp.powered ? "BLUETOOTH APAGADO" : (bp.backend && bp.backend.btScanning ? "BUSCANDO DISPOSITIVOS…" : "VISIBLE COMO ESTA COMPU"))
+        text: !bp.avail ? L.t("SIN ADAPTADOR BLUETOOTH") : (!bp.powered ? L.t("BLUETOOTH APAGADO") : (bp.backend && bp.backend.btScanning ? L.t("BUSCANDO DISPOSITIVOS…") : L.t("VISIBLE COMO ESTA COMPU")))
         font.family: "JetBrainsMono Nerd Font"
         font.weight: Font.Bold
         font.pixelSize: 10
@@ -163,8 +164,8 @@ Item {
                     showMore: d.paired && !d.connected
                     mode: "actions"
                     actions: d.connected
-                        ? [{ id: "forget", label: "Olvidar", danger: true }, { id: "disconnect", label: "Desconectar", primary: true }]
-                        : [{ id: "forget", label: "Olvidar", danger: true }, { id: "connect", label: "Conectar", primary: true }]
+                        ? [{ id: "forget", label: L.t("Olvidar"), danger: true }, { id: "disconnect", label: L.t("Desconectar"), primary: true }]
+                        : [{ id: "forget", label: L.t("Olvidar"), danger: true }, { id: "connect", label: L.t("Conectar"), primary: true }]
                     onTapped: bp.tap(d)
                     onMore: bp.expanded = bp.expanded === d.mac ? "" : d.mac
                     onAction: function(id) {
@@ -192,7 +193,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: !bp.avail ? "NO DISPONIBLE" : (bp.powered ? "NADA CERCA TODAVÍA" : "ENCENDÉ EL BLUETOOTH")
+            text: !bp.avail ? L.t("NO DISPONIBLE") : (bp.powered ? L.t("NADA CERCA TODAVÍA") : L.t("ENCENDÉ EL BLUETOOTH"))
             font.family: "Michroma"
             font.pixelSize: 10
             color: bp.pal.heroSub

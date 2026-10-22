@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Card {
     id: w
@@ -167,7 +168,7 @@ Card {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         visible: w.phase === "ok" && !w.synced
-        text: "SIN SINCRONIZAR"
+        text: L.t("SIN SINCRONIZAR")
         font.family: "Michroma"
         font.pixelSize: 7
         color: w.pal.dim
@@ -203,11 +204,11 @@ Card {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            text: w.phase === "idle" ? "Nada sonando"
-                : w.phase === "loading" ? "Buscando la letra…"
-                : w.phase === "instrumental" ? "Instrumental"
-                : w.phase === "offline" ? "Sin conexión"
-                : "No encontré la letra"
+            text: w.phase === "idle" ? L.t("Nada sonando")
+                : w.phase === "loading" ? L.t("Buscando la letra…")
+                : w.phase === "instrumental" ? L.t("Instrumental")
+                : w.phase === "offline" ? L.t("Sin conexión")
+                : L.t("No encontré la letra")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: Math.max(12, w.fs * 0.85)
@@ -219,9 +220,9 @@ Card {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: text.length > 0
-            text: w.phase === "idle" ? "Poné algo en Spotify"
-                : w.phase === "offline" ? "Lo intento de nuevo en un minuto"
-                : w.phase === "none" ? "Esta canción no está en LRCLIB"
+            text: w.phase === "idle" ? L.t("Poné algo en Spotify")
+                : w.phase === "offline" ? L.t("Lo intento de nuevo en un minuto")
+                : w.phase === "none" ? L.t("Esta canción no está en LRCLIB")
                 : ""
             font.family: "Exo 2"
             font.pixelSize: Math.max(10, w.fs * 0.65)

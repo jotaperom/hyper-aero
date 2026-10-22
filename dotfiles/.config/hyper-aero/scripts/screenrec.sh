@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 A="$HOME/.config/hyper-aero"
 CONF="$A/record.conf"
 MODEF="$A/theme/mode"
@@ -31,7 +33,7 @@ recording() {
 }
 
 note() {
-    command -v notify-send >/dev/null 2>&1 && notify-send -a "Grabación" "$@"
+    command -v notify-send >/dev/null 2>&1 && notify-send -a "$(t "Grabación")" "$@"
 }
 
 videos_dir() {
@@ -44,7 +46,7 @@ videos_dir() {
     if [ -z "$base" ] || [ "$base" = "$HOME" ]; then
         base="$HOME/Vídeos"
     fi
-    printf '%s\n' "$base/Grabaciones"
+    printf '%s\n' "$base/$(t "Grabaciones")"
 }
 
 intel_node() {
@@ -125,12 +127,12 @@ launch() {
 start() {
     local mode="${1:-full}"
     if recording; then
-        echo "Ya estoy grabando: $FILE"
+        echo "$(t "Ya estoy grabando:") $FILE"
         return 0
     fi
     if ! command -v wf-recorder >/dev/null 2>&1; then
-        note -u critical "Falta wf-recorder" "Instalalo con: sudo pacman -S wf-recorder"
-        echo "Falta wf-recorder. Instalalo con: sudo pacman -S wf-recorder"
+        note -u critical "$(t "Falta wf-recorder")" "$(t "Instalalo con: sudo pacman -S wf-recorder")"
+        echo "$(t "Falta wf-recorder") · $(t "Instalalo con: sudo pacman -S wf-recorder")"
         return 1
     fi
 
@@ -141,7 +143,7 @@ start() {
         local geom
         geom=$(slurp -d 2>/dev/null)
         if [ -z "$geom" ]; then
-            echo "Grabación cancelada."
+            echo "$(t "Grabación cancelada.")"
             return 0
         fi
         where=(-g "$geom")
@@ -154,7 +156,7 @@ start() {
     local dir file
     dir=$(videos_dir)
     mkdir -p "$dir"
-    file="$dir/Grabación_$(date +%Y-%m-%d_%H-%M-%S).$FORMAT"
+    file="$dir/$(t "Grabación")_$(date +%Y-%m-%d_%H-%M-%S).$FORMAT"
 
     audio_source
     local audio=()
@@ -175,8 +177,8 @@ start() {
         rm -f "$file"
         local why
         why=$(tail -n 3 "$LOG" 2>/dev/null)
-        note -u critical "No pude grabar" "${why:-wf-recorder se cerró al iniciar}"
-        echo "No pude empezar la grabación. Detalle en $LOG"
+        note -u critical "$(t "No pude grabar")" "${why:-$(t "wf-recorder se cerró al iniciar")}"
+        echo "$(t "No pude empezar la grabación. Detalle en") $LOG"
         return 1
     fi
 
@@ -186,7 +188,7 @@ start() {
         printf 'FILE=%q\n' "$file"
         printf 'MODS=%q\n' "$MODS"
     } > "$STATE"
-    echo "Grabando la pantalla. Para detener: SUPER + ALT + R o clic en el indicador REC de la barra."
+    echo "$(t "Grabando la pantalla. Para detener: SUPER + ALT + R o clic en el indicador REC de la barra.")"
 }
 
 clock() {
@@ -201,7 +203,7 @@ clock() {
 stop() {
     if ! recording; then
         rm -f "$STATE"
-        echo "No hay ninguna grabación en curso."
+        echo "$(t "No hay ninguna grabación en curso.")"
         return 0
     fi
     local pid=$PID file=$FILE mods=$MODS start=$START
@@ -218,10 +220,10 @@ stop() {
     dur=$(clock $(( $(date +%s) - start )))
     if [ -s "$file" ]; then
         setsid -f "$0" _done "$file" "$dur" </dev/null >/dev/null 2>&1
-        echo "Grabación guardada ($dur): $file"
+        echo "$(t "Grabación guardada") ($dur): $file"
     else
-        note -u critical "La grabación quedó vacía" "Revisá $LOG"
-        echo "La grabación quedó vacía. Detalle en $LOG"
+        note -u critical "$(t "La grabación quedó vacía")" "$(t "Revisá") $LOG"
+        echo "$(t "La grabación quedó vacía") · $LOG"
         return 1
     fi
 }
@@ -236,8 +238,8 @@ done_note() {
     size=$(du -h "$file" 2>/dev/null | cut -f1)
     command -v wl-copy >/dev/null 2>&1 && printf 'file://%s\n' "$file" | wl-copy --type text/uri-list
     command -v notify-send >/dev/null 2>&1 || return
-    act=$(notify-send -a "Grabación" -i "$icon" -A open="Ver video" -A folder="Abrir carpeta" \
-        "Grabación guardada" "${file##*/}"$'\n'"$dur · ${size:-?}")
+    act=$(notify-send -a "$(t "Grabación")" -i "$icon" -A open="$(t "Ver video")" -A folder="$(t "Abrir carpeta")" \
+        "$(t "Grabación guardada")" "${file##*/}"$'\n'"$dur · ${size:-?}")
     case "$act" in
         open) xdg-open "$file" >/dev/null 2>&1 & ;;
         folder) nautilus --select "$file" >/dev/null 2>&1 || xdg-open "${file%/*}" >/dev/null 2>&1 & ;;

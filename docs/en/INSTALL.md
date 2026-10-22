@@ -27,6 +27,7 @@ What the installer does, step by step:
 2. **Installs packages** from the official repos, plus `eww`, `mpvpaper` and `bibata-cursor-theme-bin` from the AUR. If you don't have `yay` or `paru`, it offers to install `yay`.
 3. **Checks versions**: Hyprland ≥ 0.56, and that `qs`, `eww` and `mpvpaper` are available.
 4. **Asks for a few settings**, with detected defaults:
+   - interface language (English or Spanish)
    - keyboard layout (from `localectl`)
    - your approximate location for the day/night cycle (looked up once via `ipapi.co` — you can decline and type it, or leave it empty to estimate it from your time zone)
    - default browser and file manager are detected automatically
@@ -46,7 +47,8 @@ The installer adds a few commands to your shell — `aero-profile`, `aero-assets
 ```text
 ./install.sh [options]
 
-  --profile completo|equilibrado|ligero   performance profile (otherwise one is recommended)
+  --profile full|balanced|lite            performance profile (otherwise one is recommended)
+  --lang en|es                            interface language
   --yes                                   don't ask, use the detected values
   --no-deps                               don't install packages
   --no-assets                             don't download the wallpapers
@@ -59,9 +61,9 @@ The installer adds a few commands to your shell — `aero-profile`, `aero-assets
 Examples:
 
 ```bash
-./install.sh --profile ligero
+./install.sh --profile lite
 ./install.sh --location 40.42 -3.70
-./install.sh --yes --profile equilibrado
+./install.sh --yes --profile balanced --lang en
 ```
 
 ## Packages

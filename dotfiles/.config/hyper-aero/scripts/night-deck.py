@@ -12,6 +12,7 @@ import socket
 import datetime
 import threading
 import subprocess
+from aero_i18n import t as _t
 
 sys.path.insert(0, os.path.join(os.path.expanduser("~"), ".config", "hyper-aero", "scripts"))
 try:
@@ -177,7 +178,7 @@ def next_warm_end(now, cfg):
 
 ACCENT_FILE = os.path.join(os.path.expanduser("~"), ".config", "hyper-aero", "theme", "accent")
 ACCENTS = ["blue", "red", "green", "black"]
-ACCENT_NAMES = {"blue": "AZUL", "red": "ROJO", "green": "VERDE", "black": "NEGRO"}
+ACCENT_NAMES = {"blue": _t("AZUL"), "red": _t("ROJO"), "green": _t("VERDE"), "black": _t("NEGRO")}
 GNOME_ACCENT = {"blue": "blue", "red": "red", "green": "teal", "black": "slate"}
 
 
@@ -472,7 +473,7 @@ def step_spotify(mode):
         st["spotify_applied"] = applied
         save_json(STATE, st)
     if running("spotify"):
-        notify("Spotify", "El tema nuevo de Spotify aparece la próxima vez que lo abras.", low=True)
+        notify("Spotify", _t("El tema nuevo de Spotify aparece la próxima vez que lo abras."), low=True)
 
 
 def has_overlay(path, overlay):
@@ -555,7 +556,7 @@ def set_accent(name, mode=None):
         print("temas: " + ", ".join(ACCENTS) + ", next")
         return 1
     if name != "blue" and not aero_tint:
-        notify("◢ TEMAS", "Falta aero_tint.py en ~/.config/hyper-aero/scripts", low=True)
+        notify(_t("◢ TEMAS"), _t("Falta aero_tint.py en ~/.config/hyper-aero/scripts"), low=True)
         return 1
     tmp = ACCENT_FILE + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
@@ -574,7 +575,7 @@ def set_accent(name, mode=None):
         save_json(STATE, st)
     target = mode if mode in ("day", "night") else current_mode()
     apply(target, announce=False)
-    notify(f"◢ TEMA {ACCENT_NAMES.get(name, 'PERSONAL')}", "Colores y fondo actualizados" + (" · modo noche" if target == "night" else " · modo día"))
+    notify(_t("◢ TEMA {}").format(ACCENT_NAMES.get(name, "PERSONAL")), _t("Colores y fondo actualizados · modo noche") if target == "night" else _t("Colores y fondo actualizados · modo día"))
     return 0
 
 
@@ -627,8 +628,8 @@ def veil_style(mode):
     import colorsys as _cs
     if current_mode() != mode:
         if mode == "night":
-            return "night", "040a16", 0.2, "MODO_NOCHE"
-        return "day", "ffffff", 0.18, "MODO_DÍA"
+            return "night", "040a16", 0.2, _t("MODO_NOCHE")
+        return "day", "ffffff", 0.18, _t("MODO_DÍA")
     acc = current_accent()
     tint = VEIL_TINT.get(acc)
     m = _re.match(r"^c-(\d{1,3})-(\d{1,3})$", acc or "")
@@ -637,7 +638,7 @@ def veil_style(mode):
         tint = "%02x%02x%02x" % (int(r * 255), int(g * 255), int(b * 255))
     names = globals().get("ACCENT_NAMES", {})
     name = names.get(acc, "PERSONAL") if isinstance(names, dict) else "PERSONAL"
-    return "theme", tint or "3d9be9", 0.1, ("TEMA_" + str(name)).replace(" ", "_")
+    return "theme", tint or "3d9be9", 0.1, (_t("TEMA_") + str(name)).replace(" ", "_")
 
 def veil_cover(mode):
     try:
@@ -777,9 +778,9 @@ def apply(mode, announce=True, steps=None):
     signal_bar()
     if announce:
         if mode == "night":
-            notify("◢ NIGHT DECK", "Modo noche · cabina en penumbra")
+            notify("◢ NIGHT DECK", _t("Modo noche · cabina en penumbra"))
         else:
-            notify("◢ DAY DECK", "Modo día · luces de la estación encendidas")
+            notify("◢ DAY DECK", _t("Modo día · luces de la estación encendidas"))
     log(f"applied {mode}")
 
 
@@ -843,7 +844,7 @@ def warm_toggle(force=None):
     save_json(STATE, st)
     set_warm(cfg["warm_kelvin"] if turn_on else None)
     signal_bar()
-    notify("Luz cálida", f"Encendida · {cfg['warm_kelvin']} K" if turn_on else "Apagada hasta mañana", low=True)
+    notify(_t("Luz cálida"), _t("Encendida · {} K").format(cfg["warm_kelvin"]) if turn_on else _t("Apagada hasta mañana"), low=True)
 
 
 def status(as_waybar=False):
@@ -857,11 +858,11 @@ def status(as_waybar=False):
     b = day_bounds(now, cfg)[0]
     fmt = lambda t: datetime.datetime.fromtimestamp(t).strftime("%H:%M")
     lines = [
-        f"{'NIGHT' if mode == 'night' else 'DAY'} DECK  ·  {'manual hasta ' + fmt(nxt) if manual else 'automático'}",
-        f"Amanecer {fmt(b[0])}  ·  Atardecer {fmt(b[1])}",
-        f"Luz cálida: {str(kelvin) + ' K' if kelvin else 'apagada'}",
-        f"Tema: {ACCENT_NAMES.get(current_accent(), 'PERSONAL')}",
-        "Clic: cambiar  ·  Clic derecho: luz cálida  ·  Clic medio: automático",
+        f"{'NIGHT' if mode == 'night' else 'DAY'} DECK  ·  " + (_t("manual hasta {}").format(fmt(nxt)) if manual else _t("automático")),
+        _t("Amanecer {}  ·  Atardecer {}").format(fmt(b[0]), fmt(b[1])),
+        _t("Luz cálida: {}").format(str(kelvin) + " K" if kelvin else _t("apagada")),
+        _t("Tema: {}").format(ACCENT_NAMES.get(current_accent(), "PERSONAL")),
+        _t("Clic: cambiar  ·  Clic derecho: luz cálida  ·  Clic medio: automático"),
     ]
     if as_waybar:
         text = ICON_NIGHT if mode == "night" else ICON_DAY
@@ -1110,7 +1111,7 @@ def eww_watchdog():
             log(f"eww watchdog: no response ({frozen})")
             if frozen >= 2:
                 eww_revive("frozen")
-                notify("◢ DESK", "Los widgets se habían congelado; los reinicié.", low=True)
+                notify("◢ DESK", _t("Los widgets se habían congelado; los reinicié."), low=True)
                 frozen = 0
         except Exception as e:
             log(f"eww watchdog: {e}")
@@ -1177,7 +1178,7 @@ def main(argv):
         save_json(STATE, st)
         apply(schedule()[0])
         set_warm(warm_target(time.time(), config(), st))
-        notify("◢ NIGHT DECK", "Modo automático: sigo el amanecer y el atardecer.", low=True)
+        notify("◢ NIGHT DECK", _t("Modo automático: sigo el amanecer y el atardecer."), low=True)
         return 0
     if cmd == "reapply":
         apply(current_mode(), announce=False)
@@ -1209,7 +1210,7 @@ def main(argv):
         cfg.update({"lat": round(lat, 3), "lon": round(lon, 3)})
         os.makedirs(THEME, exist_ok=True)
         save_json(CONFIG, cfg)
-        print(f"Ubicación: {cfg['lat']}, {cfg['lon']}")
+        print(_t("Ubicación: {}, {}").format(cfg["lat"], cfg["lon"]))
         return 0
     print("uso: night-deck.py [toggle|day|night|auto|reapply|warm toggle|warm on|warm off|status [--waybar]|accent blue|red|green|black|next [day|night]|eww-revive|daemon]")
     return 1

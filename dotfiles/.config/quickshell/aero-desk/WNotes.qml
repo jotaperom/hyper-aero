@@ -1,10 +1,11 @@
 import QtQuick
+import "Lang.js" as L
 
 Card {
     id: w
     property var core
     title: "NOTES"
-    tag: edit.activeFocus ? "EDITANDO" : "AUTO-SAVE"
+    tag: edit.activeFocus ? L.t("EDITANDO") : "AUTO-SAVE"
 
     Connections {
         target: w.core
@@ -53,7 +54,7 @@ Card {
             Keys.onEscapePressed: focus = false
             Text {
                 visible: !edit.text.length && !edit.activeFocus
-                text: "Escribí algo aquí…"
+                text: L.t("Escribí algo aquí…")
                 font: edit.font
                 color: w.pal.muted
             }

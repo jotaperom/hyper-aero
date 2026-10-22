@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import "Tint.js" as Tint
+import "Lang.js" as L
 
 Item {
     id: root
@@ -627,7 +628,7 @@ Item {
                             Item { width: 5; height: 1 }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: root.backend && root.backend.st.wifi ? "AERO" : "SIN RED"
+                                text: root.backend && root.backend.st.wifi ? "AERO" : L.t("SIN RED")
                                 font.family: "Michroma"
                                 font.pixelSize: 8
                                 font.letterSpacing: 1
@@ -716,7 +717,7 @@ Item {
                             x: 12
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.verticalCenterOffset: 2
-                            text: root.inSub ? "Atrás" : root.pageNames[(root.page + 2) % 3]
+                            text: root.inSub ? L.t("Atrás") : root.pageNames[(root.page + 2) % 3]
                             font.family: "Exo 2"
                             font.weight: Font.Bold
                             font.pixelSize: 12
@@ -727,7 +728,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.verticalCenterOffset: 2
                             text: root.toastText.length ? root.toastText
-                                : (root.page === 0 ? "Abrir" : (root.page === 2 ? "Guardar" : "●"))
+                                : (root.page === 0 ? L.t("Abrir") : (root.page === 2 ? L.t("Guardar") : "●"))
                             font.family: "Exo 2"
                             font.weight: Font.Black
                             font.pixelSize: root.toastText.length ? 12 : 11
@@ -923,7 +924,7 @@ Item {
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: Qt.locale("es_ES").toString(root.now, "ddd d MMM").toUpperCase()
+                                text: Qt.locale(L.LOCALE).toString(root.now, L.t("ddd d MMM")).toUpperCase()
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.weight: Font.Bold
                                 font.pixelSize: 9

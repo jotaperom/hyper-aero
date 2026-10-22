@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 A="$HOME/.config/hyper-aero"
 video="$A/wallpapers/aero-saver.mp4"
 run="${XDG_RUNTIME_DIR:-/tmp}"
@@ -71,12 +73,12 @@ case "$1" in
         ;;
     on)
         rm -f "$A/saver-off"
-        notify-send -a "SIGNAL" "Protector de pantalla" "Activado · aparece tras 2 minutos sin uso" -u low
+        notify-send -a "SIGNAL" "$(t "Protector de pantalla")" "$(t "Activado · aparece tras 2 minutos sin uso")" -u low
         ;;
     off)
         touch "$A/saver-off"
         stop
-        notify-send -a "SIGNAL" "Protector de pantalla" "Desactivado" -u low
+        notify-send -a "SIGNAL" "$(t "Protector de pantalla")" "$(t "Desactivado")" -u low
         ;;
     *)
         echo "uso: saver.sh [start|stop|preview [segundos]|on|off]"

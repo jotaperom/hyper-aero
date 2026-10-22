@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: row
@@ -195,7 +196,7 @@ Item {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: !pass.text.length
-                    text: "Contraseña"
+                    text: L.t("Contraseña")
                     font.family: "Exo 2"
                     font.pixelSize: 13
                     color: row.pal.muted
@@ -234,7 +235,7 @@ Item {
             spacing: 8
             anchors.right: parent.right
             Repeater {
-                model: row.mode === "pass" ? [{ id: "cancel", label: "Cancelar" }, { id: "submit", label: "Conectar", primary: true }] : row.actions
+                model: row.mode === "pass" ? [{ id: "cancel", label: L.t("Cancelar") }, { id: "submit", label: L.t("Conectar"), primary: true }] : row.actions
                 delegate: Rectangle {
                     height: 32
                     width: lbl.implicitWidth + 28

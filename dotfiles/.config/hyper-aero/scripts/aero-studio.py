@@ -7,6 +7,7 @@ import json
 import time
 import shutil
 import subprocess
+from aero_i18n import t as _t
 
 HOME = os.path.expanduser("~")
 A = os.path.join(HOME, ".config", "hyper-aero")
@@ -134,15 +135,15 @@ def cmd_pick():
     path = ""
     try:
         if shutil.which("zenity"):
-            r = subprocess.run(["zenity", "--file-selection", "--title=Elegí una imagen para el fondo",
-                                f"--filename={start}/", "--file-filter=Imágenes | *.png *.jpg *.jpeg *.webp *.PNG *.JPG *.JPEG *.WEBP"],
+            r = subprocess.run(["zenity", "--file-selection", "--title=" + _t("Elegí una imagen para el fondo"),
+                                f"--filename={start}/", "--file-filter=" + _t("Imágenes") + " | *.png *.jpg *.jpeg *.webp *.PNG *.JPG *.JPEG *.WEBP"],
                                capture_output=True, text=True)
             path = r.stdout.strip()
         elif shutil.which("kdialog"):
             r = subprocess.run(["kdialog", "--getopenfilename", start, "*.png *.jpg *.jpeg *.webp"], capture_output=True, text=True)
             path = r.stdout.strip()
         else:
-            out({"toast": "Instalá zenity para elegir imágenes: sudo pacman -S zenity"})
+            out({"toast": _t("Instalá zenity para elegir imágenes: sudo pacman -S zenity")})
             return
     except OSError:
         pass
@@ -152,7 +153,7 @@ def cmd_pick():
 
 def cmd_palette(image):
     if not image or not os.path.isfile(image):
-        out({"toast": "No encontré la imagen para analizar"})
+        out({"toast": _t("No encontré la imagen para analizar")})
         return
     r = subprocess.run([sys.executable, GEN, "palette", image], capture_output=True, text=True)
     for line in r.stdout.splitlines():
@@ -174,7 +175,7 @@ def spec_file(raw, extra=None):
 def cmd_preview(raw):
     spec, path = spec_file(raw)
     if not os.path.isfile(spec.get("image", "")):
-        out({"toast": "Primero elegí una imagen"})
+        out({"toast": _t("Primero elegí una imagen")})
         return
     stamp = int(time.time() * 1000)
     for f in os.listdir(CACHE):
@@ -188,18 +189,18 @@ def cmd_preview(raw):
     if r.returncode == 0:
         out({"previewDay": d, "previewNight": n})
     else:
-        out({"toast": "No pude preparar la vista previa"})
+        out({"toast": _t("No pude preparar la vista previa")})
 
 
 def cmd_render(raw):
     spec = json.loads(raw)
     img = spec.get("image", "")
     if not os.path.isfile(img):
-        out({"toast": "Primero elegí una imagen"})
+        out({"toast": _t("Primero elegí una imagen")})
         return 1
     wid = time.strftime("%Y%m%d-%H%M%S")
     base = os.path.splitext(os.path.basename(img))[0].replace("_", " ").replace("-", " ").strip()
-    name = (base[:1].upper() + base[1:])[:28] if base else "Fondo"
+    name = (base[:1].upper() + base[1:])[:28] if base else _t("Fondo")
     spec, path = spec_file(raw, {"name": name})
     dest = os.path.join(CUSTOM, wid)
     os.makedirs(dest, exist_ok=True)
@@ -211,21 +212,21 @@ def cmd_render(raw):
             print(line, flush=True)
     if proc.wait() != 0 or not os.path.isfile(os.path.join(dest, "night.mp4")):
         shutil.rmtree(dest, ignore_errors=True)
-        out({"toast": "No pude generar el fondo"})
+        out({"toast": _t("No pude generar el fondo")})
         return 1
-    out({"rendered": wid, "toast": f"Fondo «{name}» listo"})
+    out({"rendered": wid, "toast": _t("Fondo «{}» listo").format(name)})
     return 0
 
 
 def cmd_apply(accent, wall):
     if not valid_accent(accent):
-        out({"toast": "Ese color no es válido"})
+        out({"toast": _t("Ese color no es válido")})
         return 1
     if wall != "auto" and not os.path.isfile(os.path.join(CUSTOM, wall, "day.mp4")):
         wall = "auto"
     write(os.path.join(THEME, "wallpaper"), wall + "\n")
     r = subprocess.run([ND, "accent", accent], capture_output=True, text=True, env=dict(os.environ, AERO_KEEP_WALL="1"))
-    out({"applied": True, "toast": "Tema aplicado" if r.returncode == 0 else "No pude aplicar el tema"})
+    out({"applied": True, "toast": _t("Tema aplicado") if r.returncode == 0 else _t("No pude aplicar el tema")})
     return 0
 
 
@@ -257,7 +258,7 @@ def cmd_switch():
     for p in PRESETS:
         autos[p] = {"day": still(preset_video(p, "day"), f"auto-{p}-day"),
                     "night": still(preset_video(p, "night"), f"auto-{p}-night")}
-    items = [{"id": "p-" + p, "name": PRESET_NAMES[p], "accent": p, "wallpaper": "auto", "builtin": True} for p in PRESETS]
+    items = [{"id": "p-" + p, "name": _t(PRESET_NAMES[p]), "accent": p, "wallpaper": "auto", "builtin": True} for p in PRESETS]
     items += [t for t in load_themes() if valid_accent(t.get("accent", ""))]
     out_items = []
     for t in items:
@@ -268,16 +269,16 @@ def cmd_switch():
         else:
             wid = "auto"
             a = autos[t["accent"] if t["accent"] in PRESETS else "blue"]
-            day, night, wname = a["day"], a["night"], "Original del tema"
-        out_items.append({"id": t["id"], "name": t.get("name") or "Tema", "accent": t["accent"], "wallpaper": wid,
+            day, night, wname = a["day"], a["night"], _t("Original del tema")
+        out_items.append({"id": t["id"], "name": t.get("name") or _t("Tema"), "accent": t["accent"], "wallpaper": wid,
                           "day": day, "night": night, "wallName": wname, "hex": accent_hex(t["accent"]),
                           "builtin": bool(t.get("builtin")), "current": t["accent"] == accent and wid == wall})
     if not any(i["current"] for i in out_items):
         w = ws.get(wall)
         a = autos[accent if accent in PRESETS else "blue"]
-        out_items.insert(0, {"id": "now", "name": "Actual", "accent": accent, "wallpaper": wall,
+        out_items.insert(0, {"id": "now", "name": _t("Actual"), "accent": accent, "wallpaper": wall,
                              "day": w["day"] if w else a["day"], "night": w["night"] if w else a["night"],
-                             "wallName": w["name"] if w else "Original del tema", "hex": accent_hex(accent),
+                             "wallName": w["name"] if w else _t("Original del tema"), "hex": accent_hex(accent),
                              "builtin": False, "current": True})
     out({"mode": mode, "themes": out_items})
 
@@ -286,12 +287,12 @@ def cmd_save(name, accent, wall):
     items = load_themes()
     items.append({"id": "t" + str(int(time.time() * 1000)), "name": name[:32], "accent": accent, "wallpaper": wall})
     save_themes(items)
-    out({"toast": f"Tema «{name[:32]}» guardado"})
+    out({"toast": _t("Tema «%1» guardado").replace("%1", name[:32])})
 
 
 def cmd_deltheme(tid):
     save_themes([t for t in load_themes() if t.get("id") != tid])
-    out({"toast": "Tema borrado"})
+    out({"toast": _t("Tema borrado")})
 
 
 def cmd_delwall(wid):
@@ -306,7 +307,7 @@ def cmd_delwall(wid):
         if t.get("wallpaper") == wid:
             t["wallpaper"] = "auto"
     save_themes(items)
-    out({"toast": "Fondo borrado"})
+    out({"toast": _t("Fondo borrado")})
 
 
 def main(argv):

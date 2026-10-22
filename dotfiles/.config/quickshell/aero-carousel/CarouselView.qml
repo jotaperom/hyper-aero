@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import "Pal.js" as Pal
+import "Lang.js" as L
 
 Item {
     id: v
@@ -131,7 +132,7 @@ Item {
             spacing: 8
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "◢ TEMAS"
+                text: L.t("◢ TEMAS")
                 font.family: "Michroma"
                 font.pixelSize: 28
                 font.letterSpacing: 8
@@ -153,7 +154,7 @@ Item {
             }
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Deslizá, usá ← → o la rueda del mouse  ·  Enter aplica  ·  Esc cierra"
+                text: L.t("Deslizá, usá ← → o la rueda del mouse  ·  Enter aplica  ·  Esc cierra")
                 font.family: "Exo 2"
                 font.pixelSize: 14
                 color: Qt.rgba(1, 1, 1, 0.8)
@@ -321,7 +322,7 @@ Item {
                             Text {
                                 width: parent.width
                                 elide: Text.ElideRight
-                                text: "Fondo: " + card.modelData.wallName
+                                text: L.t("Fondo: ") + card.modelData.wallName
                                 font.family: "Exo 2"
                                 font.pixelSize: 13
                                 color: Qt.rgba(1, 1, 1, 0.72)
@@ -343,7 +344,7 @@ Item {
                             Text {
                                 id: badgeText
                                 anchors.centerIn: parent
-                                text: card.modelData.current ? "●  ACTUAL" : "ENTER ⏎"
+                                text: card.modelData.current ? L.t("●  ACTUAL") : "ENTER ⏎"
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.weight: Font.Bold
                                 font.pixelSize: 11
@@ -412,21 +413,21 @@ Item {
                 pal: v.pal
                 primary: true
                 glyph: "\u{F012C}"
-                text: v.cur && v.cur.current ? "Ya está aplicado" : "Aplicar " + (v.cur ? v.cur.name : "")
+                text: v.cur && v.cur.current ? L.t("Ya está aplicado") : L.t("Aplicar ") + (v.cur ? v.cur.name : "")
                 enabled2: !!v.cur && !v.cur.current && !v.leaving
                 onClicked: v.choose()
             }
             Pill {
                 pal: v.pal
                 glyph: "\u{F03D8}"
-                text: "Estudio de temas"
+                text: L.t("Estudio de temas")
                 enabled2: !v.leaving
                 onClicked: if (v.api) v.api.studio()
             }
             Pill {
                 pal: v.pal
                 glyph: "\u{F0156}"
-                text: "Cerrar"
+                text: L.t("Cerrar")
                 onClicked: v.dismiss()
             }
         }
@@ -434,7 +435,7 @@ Item {
         Text {
             anchors.centerIn: parent
             visible: !v.themes.length
-            text: "Cargando temas…"
+            text: L.t("Cargando temas…")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 18

@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+from aero_i18n import t as _t
 
 MAC_RE = re.compile(r"^([0-9A-F]{2}[:-]){5}[0-9A-F]{2}$", re.I)
 
@@ -74,7 +75,7 @@ def known_wifi():
 def wifi_list(rescan):
     code, radio = run(["nmcli", "radio", "wifi"])
     if code == 127:
-        return {"ok": False, "radio": False, "iface": "", "ip": "", "networks": [], "msg": "NetworkManager no está disponible"}
+        return {"ok": False, "radio": False, "iface": "", "ip": "", "networks": [], "msg": _t("NetworkManager no está disponible")}
     on = radio.strip() == "enabled"
     iface = wifi_iface()
     data = {"ok": True, "radio": on, "iface": iface, "ip": "", "networks": []}
@@ -109,12 +110,12 @@ def wifi_list(rescan):
 def wifi_error(txt):
     t = txt.lower()
     if "secrets were required" in t or "802-11-wireless-security.psk" in t or "no secrets" in t or "invalid passphrase" in t:
-        return "needpass", "Contraseña incorrecta o requerida"
+        return "needpass", _t("Contraseña incorrecta o requerida")
     if "no network with ssid" in t:
-        return "gone", "La red ya no está al alcance"
+        return "gone", _t("La red ya no está al alcance")
     if "timeout" in t or "timed out" in t:
-        return "timeout", "La red no respondió a tiempo"
-    return "fail", "No se pudo conectar"
+        return "timeout", _t("La red no respondió a tiempo")
+    return "fail", _t("No se pudo conectar")
 
 
 def wifi_connect(ssid, password):
@@ -122,7 +123,7 @@ def wifi_connect(ssid, password):
     if known and not password:
         code, txt = run(["nmcli", "connection", "up", "id", ssid], timeout=45)
         if code == 0:
-            return {"ok": True, "msg": "Conectado a " + ssid}
+            return {"ok": True, "msg": _t("Conectado a ") + ssid}
         kind, msg = wifi_error(txt)
         return {"ok": False, "kind": kind if kind != "fail" else "needpass", "msg": msg}
     if known and password:
@@ -132,7 +133,7 @@ def wifi_connect(ssid, password):
         args += ["password", password]
     code, txt = run(args, timeout=45)
     if code == 0:
-        return {"ok": True, "msg": "Conectado a " + ssid}
+        return {"ok": True, "msg": _t("Conectado a ") + ssid}
     if ssid in known_wifi():
         run(["nmcli", "connection", "delete", "id", ssid])
     kind, msg = wifi_error(txt)
@@ -152,10 +153,10 @@ def wifi_cmd(argv):
     if sub == "disconnect":
         iface = wifi_iface()
         code, _ = run(["nmcli", "device", "disconnect", iface]) if iface else (1, "")
-        return out({"ok": code == 0, "msg": "Desconectado" if code == 0 else "No se pudo desconectar"})
+        return out({"ok": code == 0, "msg": _t("Desconectado") if code == 0 else _t("No se pudo desconectar")})
     if sub == "forget" and len(argv) > 1:
         code, _ = run(["nmcli", "connection", "delete", "id", argv[1]])
-        return out({"ok": code == 0, "msg": "Red olvidada" if code == 0 else "No se pudo olvidar"})
+        return out({"ok": code == 0, "msg": _t("Red olvidada") if code == 0 else _t("No se pudo olvidar")})
     return out({"ok": False, "msg": "comando desconocido"})
 
 
@@ -195,7 +196,7 @@ def bt_info(mac):
 def bt_list():
     code, show = run(["bluetoothctl", "show"], timeout=4)
     if code == 127 or "No default controller" in show or not show.strip():
-        return {"ok": False, "avail": False, "powered": False, "devices": [], "msg": "No hay adaptador Bluetooth"}
+        return {"ok": False, "avail": False, "powered": False, "devices": [], "msg": _t("No hay adaptador Bluetooth")}
     powered = bool(re.search(r"Powered:\s*yes", show))
     discovering = bool(re.search(r"Discovering:\s*yes", show))
     data = {"ok": True, "avail": True, "powered": powered, "scanning": discovering, "devices": []}
@@ -232,13 +233,13 @@ def bt_connect(mac):
     if not info["paired"]:
         code, txt = run(["bluetoothctl", "--timeout", "25", "pair", mac], timeout=30)
         if not bt_ok(txt, ["pairing successful", "already paired", "alreadyexists"]):
-            return {"ok": False, "msg": "No se pudo emparejar. ¿Está en modo de emparejamiento?"}
+            return {"ok": False, "msg": _t("No se pudo emparejar. ¿Está en modo de emparejamiento?")}
     if not info["trusted"]:
         run(["bluetoothctl", "trust", mac], timeout=6)
     code, txt = run(["bluetoothctl", "--timeout", "20", "connect", mac], timeout=25)
     if bt_ok(txt, ["connection successful", "already connected"]) or bt_info(mac)["connected"]:
-        return {"ok": True, "msg": "Conectado a " + (info["name"] or mac)}
-    return {"ok": False, "msg": "No se pudo conectar. ¿Está encendido y cerca?"}
+        return {"ok": True, "msg": _t("Conectado a ") + (info["name"] or mac)}
+    return {"ok": False, "msg": _t("No se pudo conectar. ¿Está encendido y cerca?")}
 
 
 def bt_cmd(argv):
@@ -255,7 +256,7 @@ def bt_cmd(argv):
         return out(bt_connect(argv[1]))
     if sub == "disconnect" and len(argv) > 1:
         code, txt = run(["bluetoothctl", "disconnect", argv[1]], timeout=10)
-        return out({"ok": bt_ok(txt, ["successful"]), "msg": "Desconectado"})
+        return out({"ok": bt_ok(txt, ["successful"]), "msg": _t("Desconectado")})
     if sub == "forget" and len(argv) > 1:
         code, txt = run(["bluetoothctl", "remove", argv[1]], timeout=10)
         return out({"ok": bt_ok(txt, ["removed"]), "msg": "Dispositivo olvidado"})

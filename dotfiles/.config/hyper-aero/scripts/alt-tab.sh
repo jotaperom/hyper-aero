@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 exec 9>"${XDG_RUNTIME_DIR:-/tmp}/aero-alttab.lock"
 flock -n 9 || exit 0
 
@@ -76,5 +78,5 @@ target="${addrs[$choice]}"
 
 out=$(hyprctl dispatch "hl.dsp.focus({ window = 'address:${target}' })" 2>&1)
 if [ "$out" != "ok" ]; then
-    notify-send -a "SIGNAL" "Alt + Tab" "No pude enfocar la ventana: $out"
+    notify-send -a "SIGNAL" "Alt + Tab" "$(t "No pude enfocar la ventana:") $out"
 fi

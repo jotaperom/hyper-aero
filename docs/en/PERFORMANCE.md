@@ -13,7 +13,7 @@
 | GPU | any GPU with working Wayland drivers | recent Intel/AMD integrated graphics, or a dedicated GPU |
 | Disk | 1 GB free | 2 GB free |
 | Screen | 1366 × 768 (some panels feel tight) | 1920 × 1080 or higher |
-| Profile | *Ligero* | *Equilibrado* or *Completo* |
+| Profile | *Lite* | *Balanced* or *Full* |
 
 Notes:
 
@@ -42,12 +42,12 @@ Switch at any time with `SUPER + F2`, or from a terminal:
 ```bash
 aero-profile               # show the current profile
 aero-profile list
-aero-profile ligero        # or: equilibrado, completo
+aero-profile lite          # or: balanced, full
 ```
 
 The change applies right away, no logout needed.
 
-|  | Completo | Equilibrado | Ligero |
+|  | Full | Balanced | Lite |
 |---|---|---|---|
 | Wallpaper | animated | animated | still image |
 | Wallpaper pauses when | a window is fullscreen | windows cover the screen | — |
@@ -63,7 +63,7 @@ The change applies right away, no logout needed.
 | Phone and transitions kept in memory | yes | yes | no (open on demand) |
 | Recommended for | 8+ threads, dedicated or strong integrated GPU | most computers | 4 threads, 8 GB, older GPUs, battery |
 
-What “kept in memory” means: in *Completo* and *Equilibrado* the NEXUS phone and the transition layer stay loaded so they appear instantly. In *Ligero* they start when you open them (a short delay) and use no memory otherwise.
+What “kept in memory” means: in *Full* and *Balanced* the NEXUS phone and the transition layer stay loaded so they appear instantly. In *Lite* they start when you open them (a short delay) and use no memory otherwise.
 
 ## Things that always help
 

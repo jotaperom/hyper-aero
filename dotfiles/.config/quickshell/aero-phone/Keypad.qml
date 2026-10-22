@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: pad
@@ -9,10 +10,10 @@ Item {
     signal key(string k)
 
     readonly property var digits: [
-        { d: "1", g: "\u{F05A9}", s: "WI-FI" }, { d: "2", g: "\u{F00AF}", s: "BT" }, { d: "3", g: "\u{F0594}", s: "NOCHE" },
-        { d: "4", g: "\u{F0E51}", s: "FOTO" }, { d: "5", g: "\u{F044A}", s: "GRABAR" }, { d: "6", g: "\u{F040E}", s: "MÚSICA" },
-        { d: "7", g: "\u{F0335}", s: "CÁLIDA" }, { d: "8", g: "\u{F009B}", s: "NO MOL." }, { d: "9", g: "\u{F03D8}", s: "TEMA" },
-        { d: "*", g: "\u{F0581}", s: "MUTE" }, { d: "0", g: "\u{F02DC}", s: "INICIO" }, { d: "#", g: "\u{F033E}", s: "BLOQ." }
+        { d: "1", g: "\u{F05A9}", s: "WI-FI" }, { d: "2", g: "\u{F00AF}", s: "BT" }, { d: "3", g: "\u{F0594}", s: L.t("NOCHE") },
+        { d: "4", g: "\u{F0E51}", s: L.t("FOTO") }, { d: "5", g: "\u{F044A}", s: L.t("GRABAR") }, { d: "6", g: "\u{F040E}", s: L.t("MÚSICA") },
+        { d: "7", g: "\u{F0335}", s: L.t("CÁLIDA") }, { d: "8", g: "\u{F009B}", s: L.t("NO MOL.") }, { d: "9", g: "\u{F03D8}", s: L.t("TEMA") },
+        { d: "*", g: "\u{F0581}", s: "MUTE" }, { d: "0", g: "\u{F02DC}", s: L.t("INICIO") }, { d: "#", g: "\u{F033E}", s: L.t("BLOQ.") }
     ]
 
     GelKey {

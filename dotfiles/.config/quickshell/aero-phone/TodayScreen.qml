@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: td
@@ -7,8 +8,8 @@ Item {
     property bool live: false
     property var now: new Date()
     readonly property var weather: backend && backend.weather ? backend.weather : ({ ok: false })
-    readonly property var days: ["DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO"]
-    readonly property var months: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"]
+    readonly property var days: [L.t("DOMINGO"), L.t("LUNES"), L.t("MARTES"), L.t("MIÉRCOLES"), L.t("JUEVES"), L.t("VIERNES"), L.t("SÁBADO")]
+    readonly property var months: [L.t("ENERO"), L.t("FEBRERO"), L.t("MARZO"), L.t("ABRIL"), L.t("MAYO"), L.t("JUNIO"), L.t("JULIO"), L.t("AGOSTO"), L.t("SEPTIEMBRE"), L.t("OCTUBRE"), L.t("NOVIEMBRE"), L.t("DICIEMBRE")]
     signal closeRequested()
     signal pageRequested(int p)
 
@@ -18,7 +19,7 @@ Item {
 
     function greeting() {
         var h = now.getHours()
-        return h >= 5 && h < 12 ? "Buenos días" : (h < 19 && h >= 12 ? "Buenas tardes" : "Buenas noches")
+        return h >= 5 && h < 12 ? L.t("Buenos días") : (h < 19 && h >= 12 ? L.t("Buenas tardes") : L.t("Buenas noches"))
     }
 
     function cells() {
@@ -138,7 +139,7 @@ Item {
                 x: 6
                 spacing: 2
                 Text {
-                    text: "HOY"
+                    text: L.t("HOY")
                     font.family: "Michroma"
                     font.pixelSize: 16
                     font.letterSpacing: 2
@@ -147,7 +148,7 @@ Item {
                     styleColor: td.pal.heroShadow
                 }
                 Text {
-                    text: td.days[td.now.getDay()] + "  ·  " + td.now.getDate() + " DE " + td.months[td.now.getMonth()]
+                    text: L.f("%1  ·  %2 DE %3", td.days[td.now.getDay()], td.now.getDate(), td.months[td.now.getMonth()])
                     font.family: "JetBrainsMono Nerd Font"
                     font.weight: Font.Bold
                     font.pixelSize: 10
@@ -252,7 +253,7 @@ Item {
                     columns: 7
                     readonly property real cw: width / 7
                     Repeater {
-                        model: ["L", "K", "M", "J", "V", "S", "D"]
+                        model: L.t("L K M J V S D").split(" ")
                         delegate: Text {
                             required property string modelData
                             width: calGrid.cw
@@ -316,7 +317,7 @@ Item {
                         color: td.pal.accent
                     }
                     Text {
-                        text: "NOTA RÁPIDA"
+                        text: L.t("NOTA RÁPIDA")
                         font.family: "Michroma"
                         font.pixelSize: 11
                         color: td.pal.text
@@ -326,7 +327,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: 16
                     y: 13
-                    text: saved.running ? "Guardada ✓" : "Se guarda sola"
+                    text: saved.running ? L.t("Guardada ✓") : L.t("Se guarda sola")
                     font.family: "Exo 2"
                     font.pixelSize: 11
                     color: saved.running ? td.pal.accent : td.pal.muted
@@ -353,7 +354,7 @@ Item {
                         onTextChanged: if (activeFocus) autosave.restart()
                         Text {
                             visible: !noteEdit.text.length
-                            text: "Escribí algo para no olvidarlo…"
+                            text: L.t("Escribí algo para no olvidarlo…")
                             font: noteEdit.font
                             color: td.pal.muted
                         }

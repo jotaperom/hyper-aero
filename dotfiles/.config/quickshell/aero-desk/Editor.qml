@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import "Registry.js" as Reg
+import "Lang.js" as L
 
 FocusScope {
     id: ed
@@ -111,7 +112,7 @@ FocusScope {
             at = findSpot(w, h)
         }
         if (!at) {
-            toast("No hay espacio libre para " + reg.name)
+            toast(L.f("No hay espacio libre para %1", reg.name))
             return
         }
         draft.append({ wid: wid, c: at.c, r: at.r, w: w, h: h })
@@ -131,7 +132,7 @@ FocusScope {
             draft.append({ wid: s.id, c: s.c, r: s.r, w: s.w, h: s.h })
         }
         rev++
-        toast("Diseño original restablecido")
+        toast(L.t("Diseño original restablecido"))
     }
 
     function done() {
@@ -184,7 +185,7 @@ FocusScope {
 
     function endDrag() {
         if (act >= 0 && cand && valid) draft.set(act, { c: cand.c, r: cand.r, w: cand.w, h: cand.h })
-        else if (act >= 0 && cand && !valid) toast("Ese espacio está ocupado")
+        else if (act >= 0 && cand && !valid) toast(L.t("Ese espacio está ocupado"))
         act = -1
         mode = ""
         cand = null
@@ -219,7 +220,7 @@ FocusScope {
             draft.append({ wid: cand.id, c: cand.c, r: cand.r, w: cand.w, h: cand.h })
             rev++
         } else if (!overTray) {
-            toast("No cabe ahí")
+            toast(L.t("No cabe ahí"))
         }
         mode = ""
         carryId = ""

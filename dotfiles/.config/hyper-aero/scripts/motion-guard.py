@@ -9,6 +9,7 @@ import fcntl
 import socket
 import threading
 import subprocess
+from aero_i18n import t as _t
 
 HOME = os.path.expanduser("~")
 AERO = os.path.join(HOME, ".config", "hyper-aero")
@@ -134,7 +135,7 @@ class Guard:
             open(MINE, "w").close()
             if battery and not self.warned:
                 self.warned = True
-                subprocess.Popen(["notify-send", "-a", "HYPER·AERO", "Ahorro de batería", "Fondo animado en pausa"],
+                subprocess.Popen(["notify-send", "-a", "HYPER·AERO", _t("Ahorro de batería"), _t("Fondo animado en pausa")],
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         elif not want and paused and os.path.exists(MINE):
             mpv(["set_property", "pause", False])

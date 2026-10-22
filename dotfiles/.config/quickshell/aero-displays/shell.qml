@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import "Lang.js" as L
 
 ShellRoot {
     id: shell
@@ -87,7 +88,7 @@ ShellRoot {
         }
         onExited: function(code) {
             backend.busy = ""
-            if (code !== 0 && !backend.error.length) backend.error = "No pude aplicar el cambio"
+            if (code !== 0 && !backend.error.length) backend.error = L.t("No pude aplicar el cambio")
             stateProc.running = true
             if (backend.queued) {
                 var q = backend.queued

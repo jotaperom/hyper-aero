@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "Lang.js" as L
 
 ShellRoot {
     id: shell
@@ -42,7 +43,7 @@ ShellRoot {
             if (kind === "render") {
                 renderStart = Date.now()
                 var parts = String(image).split("/").pop().replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim()
-                renderName = parts.length ? parts.charAt(0).toUpperCase() + parts.slice(1, 28) : "Fondo"
+                renderName = parts.length ? parts.charAt(0).toUpperCase() + parts.slice(1, 28) : L.t("Fondo")
             }
             job.command = [shell.tool].concat(args)
             job.running = true
@@ -88,7 +89,7 @@ ShellRoot {
             paletteProc.command = [shell.tool, "palette", path]
             paletteProc.running = true
         }
-        function saveTheme(name, acc, wall) { quiet(["save", name, acc, wall]); say("Tema «" + name + "» guardado") }
+        function saveTheme(name, acc, wall) { quiet(["save", name, acc, wall]); say(L.f("Tema «%1» guardado", name)) }
         function deleteTheme(id) { quiet(["deltheme", id]) }
         function deleteWall(id) { quiet(["delwall", id]) }
         function close() { Qt.quit() }
@@ -98,7 +99,7 @@ ShellRoot {
                 progress = d.progress
                 if (busy === "render" && d.progress > 0.03 && d.progress < 1) {
                     var left = (Date.now() - renderStart) / 1000 * (1 - d.progress) / d.progress
-                    eta = left > 90 ? "faltan ~" + Math.round(left / 60) + " min" : "faltan ~" + Math.max(5, Math.round(left / 5) * 5) + " s"
+                    eta = left > 90 ? L.f("faltan ~%1 min", Math.round(left / 60)) : L.f("faltan ~%1 s", Math.max(5, Math.round(left / 5) * 5))
                 } else if (d.progress >= 1) {
                     eta = ""
                 }
@@ -142,7 +143,7 @@ ShellRoot {
             var was = api.busy
             api.busy = ""
             api.eta = ""
-            if (code !== 0 && was === "render") api.say("No pude generar el fondo" + (api.lastErr ? ": " + api.lastErr.slice(0, 90) : ""))
+            if (code !== 0 && was === "render") api.say(L.t("No pude generar el fondo") + (api.lastErr ? ": " + api.lastErr.slice(0, 90) : ""))
             if (was === "render" && api.pendingApply.length) {
                 var acc = api.pendingApply
                 api.pendingApply = ""
@@ -245,7 +246,7 @@ ShellRoot {
 
     FloatingWindow {
         id: win
-        title: "Estudio de temas"
+        title: L.t("Estudio de temas")
         implicitWidth: 1320
         implicitHeight: 820
         color: "#0b1530"

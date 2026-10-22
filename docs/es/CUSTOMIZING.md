@@ -51,6 +51,18 @@ El instalador los detecta. Para cambiarlos después, corré `./install.sh` otra 
 
 Tus temas viven en `~/.config/hyper-aero/studio/themes.json`; tus fondos en `~/.config/hyper-aero/wallpapers/`.
 
+## Idioma
+
+La interfaz está en español y en inglés:
+
+```bash
+aero-lang es      # Español
+aero-lang en      # English
+aero-lang         # ver el actual
+```
+
+Todo cambia al instante; el teléfono, el escritorio y los paneles se reinician por un segundo.
+
 ## Ubicación (día / noche y clima)
 
 El ciclo día/noche usa tu latitud y longitud:

@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Card {
     id: w
@@ -11,7 +12,7 @@ Card {
     }
     readonly property bool anyDone: pending < list.length
     title: "TASKS"
-    tag: pending + (pending === 1 ? " PENDIENTE" : " PENDIENTES")
+    tag: pending + (pending === 1 ? L.t(" PENDIENTE") : L.t(" PENDIENTES"))
 
     ListView {
         id: lv
@@ -66,7 +67,7 @@ Card {
         Text {
             visible: lv.count === 0
             anchors.centerIn: parent
-            text: "Sin tareas · escribí una abajo"
+            text: L.t("Sin tareas · escribí una abajo")
             font.family: "Exo 2"
             font.pixelSize: 11
             color: w.pal.muted
@@ -121,7 +122,7 @@ Card {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: !input.text.length
-                    text: "Nueva tarea…"
+                    text: L.t("Nueva tarea…")
                     font: input.font
                     color: w.pal.muted
                 }

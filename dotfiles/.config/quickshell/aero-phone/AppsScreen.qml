@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: scr
@@ -140,7 +141,7 @@ Item {
             anchors.top: clock.bottom
             anchors.topMargin: 2
             text: {
-                var s = Qt.locale("es_ES").toString(scr.now, "dddd d 'de' MMMM")
+                var s = Qt.locale(L.LOCALE).toString(scr.now, L.t("dddd d 'de' MMMM"))
                 return s.charAt(0).toUpperCase() + s.slice(1)
             }
             font.family: "Exo 2"
@@ -191,7 +192,7 @@ Item {
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: !search.text.length
-                text: "Buscar en NEXUS"
+                text: L.t("Buscar en NEXUS")
                 font: search.font
                 color: scr.pal.muted
             }
@@ -323,7 +324,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "SIN COINCIDENCIAS"
+            text: L.t("SIN COINCIDENCIAS")
             font.family: "Michroma"
             font.pixelSize: 11
             color: scr.pal.muted

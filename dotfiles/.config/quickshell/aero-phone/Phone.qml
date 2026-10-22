@@ -1,5 +1,6 @@
 import QtQuick
 import "Tint.js" as Tint
+import "Lang.js" as L
 
 FocusScope {
     id: host
@@ -16,7 +17,7 @@ FocusScope {
     readonly property string skin: forceSkin.length ? forceSkin : (backend && backend.skin ? backend.skin : "iphone")
     readonly property var pages: skinLoader.item ? skinLoader.item.pages : null
     readonly property bool inSub: page === 1 && !!pages && pages.controls.sub.length > 0
-    readonly property var pageNames: ["Apps", "Control", "Hoy"]
+    readonly property var pageNames: ["Apps", "Control", L.t("Hoy")]
     readonly property real shown: skinLoader.item ? skinLoader.item.shown : 0
     readonly property var skinFiles: ({
         iphone: "SkinIphone.qml", flip: "SkinFlip.qml", aqua: "SkinAqua.qml", visor: "SkinVisor.qml",
@@ -167,7 +168,7 @@ FocusScope {
         } else if (k === "call") {
             page = 2
             pages.assist.focusInput()
-            toast("Nota rápida")
+            toast(L.t("Nota rápida"))
         } else if (k === "end") {
             if (inSub) pages.controls.sub = ""
             else requestClose()
@@ -187,7 +188,7 @@ FocusScope {
             else if (page === 2) pages.assist.send("")
         } else if (k === "vol+" || k === "vol-") {
             if (backend) backend.setVolume(Math.max(0, Math.min(1, backend.volume + (k === "vol+" ? 0.05 : -0.05))))
-            toast("Volumen " + Math.round(Math.max(0, Math.min(1, (backend ? backend.volume : 0) + (k === "vol+" ? 0.05 : -0.05))) * 100) + "%")
+            toast(L.f("Volumen %1%", Math.round(Math.max(0, Math.min(1, (backend ? backend.volume : 0) + (k === "vol+" ? 0.05 : -0.05))) * 100)))
         } else if (k === "1") {
             page = 1
             pages.controls.sub = "wifi"
@@ -196,26 +197,26 @@ FocusScope {
             pages.controls.sub = "bt"
         } else if (k === "3") {
             act("night")
-            toast(night ? "Modo claro" : "Modo oscuro")
+            toast(night ? L.t("Modo claro") : L.t("Modo oscuro"))
         } else if (k === "4") {
             act("shot")
         } else if (k === "5") {
             act("rec")
         } else if (k === "6") {
             if (backend) backend.mediaCmd("toggle")
-            toast("Música ▶❚❚")
+            toast(L.t("Música ▶❚❚"))
         } else if (k === "7") {
             act("warm")
-            toast("Luz cálida")
+            toast(L.t("Luz cálida"))
         } else if (k === "8") {
             act("dnd")
-            toast("No molestar")
+            toast(L.t("No molestar"))
         } else if (k === "9") {
             act("themes")
-            toast("Temas")
+            toast(L.t("Temas"))
         } else if (k === "*") {
             if (backend) backend.toggleMute()
-            toast("Silencio")
+            toast(L.t("Silencio"))
         } else if (k === "0") {
             page = 0
         } else if (k === "#") {

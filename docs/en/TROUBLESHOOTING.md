@@ -41,7 +41,7 @@ Restart that piece and read its log:
 cat $XDG_RUNTIME_DIR/aero-phone.log
 ```
 
-If `SUPER + R` opens rofi instead of the phone, Quickshell couldn't start the phone in time — the log says why. In the *Ligero* profile the first opening takes a moment, that's expected.
+If `SUPER + R` opens rofi instead of the phone, Quickshell couldn't start the phone in time — the log says why. In the *Lite* profile the first opening takes a moment, that's expected.
 
 ## Icons look like empty boxes
 
@@ -65,7 +65,7 @@ If the panel always shows only the laptop, look at `$XDG_RUNTIME_DIR/aero-displa
 
 ## Everything looks too big or too small
 
-The installer picks a size from the laptop screen's resolution (125 % for 1080p, 150 % for 1440p/1600p, 200 % for 4K). To change it, press `SUPER + P` and choose another value under **TAMAÑO EN LA LAPTOP** (for example 125 % on a 15" 1080p laptop). The choice is remembered.
+The installer picks a size from the laptop screen's resolution (125 % for 1080p, 150 % for 1440p/1600p, 200 % for 4K). To change it, press `SUPER + P` and choose another value under **SIZE ON THE LAPTOP** (for example 125 % on a 15" 1080p laptop). The choice is remembered.
 
 At 150 % or more on a 1080p screen, the TELEMETRY HUD may not fit; use the slim HUD (`SUPER + H`) or a smaller size.
 
@@ -91,9 +91,9 @@ Then `hyprctl reload`.
 
 ## It feels slow
 
-1. `SUPER + F2` → **Ligero**.
+1. `SUPER + F2` → **Lite**.
 2. Hide heavy widgets (LYRICS, GIF, SPECTRA) or the whole desk (`SUPER + D`).
-3. `top -o %CPU` and see what's on top. `mpvpaper` high → your GPU may lack video decoding support for H.264; the *Ligero* profile uses a still image instead.
+3. `top -o %CPU` and see what's on top. `mpvpaper` high → your GPU may lack video decoding support for H.264; the *Lite* profile uses a still image instead.
 4. Make sure you're not in a VM without 3D acceleration.
 
 More in [Performance](PERFORMANCE.md).

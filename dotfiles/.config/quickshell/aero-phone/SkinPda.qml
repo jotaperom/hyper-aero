@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import "Tint.js" as Tint
+import "Lang.js" as L
 
 Item {
     id: root
@@ -314,7 +315,7 @@ Item {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 432
-                    text: "CRISTAL"
+                    text: L.t("CRISTAL")
                     font.family: "Michroma"
                     font.pixelSize: 9
                     font.letterSpacing: 5

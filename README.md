@@ -16,7 +16,7 @@ Glossy glass, bubbles, animated skies and a phone-shaped control center — the 
 
 ![Desktop](assets/screenshots/desktop.png)
 
-> **Note:** the interface text is in Spanish (Costa Rica). The docs are in English and Spanish.
+> The interface comes in **English and Spanish** — the installer asks which one you want, and `aero-lang en|es` switches it later.
 
 ## What's inside
 
@@ -29,7 +29,8 @@ Glossy glass, bubbles, animated skies and a phone-shaped control center — the 
 | **Desk widgets** | 13 draggable widgets: clock, player, sun/moon arc, weather, system, tasks, calendar, notes, visualizer, lyrics, GIF… |
 | **TELEMETRY HUD** | A side panel with CPU, RAM, GPU, network and battery |
 | **Displays panel** | Windows-style *Win + P*: laptop only, duplicate, extend, external only, and drag to arrange — automatic on plug / unplug |
-| **Performance profiles** | *Completo*, *Equilibrado* and *Ligero*, switchable at any time |
+| **Performance profiles** | *Full*, *Balanced* and *Lite*, switchable at any time |
+| **Bilingual** | English or Spanish interface: the installer asks, and `aero-lang en\|es` switches it later |
 | **Extras** | Lock screen, screensaver, alt-tab with previews, workspace overview, screenshots, screen recording, optional login screen |
 
 See [Features](docs/en/FEATURES.md) for the full tour.
@@ -44,7 +45,7 @@ See [Features](docs/en/FEATURES.md) for the full tour.
 | RAM | 8 GB | 16 GB |
 | GPU | any with working Wayland drivers | integrated Intel/AMD of the last ~6 years, or a dedicated GPU |
 | Disk | 1 GB free | 2 GB free |
-| Profile | *Ligero* | *Equilibrado* or *Completo* |
+| Profile | *Lite* | *Balanced* or *Full* |
 
 Details and measured usage: [Performance](docs/en/PERFORMANCE.md).
 

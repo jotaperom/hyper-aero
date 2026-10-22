@@ -27,6 +27,7 @@ Lo que hace el instalador, paso a paso:
 2. **Instala los paquetes** de los repos oficiales, más `eww`, `mpvpaper` y `bibata-cursor-theme-bin` del AUR. Si no tenés `yay` ni `paru`, te ofrece instalar `yay`.
 3. **Revisa versiones**: Hyprland ≥ 0.56, y que estén `qs`, `eww` y `mpvpaper`.
 4. **Te pregunta algunos ajustes**, con valores detectados:
+   - idioma de la interfaz (español o inglés)
    - distribución del teclado (de `localectl`)
    - tu ubicación aproximada para el ciclo día/noche (se consulta una vez en `ipapi.co`; podés decir que no y escribirla, o dejarla vacía para calcularla por tu zona horaria)
    - el navegador y el administrador de archivos se detectan solos
@@ -47,6 +48,7 @@ El instalador agrega algunos comandos a tu terminal: `aero-profile`, `aero-asset
 ./install.sh [opciones]
 
   --profile completo|equilibrado|ligero   perfil de rendimiento (si no, se recomienda uno)
+  --lang es|en                            idioma de la interfaz
   --yes                                   no preguntar, usar lo detectado
   --no-deps                               no instalar paquetes
   --no-assets                             no descargar los fondos

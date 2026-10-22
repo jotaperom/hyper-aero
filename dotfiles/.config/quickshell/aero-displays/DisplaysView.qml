@@ -1,6 +1,7 @@
 import QtQuick
 import "Tint.js" as Tint
 import "Pal.js" as Pal
+import "Lang.js" as L
 
 Item {
     id: v
@@ -16,17 +17,17 @@ Item {
     readonly property real extScale: ext ? Number(st.scale || 1) : 1
     readonly property real lapScale: lap ? Number(lap.scale || 1) : 1
     readonly property var modes: [
-        { mode: "laptop", title: "Solo laptop", hint: "Apaga el monitor" },
-        { mode: "duplicate", title: "Duplicar", hint: "Lo mismo en las dos" },
-        { mode: "extend", title: "Extender", hint: "Una pantalla grande" },
-        { mode: "external", title: "Solo monitor", hint: "Apaga la laptop" }
+        { mode: "laptop", title: L.t("Solo laptop"), hint: L.t("Apaga el monitor") },
+        { mode: "duplicate", title: L.t("Duplicar"), hint: L.t("Lo mismo en las dos") },
+        { mode: "extend", title: L.t("Extender"), hint: L.t("Una pantalla grande") },
+        { mode: "external", title: L.t("Solo monitor"), hint: L.t("Apaga la laptop") }
     ]
     readonly property var scales: [1, 1.25, 1.5, 1.75, 2]
     readonly property var sides: [
-        { side: "left", text: "Izquierda", glyph: "\u{F004D}" },
-        { side: "above", text: "Arriba", glyph: "\u{F005D}" },
-        { side: "below", text: "Abajo", glyph: "\u{F0045}" },
-        { side: "right", text: "Derecha", glyph: "\u{F0054}" }
+        { side: "left", text: L.t("Izquierda"), glyph: "\u{F004D}" },
+        { side: "above", text: L.t("Arriba"), glyph: "\u{F005D}" },
+        { side: "below", text: L.t("Abajo"), glyph: "\u{F0045}" },
+        { side: "right", text: L.t("Derecha"), glyph: "\u{F0054}" }
     ]
     focus: true
 
@@ -172,7 +173,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 2
                     Text {
-                        text: "◢ PANTALLAS"
+                        text: L.t("◢ PANTALLAS")
                         font.family: "Exo 2"
                         font.weight: Font.Black
                         font.pixelSize: 20
@@ -180,8 +181,8 @@ Item {
                         color: v.pal.ink
                     }
                     Text {
-                        text: v.ext ? "Monitor: " + v.ext.desc + "  ·  " + v.ext.w + "×" + v.ext.h + (v.st.extra > 0 ? "  ·  +" + v.st.extra + " más" : "")
-                                    : "Solo la pantalla de la laptop"
+                        text: v.ext ? L.t("Monitor: ") + v.ext.desc + "  ·  " + v.ext.w + "×" + v.ext.h + (v.st.extra > 0 ? "  ·  +" + v.st.extra + L.t(" más") : "")
+                                    : L.t("Solo la pantalla de la laptop")
                         font.family: "Exo 2"
                         font.pixelSize: 12
                         color: v.pal.muted
@@ -240,7 +241,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "Conectá un monitor por HDMI o USB-C: lo detecto solo y aparece este panel."
+                        text: L.t("Conectá un monitor por HDMI o USB-C: lo detecto solo y aparece este panel.")
                         font.family: "Exo 2"
                         font.pixelSize: 13
                         color: v.pal.ink
@@ -258,7 +259,7 @@ Item {
                     width: parent.width
                     height: 20
                     Text {
-                        text: "POSICIÓN FÍSICA"
+                        text: L.t("POSICIÓN FÍSICA")
                         font.family: "Exo 2"
                         font.weight: Font.Black
                         font.pixelSize: 12
@@ -267,7 +268,7 @@ Item {
                     }
                     Text {
                         anchors.right: parent.right
-                        text: "Arrastrá la pantalla 2 hasta donde está tu laptop en el escritorio"
+                        text: L.t("Arrastrá la pantalla 2 hasta donde está tu laptop en el escritorio")
                         font.family: "Exo 2"
                         font.pixelSize: 12
                         color: v.pal.muted
@@ -306,13 +307,16 @@ Item {
                 }
             }
 
-            Row {
-                visible: !!v.lap && v.mode !== "external"
-                spacing: 18
+            Grid {
+                visible: (!!v.lap && v.mode !== "external") || (!!v.ext && v.mode !== "laptop")
+                columns: 2
+                columnSpacing: 18
+                rowSpacing: 12
+                verticalItemAlignment: Grid.AlignVCenter
 
                 Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "TAMAÑO EN LA LAPTOP"
+                    visible: !!v.lap && v.mode !== "external"
+                    text: L.t("TAMAÑO EN LA LAPTOP")
                     font.family: "Exo 2"
                     font.weight: Font.Black
                     font.pixelSize: 12
@@ -320,6 +324,7 @@ Item {
                     color: v.pal.accent
                 }
                 Row {
+                    visible: !!v.lap && v.mode !== "external"
                     spacing: 8
                     Repeater {
                         model: v.scales
@@ -331,17 +336,10 @@ Item {
                         }
                     }
                 }
-            }
-
-            Grid {
-                visible: !!v.ext && v.mode !== "laptop"
-                columns: 2
-                columnSpacing: 18
-                rowSpacing: 12
-                verticalItemAlignment: Grid.AlignVCenter
 
                 Text {
-                    text: "TAMAÑO EN EL MONITOR"
+                    visible: !!v.ext && v.mode !== "laptop"
+                    text: L.t("TAMAÑO EN EL MONITOR")
                     font.family: "Exo 2"
                     font.weight: Font.Black
                     font.pixelSize: 12
@@ -349,6 +347,7 @@ Item {
                     color: v.pal.accent
                 }
                 Row {
+                    visible: !!v.ext && v.mode !== "laptop"
                     spacing: 8
                     Repeater {
                         model: v.scales
@@ -363,7 +362,7 @@ Item {
 
                 Text {
                     visible: v.mode === "extend"
-                    text: "TELEMETRY EN"
+                    text: L.t("TELEMETRY EN")
                     font.family: "Exo 2"
                     font.weight: Font.Black
                     font.pixelSize: 12
@@ -394,7 +393,7 @@ Item {
                 width: parent.width
                 height: 18
                 Text {
-                    text: "1 – 4  elegir modo   ·   P  siguiente   ·   Esc  cerrar"
+                    text: L.t("1 – 4  elegir modo   ·   P  siguiente   ·   Esc  cerrar")
                     font.family: "Exo 2"
                     font.pixelSize: 11
                     color: v.pal.dim
@@ -417,7 +416,7 @@ Item {
                         }
                     }
                     Text {
-                        text: "Acomodando pantallas…"
+                        text: L.t("Acomodando pantallas…")
                         font.family: "Exo 2"
                         font.weight: Font.Bold
                         font.pixelSize: 11

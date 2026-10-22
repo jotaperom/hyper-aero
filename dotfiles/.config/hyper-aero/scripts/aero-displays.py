@@ -10,6 +10,7 @@ import shutil
 import socket
 import threading
 import subprocess
+from aero_i18n import t as _t
 
 HOME = os.path.expanduser("~")
 A = os.path.join(HOME, ".config", "hyper-aero")
@@ -31,7 +32,7 @@ VIRTUAL = re.compile(r"^(FALLBACK|HEADLESS|WAYLAND|X11)", re.I)
 MODES = ("laptop", "duplicate", "extend", "external")
 SIDES = ("left", "right", "above", "below")
 QUIET = {"stdin": subprocess.DEVNULL, "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
-MODE_NAMES = {"laptop": "Solo laptop", "duplicate": "Duplicar", "extend": "Extender", "external": "Solo monitor"}
+MODE_NAMES = {"laptop": _t("Solo laptop"), "duplicate": _t("Duplicar"), "extend": _t("Extender"), "external": _t("Solo monitor")}
 
 
 def log(msg):
@@ -376,7 +377,7 @@ def gpu_hint():
     for n in names:
         if n.startswith(card + "-") and read_text(os.path.join(base, n, "status")) == "connected":
             write_text(flag, "1")
-            notify("◢ Monitor en la NVIDIA", "Para que vaya sin lag: cerrá sesión y volvé a entrar con la sesión HYPER·AERO")
+            notify(_t("◢ Monitor en la NVIDIA"), _t("Para que vaya sin lag: cerrá sesión y volvé a entrar con la sesión HYPER·AERO"))
             return
 
 
@@ -419,11 +420,11 @@ def apply(reason="manual"):
         if exts and fresh:
             spawn([os.path.join(SCRIPTS, "displays.sh"), "show"])
         elif exts:
-            notify("◢ Monitor conectado", f"{MODE_NAMES.get(mode, mode)} · SUPER + P para cambiar")
+            notify(_t("◢ Monitor conectado"), _t("{} · SUPER + P para cambiar").format(MODE_NAMES.get(mode, mode)))
         if exts:
             gpu_hint()
         else:
-            notify("◢ Monitor desconectado", "Volviste a la pantalla de la laptop")
+            notify(_t("◢ Monitor desconectado"), _t("Volviste a la pantalla de la laptop"))
     return primary
 
 
@@ -622,7 +623,7 @@ def update(changes):
         try:
             val = round(max(0.5, min(3.0, float(lapset[-1]))), 2)
         except ValueError:
-            print(json.dumps({"error": f"valor inválido: lapscale {lapset[-1]}"}), flush=True)
+            print(json.dumps({"error": _t("valor inválido: {}").format(f"lapscale {lapset[-1]}")}), flush=True)
             return 1
         prof = store.setdefault("laptop", {})
         if lap:
@@ -636,7 +637,7 @@ def update(changes):
             locked(apply, "manual", wait=30)
             return 0
     if not exts:
-        print(json.dumps({"error": "No hay otro monitor conectado"}), flush=True)
+        print(json.dumps({"error": _t("No hay otro monitor conectado")}), flush=True)
         return 1
     e = exts[0]
     s, _ = settings(store, e)
@@ -655,7 +656,7 @@ def update(changes):
             else:
                 raise ValueError
         except ValueError:
-            print(json.dumps({"error": f"valor inválido: {field} {value}"}), flush=True)
+            print(json.dumps({"error": _t("valor inválido: {}").format(f"{field} {value}")}), flush=True)
             return 1
     store["monitors"][key_of(e)] = s
     save(store)
@@ -666,13 +667,13 @@ def update(changes):
 def daemon():
     sig = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE")
     if not sig:
-        print("No estoy dentro de Hyprland")
+        print(_t("No estoy dentro de Hyprland"))
         return 1
     me = open(os.path.join(RUN, "aero-displays.daemon"), "a")
     try:
         fcntl.flock(me, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
-        print("El servicio de pantallas ya está corriendo")
+        print(_t("El servicio de pantallas ya está corriendo"))
         return 0
     path = os.path.join(RUN, "hypr", sig, ".socket2.sock")
     log(f"servicio iniciado (pid {os.getpid()})")
@@ -761,11 +762,11 @@ def main(argv):
         store = load()
         lap, exts = split(monitors())
         if not exts:
-            notify("◢ Pantallas", "No hay otro monitor conectado")
+            notify(_t("◢ Pantallas"), _t("No hay otro monitor conectado"))
             return 0
         s, _ = settings(store, exts[0])
         nxt = MODES[(MODES.index(s["mode"]) + 1) % len(MODES)] if s["mode"] in MODES else "extend"
-        notify("◢ Pantallas", MODE_NAMES[nxt])
+        notify(_t("◢ Pantallas"), MODE_NAMES[nxt])
         return update([("mode", nxt)])
     print("uso: aero-displays.py daemon | apply | state | next | mode laptop|duplicate|extend|external | "
           "side left|right|above|below | offset 0..1 | scale N | lapscale N | hud primary|laptop | set CAMPO VALOR ...")

@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Rectangle {
     id: card
@@ -72,7 +73,7 @@ Rectangle {
         spacing: 2
         Text {
             width: parent.width
-            text: card.media.has ? (card.media.title || "Sin título") : "Nada sonando"
+            text: card.media.has ? (card.media.title || L.t("Sin título")) : L.t("Nada sonando")
             elide: Text.ElideRight
             font.family: "Exo 2"
             font.weight: Font.Bold

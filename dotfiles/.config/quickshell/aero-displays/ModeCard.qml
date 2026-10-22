@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: c
@@ -107,7 +108,7 @@ Item {
         y: 114
         width: parent.width - 16
         horizontalAlignment: Text.AlignHCenter
-        text: c.pending ? "Aplicando…" : c.hint
+        text: c.pending ? L.t("Aplicando…") : c.hint
         elide: Text.ElideRight
         font.family: "Exo 2"
         font.pixelSize: 11

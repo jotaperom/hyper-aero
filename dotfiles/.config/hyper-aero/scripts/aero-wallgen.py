@@ -10,6 +10,7 @@ import subprocess
 
 import numpy as np
 from PIL import Image, ImageFilter
+from aero_i18n import t as _t
 
 W, H = 1920, 1080
 FPS = 24
@@ -725,7 +726,7 @@ def cmd_render(spec_path, outdir):
     for t in threads:
         t.join()
     if any(p.wait() != 0 for p in procs.values()):
-        print(json.dumps({"error": "No pude generar el video"}), flush=True)
+        print(json.dumps({"error": _t("No pude generar el video")}), flush=True)
         return 1
     thumb = Image.fromarray(frame(np.asarray(day).astype(np.float32) / 255.0, build_layers(spec, False), 7.0))
     thumb.resize((480, 270), Image.LANCZOS).save(os.path.join(outdir, "thumb.jpg"), quality=88)

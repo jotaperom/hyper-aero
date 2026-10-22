@@ -163,7 +163,7 @@ connect_iwd() {
             return 1
             ;;
         ENTERPRISE)
-            notify-send -a "SIGNAL" "$ssid" "Enterprise networks need a profile file with iwd. Ask Claude to set one up."
+            notify-send -a "SIGNAL" "$ssid" "Enterprise networks need a profile file with iwd. Create one with iwctl or in /var/lib/iwd."
             return 2
             ;;
         *)

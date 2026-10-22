@@ -1,5 +1,6 @@
 import QtQuick
 import "Tint.js" as Tint
+import "Lang.js" as L
 
 Item {
     id: cc
@@ -8,7 +9,7 @@ Item {
     readonly property var st: backend ? backend.st : ({})
     property string sub: ""
     property bool live: false
-    readonly property var accentNames: ({ blue: "AZUL", red: "ROJO", green: "VERDE", black: (cc.st.mode === "night" ? "NEGRO" : "BLANCO") })
+    readonly property var accentNames: ({ blue: L.t("AZUL"), red: L.t("ROJO"), green: L.t("VERDE"), black: (cc.st.mode === "night" ? L.t("NEGRO") : L.t("BLANCO")) })
     signal act(string name)
     signal pageRequested(int p)
     signal closeRequested
@@ -75,7 +76,7 @@ Item {
                         styleColor: cc.pal.heroShadow
                     }
                     Text {
-                        text: (cc.accentNames[cc.st.accent || "blue"] || "PERSONAL") + "  ·  " + (cc.st.mode === "night" ? "CABINA NOCTURNA" : "CIELO DIURNO")
+                        text: (cc.accentNames[cc.st.accent || "blue"] || "PERSONAL") + "  ·  " + (cc.st.mode === "night" ? L.t("CABINA NOCTURNA") : L.t("CIELO DIURNO"))
                         font.family: "JetBrainsMono Nerd Font"
                         font.weight: Font.Bold
                         font.pixelSize: 10
@@ -97,7 +98,7 @@ Item {
                     Text {
                         id: skinLabel
                         anchors.centerIn: parent
-                        text: "\u{F09A7}  PIEL  \u{F0142}"
+                        text: "\u{F09A7}  " + L.t("PIEL") + "  \u{F0142}"
                         font.family: "JetBrainsMono Nerd Font"
                         font.weight: Font.Bold
                         font.pixelSize: 9
@@ -151,7 +152,7 @@ Item {
                         }
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: "TEMAS"
+                            text: L.t("TEMAS")
                             font.family: "JetBrainsMono Nerd Font"
                             font.weight: Font.Bold
                             font.pixelSize: 10
@@ -184,7 +185,7 @@ Item {
                         pal: cc.pal
                         glyph: cc.st.wifi ? "\u{F05A9}" : "\u{F05AA}"
                         label: "Wi-Fi"
-                        sub: cc.st.wifi ? (cc.st.ssid || "Sin conexión") : "Apagado"
+                        sub: cc.st.wifi ? (cc.st.ssid || L.t("Sin conexión")) : L.t("Apagado")
                         on: !!cc.st.wifi
                         more: true
                         onClicked: cc.act("wifi")
@@ -195,7 +196,7 @@ Item {
                         pal: cc.pal
                         glyph: cc.st.bt ? "\u{F00AF}" : "\u{F00B2}"
                         label: "Bluetooth"
-                        sub: cc.st.btAvail === false ? "No disponible" : (cc.st.bt ? (cc.st.btDev || "Encendido") : "Apagado")
+                        sub: cc.st.btAvail === false ? L.t("No disponible") : (cc.st.bt ? (cc.st.btDev || L.t("Encendido")) : L.t("Apagado"))
                         on: !!cc.st.bt
                         available: cc.st.btAvail !== false
                         more: true
@@ -207,7 +208,7 @@ Item {
                         pal: cc.pal
                         glyph: cc.st.mode === "night" ? "\u{F0594}" : "\u{F0599}"
                         label: "Night Deck"
-                        sub: cc.st.mode === "night" ? "Modo oscuro" : "Modo claro"
+                        sub: cc.st.mode === "night" ? L.t("Modo oscuro") : L.t("Modo claro")
                         on: cc.st.mode === "night"
                         onClicked: cc.act("night")
                     }
@@ -215,8 +216,8 @@ Item {
                         width: tiles.cell
                         pal: cc.pal
                         glyph: "\u{F0335}"
-                        label: "Luz cálida"
-                        sub: cc.st.warm ? (cc.st.kelvin + " K") : "Apagada"
+                        label: L.t("Luz cálida")
+                        sub: cc.st.warm ? (cc.st.kelvin + " K") : L.t("Apagada")
                         on: !!cc.st.warm
                         onClicked: cc.act("warm")
                     }
@@ -224,8 +225,8 @@ Item {
                         width: tiles.cell
                         pal: cc.pal
                         glyph: cc.st.dnd ? "\u{F009B}" : "\u{F009A}"
-                        label: "No molestar"
-                        sub: cc.st.dnd ? "Activado" : "Desactivado"
+                        label: L.t("No molestar")
+                        sub: cc.st.dnd ? L.t("Activado") : L.t("Desactivado")
                         on: !!cc.st.dnd
                         onClicked: cc.act("dnd")
                     }
@@ -253,7 +254,7 @@ Item {
                         width: parent.width
                         pal: cc.pal
                         glyph: cc.backend && cc.backend.muted ? "\u{F075F}" : "\u{F057E}"
-                        label: "Volumen"
+                        label: L.t("Volumen")
                         dim: cc.backend ? cc.backend.muted : false
                         value: cc.backend ? cc.backend.volume : 0
                         onMoved: function (v) {
@@ -267,7 +268,7 @@ Item {
                         width: parent.width
                         pal: cc.pal
                         glyph: "\u{F00E0}"
-                        label: "Brillo"
+                        label: L.t("Brillo")
                         value: Math.max(0, cc.st.bri || 0) / 100
                         onMoved: function (v) {
                             if (cc.backend)
@@ -300,26 +301,26 @@ Item {
                     PowerButton {
                         pal: cc.pal
                         glyph: "\u{F033E}"
-                        label: "Bloquear"
+                        label: L.t("Bloquear")
                         onTriggered: cc.act("lock")
                     }
                     PowerButton {
                         pal: cc.pal
                         glyph: "\u{F04B2}"
-                        label: "Suspender"
+                        label: L.t("Suspender")
                         onTriggered: cc.act("suspend")
                     }
                     PowerButton {
                         pal: cc.pal
                         glyph: "\u{F0709}"
-                        label: "Reiniciar"
+                        label: L.t("Reiniciar")
                         confirm: true
                         onTriggered: cc.act("reboot")
                     }
                     PowerButton {
                         pal: cc.pal
                         glyph: "\u{F0425}"
-                        label: "Apagar"
+                        label: L.t("Apagar")
                         confirm: true
                         onTriggered: cc.act("poweroff")
                     }

@@ -1,6 +1,7 @@
 import QtQuick
 import "Tint.js" as Tint
 import "Pal.js" as Pal
+import "Lang.js" as L
 
 Item {
     id: v
@@ -11,25 +12,25 @@ Item {
     property bool nightView: api ? api.mode === "night" : false
     property string themeName: ""
     property var layers: [
-        { type: "bubbles", name: "Burbujas Aero", glyph: "\u{F05E3}", on: true, amount: 0.7, speed: 1 },
-        { type: "waves", name: "Ondas de luz", glyph: "\u{F078D}", on: true, amount: 0.7, speed: 1 },
-        { type: "sparkles", name: "Destellos", glyph: "\u{F0AE2}", on: false, amount: 0.6, speed: 1 },
-        { type: "aurora", name: "Aurora", glyph: "\u{F0674}", on: false, amount: 0.6, speed: 1 },
-        { type: "rain", name: "Lluvia en el vidrio", glyph: "\u{F0596}", on: false, amount: 0.5, speed: 1 },
-        { type: "hud", name: "Barrido HUD", glyph: "\u{F02C1}", on: false, amount: 0.5, speed: 1 },
-        { type: "mist", name: "Neblina", glyph: "\u{F0591}", on: false, amount: 0.6, speed: 1 },
-        { type: "snow", name: "Copos", glyph: "\u{F0717}", on: false, amount: 0.6, speed: 1 },
-        { type: "bokeh", name: "Orbes de luz", glyph: "\u{F0695}", on: false, amount: 0.6, speed: 1 },
-        { type: "rays", name: "Rayos de sol", glyph: "\u{F059A}", on: false, amount: 0.6, speed: 1 },
-        { type: "petals", name: "Pétalos", glyph: "\u{F09F1}", on: false, amount: 0.5, speed: 1 },
-        { type: "stars", name: "Estrellas fugaces", glyph: "\u{F1741}", on: false, amount: 0.6, speed: 1 },
-        { type: "caustics", name: "Luz de agua", glyph: "\u{F058C}", on: false, amount: 0.5, speed: 1 },
-        { type: "flare", name: "Destello de lente", glyph: "\u{F0D72}", on: false, amount: 0.6, speed: 1 },
-        { type: "grid", name: "Cuadrícula Y2K", glyph: "\u{F0758}", on: false, amount: 0.6, speed: 1 }
+        { type: "bubbles", name: L.t("Burbujas Aero"), glyph: "\u{F05E3}", on: true, amount: 0.7, speed: 1 },
+        { type: "waves", name: L.t("Ondas de luz"), glyph: "\u{F078D}", on: true, amount: 0.7, speed: 1 },
+        { type: "sparkles", name: L.t("Destellos"), glyph: "\u{F0AE2}", on: false, amount: 0.6, speed: 1 },
+        { type: "aurora", name: L.t("Aurora"), glyph: "\u{F0674}", on: false, amount: 0.6, speed: 1 },
+        { type: "rain", name: L.t("Lluvia en el vidrio"), glyph: "\u{F0596}", on: false, amount: 0.5, speed: 1 },
+        { type: "hud", name: L.t("Barrido HUD"), glyph: "\u{F02C1}", on: false, amount: 0.5, speed: 1 },
+        { type: "mist", name: L.t("Neblina"), glyph: "\u{F0591}", on: false, amount: 0.6, speed: 1 },
+        { type: "snow", name: L.t("Copos"), glyph: "\u{F0717}", on: false, amount: 0.6, speed: 1 },
+        { type: "bokeh", name: L.t("Orbes de luz"), glyph: "\u{F0695}", on: false, amount: 0.6, speed: 1 },
+        { type: "rays", name: L.t("Rayos de sol"), glyph: "\u{F059A}", on: false, amount: 0.6, speed: 1 },
+        { type: "petals", name: L.t("Pétalos"), glyph: "\u{F09F1}", on: false, amount: 0.5, speed: 1 },
+        { type: "stars", name: L.t("Estrellas fugaces"), glyph: "\u{F1741}", on: false, amount: 0.6, speed: 1 },
+        { type: "caustics", name: L.t("Luz de agua"), glyph: "\u{F058C}", on: false, amount: 0.5, speed: 1 },
+        { type: "flare", name: L.t("Destello de lente"), glyph: "\u{F0D72}", on: false, amount: 0.6, speed: 1 },
+        { type: "grid", name: L.t("Cuadrícula Y2K"), glyph: "\u{F0758}", on: false, amount: 0.6, speed: 1 }
     ]
     property bool useDraft: false
     readonly property var presetHS: ({ blue: [215, 100], red: [350, 100], green: [162, 72], black: [188, 5] })
-    readonly property var presetNames: ({ blue: "AZUL", red: "ROJO", green: "VERDE", black: "NEGRO" })
+    readonly property var presetNames: ({ blue: L.t("AZUL"), red: L.t("ROJO"), green: L.t("VERDE"), black: L.t("NEGRO") })
     readonly property var hs: toHS(work)
     readonly property var pal: Pal.make(nightView, work)
     readonly property color workColor: Tint.color("#3d9be9", work)
@@ -94,7 +95,7 @@ Item {
     function nameOf(acc) {
         if (presetNames[acc]) return presetNames[acc]
         var p = toHS(acc)
-        return p[1] < 12 ? "GRIS" : "PERSONAL · " + p[0]
+        return p[1] < 12 ? L.t("GRIS") : "PERSONAL · " + p[0]
     }
 
     function findWall(id) {
@@ -169,7 +170,7 @@ Item {
         Text {
             x: 26
             anchors.verticalCenter: parent.verticalCenter
-            text: "◢ ESTUDIO DE TEMAS"
+            text: L.t("◢ ESTUDIO DE TEMAS")
             font.family: "Michroma"
             font.pixelSize: 17
             font.letterSpacing: 2
@@ -180,7 +181,7 @@ Item {
             anchors.centerIn: parent
             spacing: 8
             Repeater {
-                model: [["\u{F03D8}", "COLOR"], ["\u{F02E9}", "FONDO"], ["\u{F08B5}", "MIS TEMAS"]]
+                model: [["\u{F03D8}", L.t("COLOR")], ["\u{F02E9}", L.t("FONDO")], ["\u{F08B5}", L.t("MIS TEMAS")]]
                 delegate: Pill {
                     required property var modelData
                     required property int index
@@ -202,7 +203,7 @@ Item {
             Pill {
                 pal: v.pal
                 glyph: v.nightView ? "\u{F0594}" : "\u{F05A8}"
-                text: v.nightView ? "Noche" : "Día"
+                text: v.nightView ? L.t("Noche") : L.t("Día")
                 onClicked: v.nightView = !v.nightView
             }
             Pill {
@@ -414,7 +415,7 @@ Item {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: v.previewing ? "Actualizando vista previa…" : (v.hasPreview ? "VISTA PREVIA · SIN MOVIMIENTO · " + (v.nightView ? "NOCHE" : "DÍA") : "IMAGEN ORIGINAL")
+                        text: v.previewing ? L.t("Actualizando vista previa…") : (v.hasPreview ? L.t("VISTA PREVIA · SIN MOVIMIENTO · ") + (v.nightView ? L.t("NOCHE") : L.t("DÍA")) : L.t("IMAGEN ORIGINAL"))
                         font.family: "Exo 2"
                         font.weight: Font.Bold
                         font.pixelSize: 11
@@ -437,7 +438,7 @@ Item {
                         width: parent.width
                         Text {
                             width: parent.width / 2
-                            text: "Generando tu fondo animado…"
+                            text: L.t("Generando tu fondo animado…")
                             font.family: "Exo 2"
                             font.weight: Font.Bold
                             font.pixelSize: 14
@@ -479,7 +480,7 @@ Item {
                     width: parent.width * 0.6
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text: v.api && v.api.busy === "render" ? "Generando tu fondo animado…" : v.api && v.api.busy === "preview" ? "Preparando vista previa…" : v.api && v.api.busy === "apply" ? "Aplicando el tema…" : "Un momento…"
+                        text: v.api && v.api.busy === "render" ? L.t("Generando tu fondo animado…") : v.api && v.api.busy === "preview" ? L.t("Preparando vista previa…") : v.api && v.api.busy === "apply" ? L.t("Aplicando el tema…") : L.t("Un momento…")
                         font.family: "Exo 2"
                         font.weight: Font.Bold
                         font.pixelSize: 18
@@ -502,7 +503,7 @@ Item {
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: v.api && v.api.busy === "render"
-                        text: Math.round((v.api ? v.api.progress : 0) * 100) + "%  ·  podés seguir usando la compu"
+                        text: L.f("%1%  ·  podés seguir usando la compu", Math.round((v.api ? v.api.progress : 0) * 100))
                         font.family: "Exo 2"
                         font.pixelSize: 13
                         color: Qt.rgba(1, 1, 1, 0.85)
@@ -539,7 +540,7 @@ Item {
                     color: v.pal.ink
                 }
                 Text {
-                    text: "Fondo: " + (v.drafting ? "nuevo · " + v.draftName + " (sin generar)" : v.selWall ? v.selWall.name : "Original del tema")
+                    text: v.drafting ? L.f("Fondo: nuevo · %1 (sin generar)", v.draftName) : L.f("Fondo: %1", v.selWall ? v.selWall.name : L.t("Original del tema"))
                     font.family: "Exo 2"
                     font.pixelSize: 13
                     color: v.pal.muted
@@ -554,7 +555,7 @@ Item {
             pal: v.pal
             primary: true
             glyph: "\u{F012C}"
-            text: v.drafting ? "Generar y aplicar" : v.dirty ? "Aplicar" : "Aplicado"
+            text: v.drafting ? L.t("Generar y aplicar") : v.dirty ? L.t("Aplicar") : L.t("Aplicado")
             enabled2: (v.dirty || v.drafting) && !v.busy
             onClicked: {
                 if (v.drafting) v.api.renderApply(v.spec(), v.work)
@@ -592,7 +593,7 @@ Item {
                 width: parent.width
                 spacing: 14
 
-                Text { text: "TONO"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("TONO"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Slider {
                     width: parent.width
                     pal: v.pal
@@ -610,7 +611,7 @@ Item {
                     onMoved: function(x) { v.work = v.make(x * 359, Math.max(20, v.hs[1])) }
                 }
 
-                Text { text: "INTENSIDAD"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("INTENSIDAD"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Slider {
                     width: parent.width
                     pal: v.pal
@@ -624,7 +625,7 @@ Item {
                     onMoved: function(x) { v.work = v.make(v.hs[0], x * 140) }
                 }
 
-                Text { text: "PREDETERMINADOS"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("PREDETERMINADOS"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Flow {
                     width: parent.width
                     spacing: 8
@@ -641,7 +642,7 @@ Item {
                     }
                 }
 
-                Text { text: "SACADOS DEL FONDO"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("SACADOS DEL FONDO"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Flow {
                     width: parent.width
                     spacing: 10
@@ -666,7 +667,7 @@ Item {
                     Pill {
                         pal: v.pal
                         glyph: "\u{F0068}"
-                        text: "Analizar fondo"
+                        text: L.t("Analizar fondo")
                         enabled2: !v.busy
                         onClicked: v.api.palette(v.drafting ? v.api.image : v.selWall ? v.selWall.day : v.autoStill(v.work, false))
                     }
@@ -675,7 +676,7 @@ Item {
                 Text {
                     width: parent.width
                     wrapMode: Text.WordWrap
-                    text: "Todo el escritorio sigue este color: barra, widgets, teléfono, notificaciones, terminal, bordes y menús."
+                    text: L.t("Todo el escritorio sigue este color: barra, widgets, teléfono, notificaciones, terminal, bordes y menús.")
                     font.family: "Exo 2"
                     font.pixelSize: 12
                     color: v.pal.muted
@@ -704,7 +705,7 @@ Item {
                         Text {
                             width: parent.width
                             elide: Text.ElideRight
-                            text: "\u{F0FCE}  Generando «" + (v.api ? v.api.renderName : "") + "» · " + Math.round((v.api ? v.api.progress : 0) * 100) + "%" + (v.api && v.api.eta.length ? " · " + v.api.eta : "")
+                            text: "\u{F0FCE}  " + L.f("Generando «%1» · %2%", v.api ? v.api.renderName : "", Math.round((v.api ? v.api.progress : 0) * 100)) + (v.api && v.api.eta.length ? " · " + v.api.eta : "")
                             font.family: "Exo 2"
                             font.weight: Font.Bold
                             font.pixelSize: 13
@@ -718,12 +719,12 @@ Item {
                     }
                 }
 
-                Text { text: "MIS FONDOS"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("MIS FONDOS"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Flow {
                     width: parent.width
                     spacing: 10
                     Repeater {
-                        model: [{ id: "auto", name: "Original", thumb: v.autoStill(v.work, false) }].concat(v.api ? v.api.walls : [])
+                        model: [{ id: "auto", name: L.t("Original"), thumb: v.autoStill(v.work, false) }].concat(v.api ? v.api.walls : [])
                         delegate: Item {
                             required property var modelData
                             width: 132
@@ -781,14 +782,14 @@ Item {
 
                 Rectangle { width: parent.width; height: 1; color: v.pal.sep }
 
-                Text { text: "FONDO NUEVO"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("FONDO NUEVO"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Row {
                     spacing: 10
                     width: parent.width
                     Pill {
                         pal: v.pal
                         glyph: "\u{F087C}"
-                        text: "Elegir imagen"
+                        text: L.t("Elegir imagen")
                         enabled2: !v.busy
                         onClicked: v.api.pickImage()
                     }
@@ -796,21 +797,21 @@ Item {
                         visible: !!v.api && v.api.image.length > 0 && !v.drafting
                         pal: v.pal
                         glyph: "\u{F0208}"
-                        text: "Ver"
+                        text: L.t("Ver")
                         onClicked: v.useDraft = true
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         width: parent.width - 170
                         elide: Text.ElideMiddle
-                        text: v.api && v.api.image ? v.api.image.split("/").pop() : "Ninguna todavía"
+                        text: v.api && v.api.image ? v.api.image.split("/").pop() : L.t("Ninguna todavía")
                         font.family: "Exo 2"
                         font.pixelSize: 12
                         color: v.pal.muted
                     }
                 }
 
-                Text { text: "ANIMACIONES"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("ANIMACIONES"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Repeater {
                     model: v.layers
                     delegate: Rectangle {
@@ -904,7 +905,7 @@ Item {
                     Pill {
                         pal: v.pal
                         glyph: "\u{F0208}"
-                        text: v.previewing ? "Actualizando…" : "Vista previa"
+                        text: v.previewing ? L.t("Actualizando…") : L.t("Vista previa")
                         enabled2: !v.previewing && !!v.api && v.api.image.length > 0
                         onClicked: v.api.preview(v.spec())
                     }
@@ -912,7 +913,7 @@ Item {
                         pal: v.pal
                         primary: true
                         glyph: "\u{F0FCE}"
-                        text: v.rendering ? "Generando " + Math.round(v.api.progress * 100) + "%" : "Generar fondo"
+                        text: v.rendering ? L.f("Generando %1%", Math.round(v.api.progress * 100)) : L.t("Generar fondo")
                         enabled2: !v.busy && !!v.api && v.api.image.length > 0
                         onClicked: v.api.render(v.spec())
                     }
@@ -920,7 +921,7 @@ Item {
                 Text {
                     width: parent.width
                     wrapMode: Text.WordWrap
-                    text: "Generar crea la versión de día y la de noche. Tarda unos minutos según cuántas animaciones elijás; mientras tanto podés seguir usando la compu."
+                    text: L.t("Generar crea la versión de día y la de noche. Tarda unos minutos según cuántas animaciones elijás; mientras tanto podés seguir usando la compu.")
                     font.family: "Exo 2"
                     font.pixelSize: 12
                     color: v.pal.muted
@@ -933,7 +934,7 @@ Item {
                 width: parent.width
                 spacing: 12
 
-                Text { text: "GUARDAR LO QUE ESTÁS VIENDO"; font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
+                Text { text: L.t("GUARDAR LO QUE ESTÁS VIENDO"); font.family: "Michroma"; font.pixelSize: 11; color: v.pal.ink }
                 Row {
                     spacing: 10
                     Rectangle {
@@ -958,7 +959,7 @@ Item {
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: !parent.text.length
-                                text: "Nombre del tema"
+                                text: L.t("Nombre del tema")
                                 font: parent.font
                                 color: v.pal.dim
                             }
@@ -968,7 +969,7 @@ Item {
                         pal: v.pal
                         primary: true
                         glyph: "\u{F0193}"
-                        text: "Guardar"
+                        text: L.t("Guardar")
                         enabled2: v.themeName.trim().length > 0 && !v.drafting
                         onClicked: {
                             v.api.saveTheme(v.themeName.trim(), v.work, v.wall)
@@ -981,7 +982,7 @@ Item {
                     visible: v.drafting
                     width: parent.width
                     wrapMode: Text.WordWrap
-                    text: "Estás viendo un fondo nuevo sin generar: dale «Generar y aplicar» y después lo guardás como tema."
+                    text: L.t("Estás viendo un fondo nuevo sin generar: dale «Generar y aplicar» y después lo guardás como tema.")
                     font.family: "Exo 2"
                     font.pixelSize: 12
                     color: v.pal.muted
@@ -993,10 +994,10 @@ Item {
                     width: parent.width
                     spacing: 12
                     Repeater {
-                        model: [{ id: "p-blue", name: "Azul", accent: "blue", wallpaper: "auto", builtin: true },
-                                { id: "p-red", name: "Rojo", accent: "red", wallpaper: "auto", builtin: true },
-                                { id: "p-green", name: "Verde", accent: "green", wallpaper: "auto", builtin: true },
-                                { id: "p-black", name: "Negro", accent: "black", wallpaper: "auto", builtin: true }].concat(v.api ? v.api.themes : [])
+                        model: [{ id: "p-blue", name: L.t("Azul"), accent: "blue", wallpaper: "auto", builtin: true },
+                                { id: "p-red", name: L.t("Rojo"), accent: "red", wallpaper: "auto", builtin: true },
+                                { id: "p-green", name: L.t("Verde"), accent: "green", wallpaper: "auto", builtin: true },
+                                { id: "p-black", name: L.t("Negro"), accent: "black", wallpaper: "auto", builtin: true }].concat(v.api ? v.api.themes : [])
                         delegate: Rectangle {
                             id: card
                             required property var modelData

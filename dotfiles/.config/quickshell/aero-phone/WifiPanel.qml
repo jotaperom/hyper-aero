@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: wp
@@ -27,11 +28,11 @@ Item {
     }
 
     function subFor(n) {
-        if (n.active) return "Conectada" + (st.ip ? "  ·  " + st.ip : "")
-        if (n.known) return "Guardada  ·  " + n.signal + "%"
-        if (n.sec === "OPEN") return "Abierta  ·  " + n.signal + "%"
-        if (n.sec === "ENTERPRISE") return "Empresarial  ·  " + n.signal + "%"
-        return "Protegida  ·  " + n.signal + "%"
+        if (n.active) return L.t("Conectada") + (st.ip ? "  ·  " + st.ip : "")
+        if (n.known) return L.t("Guardada  ·  ") + n.signal + "%"
+        if (n.sec === "OPEN") return L.t("Abierta  ·  ") + n.signal + "%"
+        if (n.sec === "ENTERPRISE") return L.t("Empresarial  ·  ") + n.signal + "%"
+        return L.t("Protegida  ·  ") + n.signal + "%"
     }
 
     function say(msg) {
@@ -51,7 +52,7 @@ Item {
                 expanded = ssid
                 say(r.msg)
             } else {
-                say(r.msg || "No se pudo conectar")
+                say(r.msg || L.t("No se pudo conectar"))
             }
         })
     }
@@ -110,7 +111,7 @@ Item {
         x: 18
         width: parent.width - 36
         elide: Text.ElideRight
-        text: !wp.radio ? "WI-FI APAGADO" : (wp.current ? "CONECTADO  ·  " + wp.current.ssid.toUpperCase() : "SIN CONEXIÓN  ·  " + wp.nets.length + " REDES")
+        text: !wp.radio ? L.t("WI-FI APAGADO") : (wp.current ? L.t("CONECTADO  ·  ") + wp.current.ssid.toUpperCase() : L.f("SIN CONEXIÓN  ·  %1 REDES", wp.nets.length))
         font.family: "JetBrainsMono Nerd Font"
         font.weight: Font.Bold
         font.pixelSize: 10
@@ -143,12 +144,12 @@ Item {
             expanded: wp.expanded === modelData.ssid
             showMore: modelData.known && !modelData.active
             mode: (wp.forcePass === modelData.ssid || (!modelData.known && modelData.sec === "SECURED")) && !modelData.active ? "pass" : "actions"
-            note: modelData.sec === "ENTERPRISE" && !modelData.known ? "Red empresarial (usuario y contraseña). Configurala en los ajustes avanzados." : (wp.forcePass === modelData.ssid ? "La contraseña guardada no funcionó. Escribila de nuevo." : "")
+            note: modelData.sec === "ENTERPRISE" && !modelData.known ? L.t("Red empresarial (usuario y contraseña). Configurala en los ajustes avanzados.") : (wp.forcePass === modelData.ssid ? L.t("La contraseña guardada no funcionó. Escribila de nuevo.") : "")
             actions: modelData.active
-                ? [{ id: "forget", label: "Olvidar", danger: true }, { id: "disconnect", label: "Desconectar", primary: true }]
+                ? [{ id: "forget", label: L.t("Olvidar"), danger: true }, { id: "disconnect", label: L.t("Desconectar"), primary: true }]
                 : (modelData.sec === "ENTERPRISE" && !modelData.known
-                    ? [{ id: "advanced", label: "Ajustes avanzados", primary: true }]
-                    : [{ id: "forget", label: "Olvidar", danger: true }, { id: "connect", label: "Conectar", primary: true }])
+                    ? [{ id: "advanced", label: L.t("Ajustes avanzados"), primary: true }]
+                    : [{ id: "forget", label: L.t("Olvidar"), danger: true }, { id: "connect", label: L.t("Conectar"), primary: true }])
             onTapped: wp.tap(modelData)
             onMore: wp.expanded = wp.expanded === modelData.ssid ? "" : modelData.ssid
             onCancel: {
@@ -180,7 +181,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: wp.radio ? "NO HAY REDES A LA VISTA" : "ENCENDÉ EL WI-FI"
+            text: wp.radio ? L.t("NO HAY REDES A LA VISTA") : L.t("ENCENDÉ EL WI-FI")
             font.family: "Michroma"
             font.pixelSize: 10
             color: wp.pal.heroSub
@@ -219,7 +220,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 6
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "\u{F0493}  Ajustes avanzados"
+        text: "\u{F0493}  " + L.t("Ajustes avanzados")
         font.family: "Exo 2"
         font.weight: Font.DemiBold
         font.pixelSize: 12

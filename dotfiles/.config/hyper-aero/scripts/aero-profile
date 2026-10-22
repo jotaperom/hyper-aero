@@ -6,6 +6,7 @@ import sys
 import json
 import shutil
 import subprocess
+from aero_i18n import t as _t
 
 HOME = os.path.expanduser("~")
 AERO = os.path.join(HOME, ".config", "hyper-aero")
@@ -15,7 +16,7 @@ LUA = os.path.join(HOME, ".config", "hypr", "aero-profile.lua")
 
 PROFILES = {
     "completo": {
-        "label": "Completo",
+        "label": _t("Completo"),
         "wallpaper": "video",
         "pause_when": "fullscreen",
         "visualizer_fps": 24,
@@ -29,7 +30,7 @@ PROFILES = {
         ],
     },
     "equilibrado": {
-        "label": "Equilibrado",
+        "label": _t("Equilibrado"),
         "wallpaper": "video",
         "pause_when": "covered",
         "visualizer_fps": 15,
@@ -43,7 +44,7 @@ PROFILES = {
         ],
     },
     "ligero": {
-        "label": "Ligero",
+        "label": _t("Ligero"),
         "wallpaper": "still",
         "pause_when": "covered",
         "visualizer_fps": 0,
@@ -145,7 +146,7 @@ def main(argv):
     if arg == "menu":
         lines = [f"{v['label']}{'  ●' if k == current() else ''}" for k, v in PROFILES.items()]
         try:
-            r = subprocess.run(["rofi", "-dmenu", "-i", "-no-custom", "-p", "Rendimiento"], input="\n".join(lines),
+            r = subprocess.run(["rofi", "-dmenu", "-i", "-no-custom", "-p", _t("Rendimiento")], input="\n".join(lines),
                                capture_output=True, text=True, timeout=60)
         except (OSError, subprocess.TimeoutExpired):
             return 1
@@ -167,8 +168,8 @@ def main(argv):
     if "--no-apply" not in argv:
         live(arg)
         if shutil.which("notify-send"):
-            spawn(["notify-send", "-a", "HYPER·AERO", "◢ Perfil " + PROFILES[arg]["label"], "Rendimiento ajustado"])
-    say(f"Perfil: {PROFILES[arg]['label']}")
+            spawn(["notify-send", "-a", "HYPER·AERO", _t("◢ Perfil ") + PROFILES[arg]["label"], _t("Rendimiento ajustado")])
+    say(_t("Perfil: ") + PROFILES[arg]["label"])
     return 0
 
 

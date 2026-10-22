@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 sink="@DEFAULT_AUDIO_SINK@"
 source="@DEFAULT_AUDIO_SOURCE@"
 
@@ -21,7 +23,7 @@ case "$1" in
         read -r _ level state < <(wpctl get-volume "$sink")
         value=$(awk -v v="$level" 'BEGIN { printf "%d", v * 100 + 0.5 }')
         [ "$state" = "[MUTED]" ] && muted=true
-        label="VOLUMEN"
+        label="$(t "VOLUMEN")"
         device=$(wpctl inspect "$sink" 2>/dev/null | awk -F'"' '/node.description/ { print $2; exit }')
         if [ "$muted" = true ] || [ "$value" -eq 0 ]; then icon="󰖁"
         elif [ "$value" -ge 66 ]; then icon="󰕾"
@@ -33,13 +35,13 @@ case "$1" in
         read -r _ level state < <(wpctl get-volume "$source")
         value=$(awk -v v="$level" 'BEGIN { printf "%d", v * 100 + 0.5 }')
         [ "$state" = "[MUTED]" ] && muted=true
-        label="MICRÓFONO"
+        label="$(t "MICRÓFONO")"
         device=$(wpctl inspect "$source" 2>/dev/null | awk -F'"' '/node.description/ { print $2; exit }')
         if [ "$muted" = true ]; then icon="󰍭"; else icon="󰍬"; fi
         ;;
     bri-*)
         value=$(brightnessctl -m | cut -d, -f4 | tr -d '%')
-        label="BRILLO"
+        label="$(t "BRILLO")"
         device="PANTALLA"
         icon="󰃠"
         ;;

@@ -28,6 +28,7 @@ Vidrio brillante, burbujas, cielos animados y un centro de control con forma de 
 | **TELEMETRY HUD** | Un panel lateral con CPU, RAM, GPU, red y batería |
 | **Panel de pantallas** | Como el *Win + P* de Windows: solo laptop, duplicar, extender, solo monitor, y acomodar arrastrando; cambia solo al conectar o desconectar |
 | **Perfiles de rendimiento** | *Completo*, *Equilibrado* y *Ligero*, se cambian cuando querás |
+| **Bilingüe** | Interfaz en español o inglés: el instalador te pregunta y `aero-lang es\|en` la cambia después |
 | **Extras** | Pantalla de bloqueo, protector de pantalla, alt-tab con vistas previas, vista de escritorios, capturas, grabación de pantalla, pantalla de inicio de sesión opcional |
 
 El recorrido completo está en [Funciones](docs/es/FEATURES.md).

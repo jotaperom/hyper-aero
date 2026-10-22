@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: ct
@@ -152,7 +153,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Captura"
+            text: L.t("Captura")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 11
@@ -199,7 +200,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: ct.rec ? ct.clock(ct.elapsed) : "Grabar"
+            text: ct.rec ? ct.clock(ct.elapsed) : L.t("Grabar")
             font.family: ct.rec ? "JetBrainsMono Nerd Font" : "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 11

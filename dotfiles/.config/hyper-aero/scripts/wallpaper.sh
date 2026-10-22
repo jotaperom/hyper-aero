@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 A="$HOME/.config/hyper-aero"
 RUN="${XDG_RUNTIME_DIR:-/tmp}"
 SOCK="$RUN/aero-motion.sock"
@@ -15,7 +17,7 @@ path() {
 start() {
     p="$(path)"
     if [ ! -f "$p" ]; then
-        notify-send -a "HYPER·AERO" "Falta el fondo" "Corré: ~/.config/hyper-aero/scripts/aero-assets.sh" 2>/dev/null
+        notify-send -a "HYPER·AERO" "$(t "Falta el fondo")" "$(t "Corré:") ~/.config/hyper-aero/scripts/aero-assets.sh" 2>/dev/null
         exit 1
     fi
     rm -f "$SOCK"

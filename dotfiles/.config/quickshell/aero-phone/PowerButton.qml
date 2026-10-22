@@ -1,4 +1,5 @@
 import QtQuick
+import "Lang.js" as L
 
 Item {
     id: btn
@@ -57,7 +58,7 @@ Item {
         anchors.top: orb.bottom
         anchors.topMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        text: btn.armed ? "¿Seguro?" : btn.label
+        text: btn.armed ? L.t("¿Seguro?") : btn.label
         font.family: "Exo 2"
         font.weight: Font.DemiBold
         font.pixelSize: 10

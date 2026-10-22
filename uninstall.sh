@@ -3,6 +3,12 @@
 A="$HOME/.config/hyper-aero"
 INFO="$A/.install.json"
 
+if [ -f "$A/scripts/i18n.sh" ]; then
+    . "$A/scripts/i18n.sh"
+else
+    t() { printf '%s' "$1"; }
+fi
+
 say()  { printf '\033[38;2;61;155;233m◢\033[0m %s\n' "$*"; }
 warn() { printf '\033[38;2;240;180;76m!\033[0m %s\n' "$*"; }
 
@@ -11,11 +17,11 @@ backup=""
 if [ -z "$backup" ] || [ ! -f "$backup/manifest" ]; then
     backup=$(ls -d "$HOME"/.local/share/hyper-aero/backups/* 2>/dev/null | sort | head -n1)
 fi
-[ -n "$backup" ] && [ -f "$backup/manifest" ] || { echo "No encontré el respaldo de la instalación."; exit 1; }
+[ -n "$backup" ] && [ -f "$backup/manifest" ] || { echo "$(t "No encontré el respaldo de la instalación.")"; exit 1; }
 
-say "Voy a restaurar tu configuración desde $backup"
+say "$(t "Voy a restaurar tu configuración desde") $backup"
 if [ -t 0 ]; then
-    read -r -p "¿Seguimos? (s/n) [s]: " ans
+    read -r -p "$(t "¿Seguimos? (s/n) [s]: ")" ans
     case "${ans:-s}" in s|S|y|Y) ;; *) exit 0 ;; esac
 fi
 
@@ -25,7 +31,7 @@ done
 pkill -f "mpvpaper.*aero-motion.sock" 2>/dev/null
 
 if [ -d "$A/wallpapers" ] && [ -t 0 ]; then
-    read -r -p "¿Conservo tus fondos generados en otra carpeta (~/hyper-aero-fondos)? (s/n) [s]: " keep
+    read -r -p "$(t "¿Conservo tus fondos generados en otra carpeta (~/hyper-aero-fondos)? (s/n) [s]: ")" keep
     case "${keep:-s}" in s|S|y|Y) mkdir -p "$HOME/hyper-aero-fondos" && cp -a "$A/wallpapers/." "$HOME/hyper-aero-fondos/" ;; esac
 fi
 
@@ -44,7 +50,7 @@ while read -r kind rel; do
             sed -i '/hyper-aero\/shell\/hyper-aero/d' "$HOME/$rel"
             ;;
         dm)
-            sudo systemctl enable "$rel" >/dev/null 2>&1 && say "Reactivé $rel"
+            sudo systemctl enable "$rel" >/dev/null 2>&1 && say "$(t "Reactivé") $rel"
             ;;
         login)
             sudo systemctl disable greetd >/dev/null 2>&1
@@ -52,7 +58,7 @@ while read -r kind rel; do
             [ -n "$last" ] && sudo cp -a "$last" /etc/greetd/config.toml
             sudo rm -f /etc/greetd/hyprland.lua /etc/greetd/aero-greet.sh /etc/greetd/aero-sun.py /etc/greetd/regreet*.toml /etc/greetd/regreet*.css
             sudo rm -rf /usr/share/backgrounds/hyper-aero
-            warn "Si no tenías otro gestor de inicio de sesión, activá uno antes de reiniciar (por ejemplo: sudo systemctl enable sddm)."
+            warn "$(t "Si no tenías otro gestor de inicio de sesión, activá uno antes de reiniciar (por ejemplo: sudo systemctl enable sddm).")"
             ;;
         gpu)
             sudo rm -f /etc/udev/rules.d/99-hyper-aero-gpu.rules /usr/local/bin/hyper-aero-session /usr/share/wayland-sessions/hyper-aero.desktop
@@ -67,6 +73,6 @@ done
 rm -rf "$HOME/.local/share/fonts/hyper-aero" "$HOME/.local/share/applications/aero-studio.desktop"
 fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1
 
-say "Listo. Cerrá sesión y volvé a entrar para usar tu configuración de antes."
-say "Los paquetes instalados se quedan; si querés quitarlos, la lista está en docs/es/INSTALL.md (sección Desinstalar)."
+say "$(t "Listo. Cerrá sesión y volvé a entrar para usar tu configuración de antes.")"
+say "$(t "Los paquetes instalados se quedan; si querés quitarlos, la lista está en docs/es/INSTALL.md (sección Desinstalar).")"
 rmdir "$HOME/.config/quickshell" 2>/dev/null

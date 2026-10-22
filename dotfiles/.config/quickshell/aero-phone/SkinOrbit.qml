@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import "Tint.js" as Tint
+import "Lang.js" as L
 
 Item {
     id: root
@@ -208,7 +209,7 @@ Item {
             }
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: Qt.locale("es_ES").toString(root.host.now, "dddd d MMMM").toUpperCase()
+                text: Qt.locale(L.LOCALE).toString(root.host.now, L.t("dddd d MMMM")).toUpperCase()
                 font.family: "JetBrainsMono Nerd Font"
                 font.weight: Font.Bold
                 font.pixelSize: 11 * root.fit
@@ -292,7 +293,7 @@ Item {
         Repeater {
             model: [
                 { p: 1, g: "\u{F0493}", t: "CONTROL", a: -2.35 },
-                { p: 2, g: "\u{F00F6}", t: "HOY", a: -0.79 }
+                { p: 2, g: "\u{F00F6}", t: L.t("HOY"), a: -0.79 }
             ]
             delegate: Item {
                 id: sat
@@ -387,7 +388,7 @@ Item {
                 anchors.left: lens.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.searching ? pagesItem.apps.query + "▏" : "Escribí para buscar en la órbita…"
+                text: root.searching ? pagesItem.apps.query + "▏" : L.t("Escribí para buscar en la órbita…")
                 font.family: "Exo 2"
                 font.pixelSize: 14 * root.fit
                 color: root.searching ? root.hp.text : root.hp.muted

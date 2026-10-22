@@ -1,5 +1,6 @@
 import QtQuick
 import "Registry.js" as Reg
+import "Lang.js" as L
 
 Item {
     id: tray
@@ -46,7 +47,7 @@ Item {
         }
         Text {
             anchors.centerIn: parent
-            text: tray.ed.trayOpen ? "\u{F0140}  OCULTAR" : "\u{F0143}  BANDEJA"
+            text: tray.ed.trayOpen ? "\u{F0140}  " + L.t("OCULTAR") : "\u{F0143}  " + L.t("BANDEJA")
             font.family: "JetBrainsMono Nerd Font"
             font.weight: Font.Bold
             font.pixelSize: 9
@@ -67,14 +68,14 @@ Item {
         spacing: 5
 
         Text {
-            text: "◢ EDITAR ESCRITORIO"
+            text: L.t("◢ EDITAR ESCRITORIO")
             font.family: "Michroma"
             font.pixelSize: 10
             font.letterSpacing: 1
             color: tray.pal.ink
         }
         Text {
-            text: tray.ed.cols + " × " + tray.ed.rows + " CELDAS  ·  " + tray.ed.cell + " PX"
+            text: tray.ed.cols + " × " + tray.ed.rows + L.t(" CELDAS  ·  ") + tray.ed.cell + " PX"
             font.family: "JetBrainsMono Nerd Font"
             font.weight: Font.Bold
             font.pixelSize: 8
@@ -82,10 +83,10 @@ Item {
         }
         Repeater {
             model: [
-                ["ARRASTRAR", "mover o agregar"],
-                ["ESQUINA \u{F045D}", "cambiar tamaño"],
-                ["CLIC DER.", "quitar widget"],
-                ["ESC", "cancelar"]
+                [L.t("ARRASTRAR"), L.t("mover o agregar")],
+                [L.t("ESQUINA") + " \u{F045D}", L.t("cambiar tamaño")],
+                [L.t("CLIC DER."), L.t("quitar widget")],
+                ["ESC", L.t("cancelar")]
             ]
             delegate: Row {
                 required property var modelData
@@ -381,7 +382,7 @@ Item {
         TrayButton {
             pal: tray.pal
             glyph: "\u{F012C}"
-            text: "LISTO"
+            text: L.t("LISTO")
             primary: true
             onClicked: tray.ed.done()
         }
@@ -394,7 +395,7 @@ Item {
         TrayButton {
             pal: tray.pal
             glyph: "\u{F0156}"
-            text: "CANCELAR"
+            text: L.t("CANCELAR")
             onClicked: tray.ed.cancel()
         }
     }

@@ -44,12 +44,24 @@ The installer detects them. To change them later, run `./install.sh` again (it k
 ## Themes and colors
 
 - `SUPER + G` — theme carousel.
-- **Theme Studio** — open *Estudio de temas* from the launcher (`SUPER + R`). From there you can:
+- **Theme Studio** — open *Theme Studio* from the launcher (`SUPER + R`). From there you can:
   - choose any accent color;
   - pick one of your images and turn it into an animated wallpaper, adding layers (bubbles, waves, sparkles, bokeh, rays, caustics, petals, stars, flare, grid) with their amount and speed;
   - save the result as your own theme, which then shows up in the carousel.
 
 Your themes live in `~/.config/hyper-aero/studio/themes.json`; your wallpapers in `~/.config/hyper-aero/wallpapers/`.
+
+## Language
+
+The interface is available in English and Spanish:
+
+```bash
+aero-lang en      # English
+aero-lang es      # Español
+aero-lang         # show the current one
+```
+
+Everything switches right away; the phone, desk and panels restart for a second.
 
 ## Location (day / night and weather)
 
@@ -69,13 +81,13 @@ echo "Madrid" > ~/.config/hyper-aero/weather-location
 
 ## Performance profile
 
-`SUPER + F2` or `aero-profile ligero|equilibrado|completo`. See [Performance](PERFORMANCE.md).
+`SUPER + F2` or `aero-profile lite|balanced|full`. See [Performance](PERFORMANCE.md).
 
 The profile writes `~/.config/hypr/aero-profile.lua` (blur, shadows, animations). Settings in `user.lua` still win over it.
 
 ## Phone skin
 
-`SUPER + X` → **PIEL**. Eight skins; the choice is saved in `~/.config/hyper-aero/phone-skin`.
+`SUPER + X` → **SKIN**. Eight skins; the choice is saved in `~/.config/hyper-aero/phone-skin`.
 
 ## Desk
 

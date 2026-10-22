@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
 D="$HOME/.config/hyper-aero/desk"
 G="$D/gifs"
 STATE="$D/gif.json"
@@ -15,12 +17,12 @@ set_file() {
     src="$1"
     case "$src" in file://*) src="$(python3 -c 'import sys,urllib.parse;print(urllib.parse.unquote(sys.argv[1][7:]))' "$src")" ;; esac
     if [ ! -f "$src" ]; then
-        notify-send -a "DESK" "GIF" "No encontré ese archivo." 2>/dev/null
+        notify-send -a "DESK" "GIF" "$(t "No encontré ese archivo.")" 2>/dev/null
         exit 1
     fi
     case "${src,,}" in
         *.gif|*.webp|*.png|*.jpg|*.jpeg|*.apng) ;;
-        *) notify-send -a "DESK" "GIF" "Ese archivo no es una imagen o GIF." 2>/dev/null; exit 1 ;;
+        *) notify-send -a "DESK" "GIF" "$(t "Ese archivo no es una imagen o GIF.")" 2>/dev/null; exit 1 ;;
     esac
     base="$(basename "$src")"
     name="$(date +%s)-${base//[^A-Za-z0-9._-]/_}"
@@ -40,14 +42,14 @@ pick() {
     [ -d "$start" ] || start="$HOME/Pictures"
     [ -d "$start" ] || start="$HOME"
     if command -v zenity >/dev/null; then
-        f="$(zenity --file-selection --title="Elegí un GIF" --filename="$start/" --file-filter="Imágenes | *.gif *.GIF *.webp *.png *.jpg *.jpeg" 2>/dev/null)"
+        f="$(zenity --file-selection --title="$(t "Elegí un GIF")" --filename="$start/" --file-filter="$(t "Imágenes") | *.gif *.GIF *.webp *.png *.jpg *.jpeg" 2>/dev/null)"
     elif command -v kdialog >/dev/null; then
         f="$(kdialog --getopenfilename "$start" "*.gif *.webp *.png *.jpg *.jpeg" 2>/dev/null)"
     elif command -v yad >/dev/null; then
-        f="$(yad --file --title="Elegí un GIF" --filename="$start/" 2>/dev/null)"
+        f="$(yad --file --title="$(t "Elegí un GIF")" --filename="$start/" 2>/dev/null)"
     else
         xdg-open "$G" >/dev/null 2>&1 &
-        notify-send -a "DESK" "GIF" "Arrastrá un GIF al widget, o instalá un selector: sudo pacman -S zenity" 2>/dev/null
+        notify-send -a "DESK" "GIF" "$(t "Arrastrá un GIF al widget, o instalá un selector: sudo pacman -S zenity")" 2>/dev/null
         exit 0
     fi
     [ -n "$f" ] && set_file "$f"

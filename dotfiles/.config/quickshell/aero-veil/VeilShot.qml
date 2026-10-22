@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
+import "Lang.js" as L
 
 Item {
     id: shot
@@ -587,7 +588,7 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: shot.theme ? "Pintando la estación…" : shot.night ? "Bajando las luces…" : "Encendiendo la estación…"
+            text: shot.theme ? L.t("Pintando la estación…") : shot.night ? L.t("Bajando las luces…") : L.t("Encendiendo la estación…")
             font.family: "Exo 2"
             font.weight: Font.Bold
             font.pixelSize: 15
