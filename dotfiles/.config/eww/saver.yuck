@@ -1,0 +1,17 @@
+(defpoll saver_hm :interval "2s" "date +%H:%M")
+(defpoll saver_date :interval "60s" "LC_TIME=es_ES.UTF-8 date '+%A  ·  %d de %B' | tr '[:lower:]' '[:upper:]'")
+
+(defwidget saver-clock []
+  (box :class "saver-wrap" :orientation "v" :space-evenly false
+    (label :class "saver-time" :halign "start" :text saver_hm)
+    (label :class "saver-date" :halign "start" :text saver_date)
+    (label :class "saver-brand" :halign "start" :text "◢  HYPER·AERO  ·  STATION IDLE  ·  MOVÉ EL MOUSE PARA VOLVER")))
+
+(defwindow saver-clock
+  :monitor 0
+  :geometry (geometry :x "64px" :y "56px" :anchor "bottom left")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "aerosaver-clock"
+  (saver-clock))

@@ -1,0 +1,28 @@
+(defvar osd_icon "")
+(defvar osd_label "VOLUMEN")
+(defvar osd_device "")
+(defvar osd_value 0)
+(defvar osd_muted false)
+(defvar osd_segs "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]")
+
+(defwidget osd []
+  (box :class "osd-wrap"
+    (box :class {osd_muted ? "osd-pill muted" : "osd-pill"} :space-evenly false :spacing 16
+      (label :class "osd-icon" :text osd_icon)
+      (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 7
+        (box :space-evenly false
+          (label :class "osd-label" :halign "start" :hexpand true :text osd_label)
+          (label :class "osd-device" :halign "end" :limit-width 24 :text osd_device))
+        (box :class "osd-segs" :space-evenly true :spacing 3
+          (for s in {osd_segs}
+            (box :class {s == 1 ? "seg on" : "seg"}))))
+      (label :class "osd-value" :text {osd_muted ? "MUTE" : osd_value}))))
+
+(defwindow osd
+  :monitor 0
+  :geometry (geometry :x "0px" :y "46px" :width "428px" :anchor "bottom center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "aero-osd"
+  (osd))

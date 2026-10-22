@@ -1,0 +1,89 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 800
+
+format = """
+[╭─](#4a5a78)\
+[](#1e6fd9)[ ◢ DECK ](bold fg:#ffffff bg:#1e6fd9)[](#1e6fd9) \
+$username[@](#8b97ab)$hostname\
+[ ▸ ](#4a5a78)$directory\
+$git_branch$git_status\
+$python$nodejs$rust$c$java\
+$fill\
+$cmd_duration$status\
+[ · ](#4a5a78)$time
+$character"""
+
+[username]
+show_always = true
+format = '[$user]($style)'
+style_user = 'bold #e6eefb'
+style_root = 'bold #ff5d6c'
+
+[hostname]
+ssh_only = false
+format = '[$hostname]($style)'
+style = 'bold #e6eefb'
+
+[directory]
+format = '[$path]($style)[$read_only]($read_only_style)'
+style = 'bold #6fd3ff'
+truncation_length = 4
+truncation_symbol = '…/'
+home_symbol = '~'
+read_only = ' RO'
+read_only_style = 'bold #ff5d6c'
+
+[git_branch]
+format = '[   $branch]($style)'
+style = '#3d9be9'
+
+[git_status]
+format = '([ \[$all_status$ahead_behind\]]($style))'
+style = 'bold #f0b44c'
+
+[python]
+format = '[  py $version( $virtualenv)]($style)'
+style = '#3ddc97'
+
+[nodejs]
+format = '[  node $version]($style)'
+style = '#3ddc97'
+
+[rust]
+format = '[  rs $version]($style)'
+style = '#3ddc97'
+
+[c]
+format = '[  c $version]($style)'
+style = '#3ddc97'
+
+[java]
+format = '[  java $version]($style)'
+style = '#3ddc97'
+
+[fill]
+symbol = '─'
+style = '#1e2a44'
+
+[cmd_duration]
+min_time = 2000
+format = '[ T+$duration ]($style)'
+style = '#8b97ab'
+
+[status]
+disabled = false
+format = '[ ERR $status ]($style)'
+style = 'bold #ff5d6c'
+
+[time]
+disabled = false
+time_format = '%H:%M:%S'
+format = '[$time]($style)'
+style = '#8b97ab'
+
+[character]
+success_symbol = '[╰─▸](bold #6fd3ff)'
+error_symbol = '[╰─▸](bold #ff5d6c)'
+vimcmd_symbol = '[╰─◂](bold #3ddc97)'

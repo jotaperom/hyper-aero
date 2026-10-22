@@ -1,0 +1,2 @@
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ATTRS{boot_vga}=="1", SYMLINK+="dri/aero-gpu-main"
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ATTRS{boot_vga}=="0", SYMLINK+="dri/aero-gpu-alt"

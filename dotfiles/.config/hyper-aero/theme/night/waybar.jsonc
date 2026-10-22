@@ -1,0 +1,205 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "margin-top": 8,
+    "margin-left": 14,
+    "margin-right": 14,
+    "spacing": 0,
+    "exclusive": true,
+    "reload_style_on_change": true,
+    "modules-left": [
+        "custom/aero",
+        "custom/ws1",
+        "custom/ws2",
+        "custom/ws3",
+        "custom/ws4",
+        "custom/ws5",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "clock",
+        "custom/rec"
+    ],
+    "modules-right": [
+        "tray",
+        "network",
+        "bluetooth",
+        "wireplumber",
+        "backlight",
+        "battery",
+        "custom/nightdeck",
+        "custom/notification",
+        "custom/power"
+    ],
+    "custom/rec": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/screenrec.sh bar",
+        "return-type": "json",
+        "escape": false,
+        "on-click": "__HOME__/.config/hyper-aero/scripts/screenrec.sh stop",
+        "tooltip": true
+    },
+    "custom/aero": {
+        "format": "◢ HYPER·AERO",
+        "tooltip-format": "Open launcher",
+        "on-click": "__HOME__/.config/hyper-aero/scripts/phone.sh toggle"
+    },
+    "custom/ws1": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/ws-pill.sh 1",
+        "return-type": "json",
+        "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 1 })'",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'"
+    },
+    "custom/ws2": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/ws-pill.sh 2",
+        "return-type": "json",
+        "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 2 })'",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'"
+    },
+    "custom/ws3": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/ws-pill.sh 3",
+        "return-type": "json",
+        "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })'",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'"
+    },
+    "custom/ws4": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/ws-pill.sh 4",
+        "return-type": "json",
+        "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 4 })'",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'"
+    },
+    "custom/ws5": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/ws-pill.sh 5",
+        "return-type": "json",
+        "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 5 })'",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'"
+    },
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 22,
+        "separate-outputs": true,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "$1",
+            "(.*) - Mozilla Firefox": "$1",
+            "(.*) - Brave": "$1",
+            "(.*) - Visual Studio Code": "$1",
+            "(.*) - Discord": "$1",
+            "(.*) — GitHub Desktop": "$1"
+        }
+    },
+    "clock": {
+        "interval": 1,
+        "format": "<span font_family='Michroma' size='12288'>{0:%H:%M}</span>  <span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>{0:%a %d %b}</span>",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "format": {
+                "months": "<span color='#6fd3ff'><b>{}</b></span>",
+                "days": "<span color='#e6eefb'>{}</span>",
+                "weekdays": "<span color='#8b97ab'><b>{}</b></span>",
+                "today": "<span color='#ffffff' background='#6fd3ff'><b>{}</b></span>"
+            }
+        }
+    },
+    "tray": {
+        "icon-size": 14,
+        "spacing": 8
+    },
+    "network": {
+        "interval": 3,
+        "format-wifi": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>NET</span> {signalStrength}%",
+        "format-ethernet": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>NET</span> LAN",
+        "format-disconnected": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>NET</span> OFF",
+        "tooltip-format-wifi": "{essid}  {ipaddr}\n▼ {bandwidthDownBytes}   ▲ {bandwidthUpBytes}",
+        "tooltip-format-ethernet": "{ifname}  {ipaddr}\n▼ {bandwidthDownBytes}   ▲ {bandwidthUpBytes}",
+        "tooltip-format-disconnected": "No connection",
+        "on-click": "__HOME__/.config/hyper-aero/scripts/wifi-menu.sh",
+        "on-click-right": "__HOME__/.config/hyper-aero/scripts/wifi-menu.sh advanced"
+    },
+    "wireplumber": {
+        "format": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>VOL</span> {volume}",
+        "format-muted": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>VOL</span> MUTE",
+        "on-click": "__HOME__/.config/hyper-aero/scripts/osd.sh mute",
+        "max-volume": 100,
+        "tooltip-format": "{node_name}",
+        "on-scroll-up": "__HOME__/.config/hyper-aero/scripts/osd.sh vol-up",
+        "on-scroll-down": "__HOME__/.config/hyper-aero/scripts/osd.sh vol-down"
+    },
+    "backlight": {
+        "format": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>LUM</span> {percent}",
+        "on-scroll-up": "__HOME__/.config/hyper-aero/scripts/osd.sh bri-up",
+        "on-scroll-down": "__HOME__/.config/hyper-aero/scripts/osd.sh bri-down",
+        "tooltip": false
+    },
+    "battery": {
+        "interval": 10,
+        "states": {
+            "warning": 25,
+            "critical": 12
+        },
+        "format": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BAT</span> {icon} {capacity}",
+        "format-charging": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>CHG</span> {icon} {capacity}",
+        "format-plugged": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>AC</span> {icon} {capacity}",
+        "format-icons": [
+            "▱▱▱▱▱",
+            "▰▱▱▱▱",
+            "▰▰▱▱▱",
+            "▰▰▰▱▱",
+            "▰▰▰▰▱",
+            "▰▰▰▰▰"
+        ],
+        "tooltip-format": "{timeTo}"
+    },
+    "custom/nightdeck": {
+        "exec": "__HOME__/.config/hyper-aero/scripts/night-deck.py status --waybar",
+        "return-type": "json",
+        "interval": 60,
+        "signal": 9,
+        "escape": false,
+        "on-click": "setsid -f __HOME__/.config/hyper-aero/scripts/night-deck.py toggle",
+        "on-click-right": "__HOME__/.config/hyper-aero/scripts/night-deck.py warm toggle",
+        "on-click-middle": "setsid -f __HOME__/.config/hyper-aero/scripts/night-deck.py auto"
+    },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip-format": "Power menu",
+        "on-click": "__HOME__/.config/hyper-aero/scripts/power-menu.sh"
+    },
+    "custom/notification": {
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>SIG</span> <span foreground='#6fd3ff'>●</span>",
+            "none": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>SIG</span> <span foreground='#4a5a78'>○</span>",
+            "dnd-notification": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>DND</span> <span foreground='#f0b44c'>◐</span>",
+            "dnd-none": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>DND</span> <span foreground='#f0b44c'>◐</span>",
+            "inhibited-notification": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>SIG</span> <span foreground='#6fd3ff'>●</span>",
+            "inhibited-none": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>SIG</span> <span foreground='#4a5a78'>○</span>",
+            "dnd-inhibited-notification": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>DND</span> <span foreground='#f0b44c'>◐</span>",
+            "dnd-inhibited-none": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>DND</span> <span foreground='#f0b44c'>◐</span>"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "tooltip": false
+    },
+    "bluetooth": {
+        "format": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BT</span> ON",
+        "format-off": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BT</span> OFF",
+        "format-disabled": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BT</span> OFF",
+        "format-connected": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BT</span> <span foreground='#6fd3ff'>●</span>",
+        "format-connected-battery": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#8b97ab' letter_spacing='1400'>BT</span> <span foreground='#6fd3ff'>●</span> {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias} · {status}",
+        "tooltip-format-connected": "{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias} · {device_battery_percentage}%",
+        "on-click": "__HOME__/.config/hyper-aero/scripts/phone.sh bluetooth",
+        "on-click-right": "pavucontrol"
+    }
+}

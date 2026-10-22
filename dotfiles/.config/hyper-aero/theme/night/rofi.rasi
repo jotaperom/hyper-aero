@@ -1,0 +1,79 @@
+* {
+    ink:       #e6eefb;
+    graphite:  #8b97ab;
+    chrome:    #2a3a5c;
+    cobalt:    #3d9be9;
+    blue:      #1e6fd9;
+    sky:       #6fd3ff;
+    cloud:     #13213d;
+    text-color: @ink;
+}
+
+configuration {
+    icon-theme: "Papirus-Dark";
+}
+
+window {
+    border-color:     #6fd3ff59;
+    background-color: #0a1224d9;
+    background-image: linear-gradient(to bottom, #1c2e52f0, #0e1830e0, #0a1224d8);
+}
+
+box-header {
+    border-color: #8b97ab40;
+}
+
+textbox-brand {
+    text-color: #6fd3ff;
+}
+
+inputbar {
+    border-color:     #6fd3ff73;
+    background-color: #070c18e6;
+}
+
+textbox-orb {
+    border-color:     #6fd3ffb3;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+}
+
+entry {
+    placeholder-color: #8b97ab99;
+}
+
+listview {
+    border-color: #8b97ab55;
+}
+
+element selected.normal {
+    border-color:     #6fd3ffcc;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+    text-color:       #ffffff;
+}
+
+element normal.active,
+element alternate.active {
+    text-color: #6fd3ff;
+}
+
+element normal.urgent,
+element alternate.urgent,
+element selected.urgent {
+    text-color: #ff5d6c;
+}
+
+button {
+    border-color:     #8b97ab40;
+    background-color: #e6eefb12;
+}
+
+button selected {
+    border-color:     #6fd3ffcc;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+    text-color:       #ffffff;
+}
+
+message {
+    border-color:     #8b97ab40;
+    background-color: #070c18b3;
+}

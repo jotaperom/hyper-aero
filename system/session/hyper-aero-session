@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/hyper-aero"
+LOG="$CACHE/session.log"
+FAILED="$CACHE/gpu-alt-failed"
+mkdir -p "$CACHE"
+
+launch() {
+    if command -v start-hyprland >/dev/null; then
+        start-hyprland
+    else
+        Hyprland
+    fi
+}
+
+alt_connected() {
+    [ -e /dev/dri/aero-gpu-alt ] && [ -e /dev/dri/aero-gpu-main ] || return 1
+    local card
+    card="$(basename "$(readlink -f /dev/dri/aero-gpu-alt)")"
+    for st in /sys/class/drm/"$card"-*/status; do
+        [ "$(cat "$st" 2>/dev/null)" = "connected" ] && return 0
+    done
+    return 1
+}
+
+if [ ! -f "$FAILED" ] && alt_connected; then
+    echo "$(date '+%F %T') monitor en la tarjeta dedicada: la uso para dibujar" >> "$LOG"
+    export AQ_DRM_DEVICES="/dev/dri/aero-gpu-alt:/dev/dri/aero-gpu-main"
+    export AERO_GPU_MODE="alt"
+    if [ -d /proc/driver/nvidia ]; then
+        export LIBVA_DRIVER_NAME="nvidia"
+        export __GLX_VENDOR_LIBRARY_NAME="nvidia"
+    fi
+    start=$(date +%s)
+    launch
+    code=$?
+    if [ $code -ne 0 ] && [ $(( $(date +%s) - start )) -lt 20 ]; then
+        echo "$(date '+%F %T') falló con la tarjeta dedicada (código $code); vuelvo al modo normal" >> "$LOG"
+        touch "$FAILED"
+        unset AQ_DRM_DEVICES AERO_GPU_MODE LIBVA_DRIVER_NAME __GLX_VENDOR_LIBRARY_NAME
+        launch
+    fi
+    exit $?
+fi
+
+echo "$(date '+%F %T') modo normal" >> "$LOG"
+launch

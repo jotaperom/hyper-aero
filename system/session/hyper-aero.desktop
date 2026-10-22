@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=HYPER·AERO
+Comment=Hyprland con HYPER·AERO (elige la tarjeta gráfica según el monitor conectado)
+Exec=/usr/local/bin/hyper-aero-session
+Type=Application
+DesktopNames=Hyprland

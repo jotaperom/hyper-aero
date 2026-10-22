@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+RUN="${XDG_RUNTIME_DIR:-/tmp}"
+exec 9>"$RUN/aero-eww.lock"
+flock -w 30 9 || exit 1
+
+for _ in $(seq 1 150); do
+    eww ping >/dev/null 2>&1 9>&- && break
+    sleep 0.1
+done
+eww ping >/dev/null 2>&1 9>&- || exit 1
+
+case "$1" in
+    open|open-many|reload|close|close-all)
+        for _ in $(seq 1 20); do
+            timeout 2 eww active-windows >/dev/null 2>&1 9>&- && break
+            sleep 0.25
+        done
+        eww "$@" </dev/null >>"$RUN/aero-eww.out" 2>&1 9>&-
+        ;;
+    *)
+        eww "$@" 9>&-
+        ;;
+esac

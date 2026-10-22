@@ -1,0 +1,8 @@
+{
+  "lat": __LAT__,
+  "lon": __LON__,
+  "warm_kelvin": 4200,
+  "warm_enabled": true,
+  "night_offset_min": 0,
+  "day_offset_min": 0
+}

@@ -1,0 +1,26 @@
+skip_selection = false
+
+[background]
+path = "/usr/share/backgrounds/hyper-aero/aero-login.jpg"
+fit = "Cover"
+
+[GTK]
+application_prefer_dark_theme = false
+cursor_theme_name = "Bibata-Modern-Ice"
+cursor_blink = true
+font_name = "Exo 2 12"
+icon_theme_name = "Papirus-Light"
+theme_name = "adw-gtk3"
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "◢  STATION ACCESS"
+
+[widget.clock]
+format = "%H:%M  ·  %A %d %B"
+resolution = "1s"
+label_width = 420
+locale = "__LOCALE__"

@@ -1,0 +1,48 @@
+.Root__nav-bar,
+.Root__main-view,
+.Root__right-sidebar,
+.Root__now-playing-bar {
+    border: 1px solid rgba(111, 211, 255, 0.22) !important;
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.14) !important;
+}
+
+.Root__now-playing-bar {
+    background-image: linear-gradient(to bottom,
+        rgba(36, 56, 98, 0.98) 0%,
+        rgba(20, 33, 62, 0.97) 47%,
+        rgba(11, 19, 38, 0.97) 53%,
+        rgba(14, 24, 46, 0.98) 100%) !important;
+}
+
+.Root__now-playing-bar button[data-testid="control-button-playpause"] {
+    border: 1px solid rgba(111, 211, 255, 0.75) !important;
+    box-shadow: 0 0 10px rgba(61, 155, 233, 0.55) !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(139, 151, 171, 0.30) !important;
+}
+
+main > div > div[style*="background-color"] {
+    background-image: linear-gradient(to bottom,
+        #16284a 0%,
+        #0b1426 55%,
+        rgba(7, 12, 24, 0) 100%) !important;
+}
+
+main [style*="--background-base"] {
+    --background-base: #0b1426 !important;
+}
+
+main button[role="checkbox"] [data-encore-id="chip"],
+main button[role="checkbox"] > span {
+    background-color: rgba(19, 33, 61, 0.92) !important;
+    color: #e6eefb !important;
+    border: 1px solid rgba(111, 211, 255, 0.25) !important;
+}
+
+main button[role="checkbox"][aria-checked="true"] [data-encore-id="chip"],
+main button[role="checkbox"][aria-checked="true"] > span {
+    color: #ffffff !important;
+    border-color: rgba(111, 211, 255, 0.75) !important;
+}

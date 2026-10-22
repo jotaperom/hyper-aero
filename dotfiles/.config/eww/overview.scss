@@ -1,0 +1,120 @@
+.ov-scrim {
+    background-image: linear-gradient(to bottom,
+        rgba(245, 248, 251, 0.52) 0%,
+        rgba(227, 238, 249, 0.46) 60%,
+        rgba(198, 214, 232, 0.50) 100%);
+}
+
+.ov-header {
+    padding: 0 6px 10px 6px;
+    border-bottom: 1px dashed rgba(90, 98, 112, 0.45);
+}
+
+.ov-heading {
+    font-family: "Michroma";
+    font-size: 15px;
+    color: $ink;
+}
+
+.ov-meta {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 10px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-hint {
+    padding-top: 4px;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-card {
+    padding: 10px 10px 11px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(11, 13, 18, 0.72);
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.94) 0%,
+        rgba(245, 248, 251, 0.82) 46%,
+        rgba(227, 238, 249, 0.74) 54%,
+        rgba(238, 244, 250, 0.84) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 6px 18px rgba(11, 13, 18, 0.10);
+    transition: all 160ms ease-out;
+}
+
+.ov-hit:hover > .ov-card {
+    border-color: $blue;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 0 0 3px rgba(61, 155, 233, 0.30), 0 10px 24px rgba(20, 70, 194, 0.18);
+}
+
+.ov-card.current {
+    border-color: $cobalt;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 0 0 3px rgba(30, 111, 217, 0.45), 0 10px 24px rgba(20, 70, 194, 0.20);
+}
+
+.ov-head {
+    padding: 0 2px;
+}
+
+.ov-num {
+    padding: 2px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(11, 13, 18, 0.62);
+    background-image: linear-gradient(to bottom, #ffffff 0%, #f5f8fb 48%, #e3eef9 52%, #f0f5fa 100%);
+    font-family: "Michroma";
+    font-size: 11px;
+    color: $ink;
+}
+
+.ov-card.current .ov-num {
+    border-color: $cobalt;
+    background-image: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+    color: #ffffff;
+}
+
+.ov-state {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-card.current .ov-state {
+    color: $cobalt;
+}
+
+.ov-bezel {
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(11, 13, 18, 0.80);
+    background-color: $ink;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.ov-card.vacant .ov-shot {
+    opacity: 0.55;
+}
+
+.ov-vacant-tag {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    background-color: rgba(11, 13, 18, 0.45);
+    font-family: "Michroma";
+    font-size: 9px;
+    color: #ffffff;
+}
+
+.ov-foot {
+    padding: 0 2px;
+    min-height: 24px;
+}
+
+.ov-title {
+    margin-left: 4px;
+    font-family: "Exo 2";
+    font-size: 11px;
+    color: $ink;
+}

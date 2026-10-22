@@ -1,0 +1,162 @@
+window,
+window.background {
+    background-color: #f5f8fb;
+}
+
+frame.background {
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.94) 0%,
+        rgba(255, 255, 255, 0.84) 46%,
+        rgba(227, 238, 249, 0.80) 54%,
+        rgba(245, 248, 251, 0.90) 100%);
+    background-color: transparent;
+    border: 1px solid rgba(11, 13, 18, 0.78);
+    border-radius: 26px;
+    box-shadow: inset 0 1px 0 #ffffff, 0 10px 28px rgba(11, 13, 18, 0.16);
+    color: #0b0d12;
+}
+
+frame.background > grid {
+    padding: 14px 18px 10px 18px;
+}
+
+frame.background > label {
+    font-family: "Michroma";
+    font-size: 26px;
+    color: #0b0d12;
+    padding: 14px 34px 16px 34px;
+}
+
+grid > label {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    font-weight: bold;
+    color: #5a6270;
+}
+
+grid > label:first-child {
+    font-family: "Michroma";
+    font-size: 14px;
+    font-weight: normal;
+    color: #0b0d12;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed rgba(90, 98, 112, 0.45);
+}
+
+entry,
+combobox button.combo,
+dropdown button {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(11, 13, 18, 0.55);
+    background-image: none;
+    background-color: rgba(255, 255, 255, 0.96);
+    color: #0b0d12;
+    box-shadow: inset 0 1px 2px rgba(11, 13, 18, 0.08);
+    font-family: "Exo 2";
+    font-size: 14px;
+}
+
+entry:focus-within,
+entry:focus {
+    border: 2px solid #1446c2;
+    box-shadow: 0 0 0 3px rgba(61, 155, 233, 0.25);
+    outline: none;
+}
+
+entry text selection {
+    background-color: #1e6fd9;
+    color: #ffffff;
+}
+
+button {
+    min-height: 36px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(11, 13, 18, 0.45);
+    background-image: linear-gradient(to bottom, #ffffff 0%, #f2f7fc 46%, #dfeaf6 54%, #f5f9fd 100%);
+    color: #0b0d12;
+    box-shadow: inset 0 1px 0 #ffffff;
+    font-family: "Exo 2";
+    font-weight: bold;
+}
+
+button:hover {
+    border-color: rgba(20, 70, 194, 0.6);
+    color: #1446c2;
+}
+
+button.toggle {
+    min-width: 36px;
+    padding: 0;
+    color: #5a6270;
+}
+
+button.toggle:checked {
+    background-image: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+    color: #ffffff;
+    border-color: #0b0d12;
+}
+
+button.suggested-action {
+    background-image: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+    border: 1px solid #0b0d12;
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 2px 6px rgba(20, 70, 194, 0.35);
+    min-width: 120px;
+}
+
+button.suggested-action:hover {
+    background-image: linear-gradient(to bottom, #a8d4f8 0%, #5aaced 45%, #1e55d4 55%, #2f7fe6 100%);
+    color: #ffffff;
+}
+
+button.destructive-action {
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(255, 255, 255, 0.80) 46%,
+        rgba(227, 238, 249, 0.76) 54%,
+        rgba(245, 248, 251, 0.88) 100%);
+    border: 1px solid rgba(11, 13, 18, 0.55);
+    color: #0b0d12;
+    min-width: 130px;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+}
+
+button.destructive-action:hover {
+    background-image: linear-gradient(to bottom, #ff9aa6 0%, #e5484d 45%, #a8182b 55%, #c4283b 100%);
+    border-color: #0b0d12;
+    color: #ffffff;
+}
+
+infobar,
+infobar > revealer > box {
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #c4283b;
+    color: #0b0d12;
+}
+
+infobar label {
+    font-family: "Exo 2";
+    font-weight: bold;
+    color: #c4283b;
+}
+
+popover contents,
+popover.menu contents {
+    border-radius: 14px;
+    border: 1px solid rgba(11, 13, 18, 0.45);
+    background-color: #ffffff;
+    color: #0b0d12;
+}
+
+popover modelbutton:hover,
+popover row:hover {
+    background-color: #1446c2;
+    color: #ffffff;
+    border-radius: 10px;
+}

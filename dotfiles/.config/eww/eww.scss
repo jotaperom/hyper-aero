@@ -1,0 +1,311 @@
+$ink: #0b0d12;
+$graphite: #5a6270;
+$chrome: #c6d0db;
+$cobalt: #1446c2;
+$blue: #1e6fd9;
+$sky: #3d9be9;
+$cloud: #e3eef9;
+$ok: #0f7b5a;
+$warn: #a8650a;
+$critical: #c4283b;
+
+* {
+    all: unset;
+}
+
+.hud {
+    margin-right: 14px;
+    padding: 12px 12px 12px 12px;
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(245, 248, 251, 0.78) 14%,
+        rgba(227, 238, 249, 0.70) 100%);
+    border: 1px solid rgba(11, 13, 18, 0.8);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: $ink;
+}
+
+.hud-head {
+    padding: 0 4px 6px 4px;
+}
+
+.hud-brand {
+    font-family: "Michroma";
+    font-size: 12px;
+    color: $ink;
+}
+
+.hud-collapse {
+    font-size: 11px;
+    color: $graphite;
+    padding: 2px 8px;
+    border: 1px solid rgba(11, 13, 18, 0.3);
+    border-radius: 10px;
+}
+
+.hud-collapse:hover {
+    color: #ffffff;
+    background-color: $cobalt;
+    border-color: $ink;
+}
+
+.hud-sub {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.card {
+    padding: 8px 11px 9px 11px;
+    background-color: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(11, 13, 18, 0.28);
+    border-radius: 16px;
+}
+
+.card-head {
+    padding-bottom: 5px;
+    border-bottom: 1px dashed rgba(90, 98, 112, 0.45);
+}
+
+.card-title {
+    font-family: "Michroma";
+    font-size: 8px;
+    color: $ink;
+}
+
+.card-code {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.ring {
+    color: $cobalt;
+    background-color: rgba(198, 208, 219, 0.7);
+}
+
+.ring-num {
+    font-family: "Michroma";
+    font-size: 14px;
+    color: $ink;
+}
+
+.ring-unit {
+    font-size: 10px;
+    font-weight: bold;
+    color: $graphite;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.stat-key {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.stat-val {
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.stat.alert .stat-val,
+.meter.alert .meter-pct {
+    color: $critical;
+}
+
+.spark {
+    color: $cobalt;
+    background-color: rgba(61, 155, 233, 0.10);
+    border-radius: 8px;
+    margin-top: 2px;
+}
+
+.spark.net {
+    color: $sky;
+}
+
+.meter-pct {
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.meter-detail {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.bar trough {
+    min-height: 6px;
+    min-width: 20px;
+    background-color: rgba(198, 208, 219, 0.75);
+    border-radius: 999px;
+}
+
+.bar progress {
+    min-height: 6px;
+    background-image: linear-gradient(to right, $cobalt, $sky);
+    border-radius: 999px;
+}
+
+.meter.alert .bar progress {
+    background-image: linear-gradient(to right, $critical, #e5484d);
+}
+
+.dgpu {
+    margin-top: 2px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.dgpu.sleep {
+    color: $ok;
+    background-color: rgba(15, 123, 90, 0.08);
+    border-color: rgba(15, 123, 90, 0.45);
+}
+
+.dgpu.awake {
+    color: $warn;
+    background-color: rgba(168, 101, 10, 0.10);
+    border-color: rgba(168, 101, 10, 0.5);
+}
+
+.dgpu:hover {
+    background-color: rgba(61, 155, 233, 0.15);
+}
+
+.dgpu-name {
+    font-family: "Exo 2";
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.dgpu-state {
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.art {
+    min-width: 46px;
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid $ink;
+    background-color: $cloud;
+    background-size: cover;
+    background-position: center;
+}
+
+.track {
+    font-family: "Exo 2";
+    font-size: 13px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.artist {
+    font-family: "Exo 2";
+    font-size: 11px;
+    color: $graphite;
+}
+
+.media-pos {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.viz {
+    font-size: 14px;
+    color: $cobalt;
+    margin: 4px 0 2px 0;
+}
+
+.ctl {
+    font-size: 15px;
+    color: $ink;
+    padding: 3px 14px;
+    border: 1px solid rgba(11, 13, 18, 0.4);
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.ctl:hover {
+    color: $cobalt;
+    background-color: $cloud;
+}
+
+.ctl.play {
+    color: #ffffff;
+    border-color: $ink;
+    background-image: linear-gradient(to bottom, #8cc6f5 0%, $sky 45%, $cobalt 55%, $blue 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.ctl.play:hover {
+    background-image: linear-gradient(to bottom, #a8d4f8 0%, #5aaced 45%, #1e55d4 55%, #2f7fe6 100%);
+}
+
+.hud.slim {
+    padding: 14px 6px;
+    border-radius: 18px;
+}
+
+.slim-brand {
+    font-family: "Michroma";
+    font-size: 14px;
+    color: $cobalt;
+}
+
+.slim-key {
+    font-size: 8px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.slim-val {
+    font-size: 11px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.slim-bar trough {
+    min-width: 28px;
+    min-height: 4px;
+}
+
+.slim-bar progress {
+    min-height: 4px;
+}
+
+.slim-dgpu.sleep {
+    color: $ok;
+}
+
+.slim-dgpu.awake {
+    color: $warn;
+}
+
+.slim-live {
+    font-size: 13px;
+    color: $chrome;
+}
+
+.slim-live.on {
+    color: $cobalt;
+}
+
+.slim-expand {
+    font-size: 10px;
+    color: $graphite;
+}
+@import "desktop";
+@import "osd";
+@import "overview";
+
+@import "saver";
+@import "night-deck";

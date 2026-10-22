@@ -1,0 +1,47 @@
+(defvar ov_rows "[]")
+(defvar ov_w 320)
+(defvar ov_h 180)
+(defvar ov_meta "")
+
+(defwidget ov-card [ws]
+  (eventbox :class "ov-hit" :cursor "pointer"
+            :onclick "__HOME__/.config/hyper-aero/scripts/overview.sh go ${ws.id} &"
+            :onrightclick "__HOME__/.config/hyper-aero/scripts/overview.sh send ${ws.id} &"
+    (box :class {ws.active ? "ov-card current" : ws.windows == 0 ? "ov-card vacant" : "ov-card"}
+         :orientation "v" :space-evenly false :spacing 9
+      (box :class "ov-head" :space-evenly false
+        (label :class "ov-num" :text {ws.label})
+        (label :class "ov-state" :halign "end" :hexpand true :text {ws.state}))
+      (box :class "ov-bezel" :halign "center"
+        (overlay
+          (image :class "ov-shot" :path {ws.shot} :image-width ov_w :image-height ov_h)
+          (label :class "ov-vacant-tag" :visible {ws.windows == 0} :halign "center" :valign "center"
+                 :text "◇  FREE SECTOR")))
+      (box :class "ov-foot" :space-evenly false :spacing 6
+        (for app in {ws.apps}
+          (image :class "ov-app" :icon app :icon-size "large-toolbar"))
+        (label :class "ov-title" :halign "start" :hexpand true :limit-width 30 :text {ws.title})))))
+
+(defwidget overview []
+  (eventbox :onclick "__HOME__/.config/hyper-aero/scripts/overview.sh close &"
+    (box :class "ov-scrim" :hexpand true :vexpand true
+      (box :orientation "v" :space-evenly false :halign "center" :valign "center" :hexpand true :spacing 22
+        (box :class "ov-header" :space-evenly false
+          (label :class "ov-heading" :halign "start" :hexpand true :text "◢  NEXUS // OVERVIEW")
+          (label :class "ov-meta" :halign "end" :text ov_meta))
+        (box :orientation "v" :space-evenly false :spacing 22
+          (for row in {ov_rows}
+            (box :space-evenly false :halign "center" :spacing 22
+              (for ws in row
+                (ov-card :ws ws)))))
+        (label :class "ov-hint"
+               :text "CLICK · JUMP        RIGHT CLICK · SEND ACTIVE WINDOW        ESC · CLOSE")))))
+
+(defwindow overview
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top left")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "aero-overview"
+  (overview))

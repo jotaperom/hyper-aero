@@ -1,0 +1,218 @@
+configuration {
+    modi:                "drun,run,window";
+    show-icons:          true;
+    icon-theme:          "Papirus";
+    font:                "Exo 2 11";
+    display-drun:        "APPS";
+    display-run:         "RUN";
+    display-window:      "WINDOWS";
+    drun-display-format: "{name}";
+    hover-select:        true;
+    me-select-entry:     "";
+    me-accept-entry:     "MousePrimary";
+}
+
+* {
+    ink:       #0b0d12;
+    graphite:  #5a6270;
+    chrome:    #c6d0db;
+    cobalt:    #1446c2;
+    blue:      #1e6fd9;
+    sky:       #3d9be9;
+    cloud:     #e3eef9;
+
+    background-color: transparent;
+    text-color:       @ink;
+    spacing:          0;
+}
+
+window {
+    width:            660px;
+    border:           1px;
+    border-color:     #0b0d12cc;
+    border-radius:    22px;
+    background-color: #f5f8fbc8;
+    background-image: linear-gradient(to bottom, #ffffffee, #f5f8fbc0, #e3eef9b8);
+}
+
+mainbox {
+    children: [ box-header, inputbar, listview, mode-switcher ];
+    spacing:  14px;
+    padding:  18px 20px 20px 20px;
+}
+
+box-header {
+    orientation: horizontal;
+    expand:      false;
+    children:    [ textbox-title, textbox-brand ];
+    padding:     0 4px 8px 4px;
+    border:      0 0 1px 0;
+    border-color: #5a627055;
+}
+
+textbox-title {
+    content:    "NEXUS // APPLICATION INDEX";
+    font:       "JetBrainsMono Nerd Font Bold 9";
+    text-color: @graphite;
+}
+
+textbox-brand {
+    content:          "◢ HYPER·AERO";
+    font:             "Michroma 9";
+    text-color:       @cobalt;
+    expand:           false;
+    horizontal-align: 1;
+}
+
+inputbar {
+    children:         [ textbox-orb, prompt, entry, num-filtered-rows, textbox-slash, num-rows ];
+    spacing:          12px;
+    padding:          6px 16px 6px 6px;
+    border:           1px;
+    border-color:     @ink;
+    border-radius:    26px;
+    background-color: #ffffffe6;
+}
+
+textbox-orb {
+    content:          "◢";
+    font:             "JetBrainsMono Nerd Font Bold 14";
+    expand:           false;
+    padding:          9px 14px;
+    border:           1px;
+    border-color:     @ink;
+    border-radius:    22px;
+    text-color:       #ffffff;
+    background-color: @cobalt;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+    vertical-align:   0.5;
+}
+
+prompt {
+    font:           "Michroma 9";
+    text-color:     @graphite;
+    vertical-align: 0.5;
+}
+
+entry {
+    font:              "Exo 2 15";
+    placeholder:       "Search the station…";
+    placeholder-color: #5a627099;
+    cursor:            text;
+    vertical-align:    0.5;
+}
+
+num-filtered-rows,
+textbox-slash,
+num-rows {
+    font:           "JetBrainsMono Nerd Font 10";
+    text-color:     @graphite;
+    expand:         false;
+    vertical-align: 0.5;
+}
+
+textbox-slash {
+    content: "/";
+}
+
+listview {
+    columns:      5;
+    lines:        3;
+    fixed-height: true;
+    fixed-columns: true;
+    flow:         horizontal;
+    cycle:        true;
+    scrollbar:    false;
+    spacing:      8px;
+    padding:      14px 0 0 0;
+    border:       1px dash 0px 0px 0px;
+    border-color: #5a627077;
+}
+
+element {
+    orientation:   vertical;
+    padding:       14px 6px 10px 6px;
+    spacing:       8px;
+    border:        1px;
+    border-color:  transparent;
+    border-radius: 16px;
+    cursor:        pointer;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @ink;
+}
+
+element selected.normal {
+    border-color:     @ink;
+    background-color: @cobalt;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+    text-color:       #ffffff;
+}
+
+element normal.active,
+element alternate.active {
+    text-color: @cobalt;
+}
+
+element selected.active {
+    background-color: @cobalt;
+    text-color:       #ffffff;
+}
+
+element normal.urgent,
+element alternate.urgent,
+element selected.urgent {
+    text-color: #c4283b;
+}
+
+element-icon {
+    size:             40px;
+    horizontal-align: 0.5;
+    cursor:           inherit;
+}
+
+element-text {
+    font:             "Exo 2 10";
+    horizontal-align: 0.5;
+    text-color:       inherit;
+    cursor:           inherit;
+}
+
+mode-switcher {
+    spacing: 8px;
+}
+
+button {
+    font:          "JetBrainsMono Nerd Font Bold 9";
+    padding:       7px 0;
+    border:        1px;
+    border-color:  #5a627055;
+    border-radius: 14px;
+    text-color:    @graphite;
+    background-color: #ffffff99;
+    cursor:        pointer;
+}
+
+button selected {
+    border-color:     @ink;
+    background-color: @cobalt;
+    background-image: linear-gradient(to bottom, #8cc6f5, #3d9be9, #1446c2, #1e6fd9);
+    text-color:       #ffffff;
+}
+
+message {
+    padding:          10px 14px;
+    border:           1px;
+    border-color:     #5a627055;
+    border-radius:    14px;
+    background-color: #ffffffb0;
+}
+
+textbox {
+    text-color: @ink;
+}
+
+@import "__HOME__/.config/hyper-aero/theme/current/rofi.rasi"

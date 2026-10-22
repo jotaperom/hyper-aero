@@ -1,0 +1,154 @@
+(deflisten stats
+  :initial '{"cpu":0,"cpu_temp":0,"cpu_freq":"0.00","load":"0.00","mem":0,"mem_used":"0.0","mem_total":"0.0","disk":0,"disk_used":"0G","disk_total":"0G","igpu_mhz":0,"igpu_pct":0,"dgpu":"unknown","net_if":"none","net_down":"0 KB/s","net_up":"0 KB/s","net_down_kb":0,"bat":0,"bat_status":"AC","bat_watts":"0.0","bat_time":"--","uptime":"00:00","host":"","cpu_short":"CPU","igpu_name":"GPU","dgpu_name":""}'
+  `__HOME__/.config/hyper-aero/scripts/hud-stats.sh`)
+
+(deflisten media
+  :initial '{"status":"","title":"","artist":"","art":""}'
+  `__HOME__/.config/hyper-aero/scripts/hud-media.sh`)
+
+(deflisten viz
+  :initial "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁"
+  `__HOME__/.config/hyper-aero/scripts/hud-visualizer.sh`)
+
+(defpoll media_pos
+  :interval "1s"
+  :initial ""
+  `playerctl metadata --format '{{duration(position)}} / {{duration(mpris:length)}}' 2>/dev/null || true`)
+
+(defwidget card [title code]
+  (box :class "card" :orientation "v" :space-evenly false :spacing 6
+    (box :class "card-head" :space-evenly false
+      (label :class "card-title" :halign "start" :hexpand true :text title)
+      (label :class "card-code" :halign "end" :text code))
+    (children)))
+
+(defwidget stat [key value alert]
+  (box :class {alert ? "stat alert" : "stat"} :space-evenly false :spacing 6
+    (label :class "stat-key" :text key)
+    (label :class "stat-val" :text value)))
+
+(defwidget meter [key value detail alert]
+  (box :class {alert ? "meter alert" : "meter"} :orientation "v" :space-evenly false :spacing 4
+    (box :space-evenly false :spacing 6
+      (label :class "stat-key" :text key)
+      (label :class "meter-pct" :text "${value}%")
+      (box :hexpand true)
+      (label :class "meter-detail" :text detail))
+    (progress :class "bar" :value value :orientation "h")))
+
+(defwidget hud-header []
+  (box :class "hud-head" :orientation "v" :space-evenly false :spacing 2
+    (box :space-evenly false
+      (label :class "hud-brand" :halign "start" :hexpand true :text "◢ TELEMETRY")
+      (eventbox :cursor "pointer" :onclick "__HOME__/.config/hyper-aero/scripts/hud-toggle.sh"
+        (label :class "hud-collapse" :text "▸▸")))
+    (box :space-evenly false
+      (label :class "hud-sub" :halign "start" :hexpand true :text "STATION · ${stats.host}")
+      (label :class "hud-sub" :halign "end" :text "T+ ${stats.uptime}"))))
+
+(defwidget cpu-card []
+  (card :title "PROCESSOR" :code "${stats.cpu_short} · ${stats.cpu_freq} GHz"
+    (box :space-evenly false :spacing 14
+      (circular-progress :class "ring" :value {stats.cpu} :thickness 7 :start-at 75 :clockwise true
+        (box :class "ring-core" :width 66 :height 66
+          (box :halign "center" :valign "center" :hexpand true :space-evenly false
+            (label :class "ring-num" :text "${stats.cpu}")
+            (label :class "ring-unit" :valign "end" :text "%"))))
+      (box :orientation "v" :space-evenly false :valign "center" :spacing 6
+        (stat :key "TEMP" :value "${stats.cpu_temp}°C" :alert {stats.cpu_temp >= 85})
+        (stat :key "FREQ" :value "${stats.cpu_freq} GHz" :alert false)
+        (stat :key "LOAD" :value "${stats.load}" :alert false)))
+    (graph :class "spark" :value {stats.cpu} :time-range "120s" :min 0 :max 100 :thickness 1.5 :line-style "round" :height 26)))
+
+(defwidget memdisk-card []
+  (card :title "MEMORY / STORAGE" :code "RAM · SSD"
+    (meter :key "RAM" :value {stats.mem} :detail "${stats.mem_used} / ${stats.mem_total} G" :alert {stats.mem >= 90})
+    (meter :key "SSD" :value {stats.disk} :detail "${stats.disk_used} / ${stats.disk_total}" :alert {stats.disk >= 90})))
+
+(defwidget gpu-card []
+  (card :title "GRAPHICS" :code {stats.dgpu_name != "" ? "HYBRID" : stats.igpu_name}
+    (meter :key {stats.dgpu_name != "" ? "iGPU" : "GPU"} :value {stats.igpu_pct} :detail "${stats.igpu_mhz} MHz" :alert false)
+    (eventbox :visible {stats.dgpu_name != ""} :cursor "pointer" :onclick "__HOME__/.config/hyper-aero/scripts/hud-gpu-probe.sh"
+      (box :class {stats.dgpu == "suspended" ? "dgpu sleep" : "dgpu awake"} :space-evenly false
+        (label :class "dgpu-name" :halign "start" :hexpand true :text {stats.dgpu_name})
+        (label :class "dgpu-state" :halign "end" :text {stats.dgpu == "suspended" ? "● POWERED DOWN" : "● ${stats.dgpu}"})))))
+
+(defwidget net-card []
+  (card :title "NETWORK" :code {stats.net_if}
+    (box :space-evenly true
+      (stat :key "▼" :value {stats.net_down} :alert false)
+      (stat :key "▲" :value {stats.net_up} :alert false))
+    (graph :class "spark net" :value {stats.net_down_kb} :time-range "120s" :min 0 :max 100 :dynamic true :thickness 1.5 :line-style "round" :height 22)))
+
+(defwidget power-card []
+  (card :title "POWER" :code {stats.bat_status}
+    (meter :key "BAT" :value {stats.bat} :detail "${stats.bat_watts} W · ${stats.bat_time}" :alert {stats.bat <= 15 && stats.bat_status == "ON BATTERY"})))
+
+(defwidget pulse-card []
+  (card :title "PULSE" :code {media.status == "Playing" ? "▶ LIVE" : "STANDBY"}
+    (box :space-evenly false :spacing 10
+      (box :class "art" :width 46 :height 46 :style {media.art != "" ? "background-image: url('${media.art}');" : ""})
+      (box :orientation "v" :space-evenly false :valign "center" :hexpand true :spacing 2
+        (label :class "track" :xalign 0 :limit-width 20 :text {media.title != "" ? media.title : "No signal"})
+        (label :class "artist" :xalign 0 :limit-width 24 :text {media.artist != "" ? media.artist : "awaiting transmission"})
+        (label :class "media-pos" :xalign 0 :text media_pos)))
+    (label :class "viz" :text viz)
+    (box :class "controls" :space-evenly false :halign "center" :spacing 8
+      (button :class "ctl" :onclick "playerctl previous" "󰒮")
+      (button :class "ctl play" :onclick "playerctl play-pause" {media.status == "Playing" ? "󰏤" : "󰐊"})
+      (button :class "ctl" :onclick "playerctl next" "󰒭"))))
+
+(defwidget telemetry []
+  (box :class "hud" :orientation "v" :space-evenly false :spacing 7
+    (hud-header)
+    (cpu-card)
+    (memdisk-card)
+    (gpu-card)
+    (net-card)
+    (power-card)
+    (box :vexpand true)
+    (pulse-card)))
+
+(defwidget slim-stat [key value]
+  (box :class "slim-stat" :orientation "v" :space-evenly false :spacing 3
+    (label :class "slim-key" :text key)
+    (label :class "slim-val" :text value)
+    (progress :class "bar slim-bar" :value value :orientation "h")))
+
+(defwidget telemetry-slim []
+  (eventbox :cursor "pointer" :onclick "__HOME__/.config/hyper-aero/scripts/hud-toggle.sh"
+    (box :class "hud slim" :orientation "v" :space-evenly false :spacing 14
+      (label :class "slim-brand" :text "◢")
+      (slim-stat :key "CPU" :value {stats.cpu})
+      (slim-stat :key "MEM" :value {stats.mem})
+      (slim-stat :key "TMP" :value {stats.cpu_temp})
+      (slim-stat :key "BAT" :value {stats.bat})
+      (label :visible {stats.dgpu_name != ""} :class {stats.dgpu == "suspended" ? "slim-dgpu sleep" : "slim-dgpu awake"} :text "●")
+      (box :vexpand true)
+      (label :class {media.status == "Playing" ? "slim-live on" : "slim-live"} :text "♪")
+      (label :class "slim-expand" :text "◂◂"))))
+
+(defwindow telemetry
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "282px" :height "97%" :anchor "center right")
+  :stacking "bottom"
+  :exclusive true
+  :focusable false
+  :namespace "aero-hud"
+  (telemetry))
+
+(defwindow telemetry-slim
+  :monitor 0
+  :geometry (geometry :x "0px" :y "0px" :width "60px" :height "97%" :anchor "center right")
+  :stacking "bottom"
+  :exclusive true
+  :focusable false
+  :namespace "aero-hud"
+  (telemetry-slim))
+(include "./desktop.yuck")
+(include "./osd.yuck")
+(include "./overview.yuck")
+
+
+
+(include "./saver.yuck")

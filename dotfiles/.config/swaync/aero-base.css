@@ -1,0 +1,254 @@
+@import url("file:///etc/xdg/swaync/style.css");
+
+:root {
+    --cc-bg: rgba(245, 248, 251, 0.96);
+    --text-color: #0b0d12;
+    --text-color-disabled: #9aa3ae;
+    --bg-selected: #1446c2;
+    --noti-border-color: rgba(11, 13, 18, 0.75);
+    --noti-bg-darker: #e3eef9;
+    --noti-bg-hover: rgba(227, 238, 249, 0.95);
+    --noti-bg-focus: rgba(61, 155, 233, 0.18);
+    --noti-close-bg: rgba(11, 13, 18, 0.08);
+    --noti-close-bg-hover: #c4283b;
+    --border-radius: 16px;
+    --font-size-summary: 13px;
+    --font-size-body: 12px;
+}
+
+* {
+    font-family: "Exo 2", "JetBrainsMono Nerd Font", sans-serif;
+}
+
+.control-center {
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.98) 0%,
+        rgba(245, 248, 251, 0.96) 28%,
+        rgba(234, 241, 248, 0.95) 100%);
+    border: 1px solid rgba(11, 13, 18, 0.80);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    color: #0b0d12;
+}
+
+.control-center-list-placeholder {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #5a6270;
+}
+
+.notification-row .notification-background .notification {
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.96) 0%,
+        rgba(255, 255, 255, 0.88) 47%,
+        rgba(227, 238, 249, 0.86) 53%,
+        rgba(245, 248, 251, 0.92) 100%);
+    border: 1px solid rgba(11, 13, 18, 0.75);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    color: #0b0d12;
+}
+
+.notification-row .notification-background .notification.critical {
+    border: 1px solid #c4283b;
+    box-shadow: inset 4px 0 0 #c4283b, inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.notification-row .notification-background .notification.low {
+    border: 1px solid rgba(90, 98, 112, 0.45);
+}
+
+.floating-notifications .notification-row .notification-background .notification {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 8px 22px rgba(11, 13, 18, 0.18);
+}
+
+.notification-default-action:hover {
+    background: rgba(61, 155, 233, 0.10);
+    border-radius: 16px;
+}
+
+.notification .summary {
+    font-family: "Exo 2";
+    font-weight: 700;
+    font-size: 13px;
+    color: #0b0d12;
+}
+
+.notification .time {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 10px;
+    color: #5a6270;
+}
+
+.notification .body {
+    font-size: 12px;
+    color: #2a303a;
+}
+
+.close-button {
+    background: rgba(11, 13, 18, 0.08);
+    color: #0b0d12;
+    border: 1px solid rgba(11, 13, 18, 0.35);
+    border-radius: 999px;
+}
+
+.close-button:hover {
+    background: #c4283b;
+    color: #ffffff;
+    border: 1px solid #0b0d12;
+}
+
+.notification-action > button {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #0b0d12;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(11, 13, 18, 0.45);
+    border-radius: 12px;
+}
+
+.notification-action > button:hover {
+    color: #ffffff;
+    background: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+    border: 1px solid #0b0d12;
+}
+
+.widget-title {
+    margin: 8px 10px 6px 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(90, 98, 112, 0.35);
+}
+
+.widget-title > label {
+    font-family: "Michroma";
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #0b0d12;
+}
+
+.widget-title > button {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: 700;
+    font-size: 10px;
+    color: #0b0d12;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #0b0d12;
+    border-radius: 12px;
+    padding: 4px 14px;
+}
+
+.widget-title > button:hover {
+    color: #ffffff;
+    background: #c4283b;
+}
+
+.widget-dnd {
+    margin: 6px 10px;
+}
+
+.widget-dnd label {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #5a6270;
+}
+
+.widget-dnd switch {
+    background: #c6d0db;
+    border: 1px solid #0b0d12;
+    border-radius: 999px;
+}
+
+.widget-dnd switch:checked {
+    background: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+}
+
+.widget-dnd switch slider {
+    background: #ffffff;
+    border: 1px solid #0b0d12;
+    border-radius: 999px;
+}
+
+.widget-mpris .widget-mpris-player {
+    border: 1px solid #0b0d12;
+    border-radius: 16px;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay {
+    background-color: rgba(11, 13, 18, 0.58);
+}
+
+.widget-mpris .widget-mpris-title {
+    font-family: "Exo 2";
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-subtitle {
+    color: #e3eef9;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-player button,
+.widget-mpris .widget-mpris-player button image,
+.widget-mpris .widget-mpris-player button label {
+    color: #ffffff;
+    -gtk-icon-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-player button {
+    background: transparent;
+    border-radius: 999px;
+}
+
+.widget-mpris .widget-mpris-player button:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.widget-mpris .widget-mpris-player button:active {
+    background: rgba(61, 155, 233, 0.45);
+}
+
+.widget-mpris .widget-mpris-player button:disabled,
+.widget-mpris .widget-mpris-player button:disabled image {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.widget-volume,
+.widget-backlight {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(11, 13, 18, 0.35);
+    border-radius: 14px;
+    padding: 6px 12px;
+    margin: 4px 10px;
+}
+
+.widget-volume label,
+.widget-backlight label {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: 700;
+    font-size: 10px;
+    color: #5a6270;
+}
+
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: #c6d0db;
+    border-radius: 999px;
+    min-height: 6px;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+    background: linear-gradient(to right, #1446c2, #3d9be9);
+    border-radius: 999px;
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+    background: #ffffff;
+    border: 1px solid #0b0d12;
+    border-radius: 999px;
+    min-width: 14px;
+    min-height: 14px;
+}

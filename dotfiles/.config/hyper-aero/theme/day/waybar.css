@@ -1,0 +1,15 @@
+#custom-nightdeck {
+    font-size: 14px;
+    color: @cobalt;
+    padding: 0 9px 0 8px;
+    border-left: 1px solid rgba(90, 98, 112, 0.35);
+}
+
+#custom-nightdeck:hover {
+    color: @blue;
+    background: rgba(61, 155, 233, 0.12);
+}
+
+#custom-nightdeck.warm {
+    color: #c26a12;
+}

@@ -1,0 +1,257 @@
+@define-color paper    #f5f8fb;
+@define-color cloud    #e3eef9;
+@define-color cobalt   #1446c2;
+@define-color blue     #1e6fd9;
+@define-color sky      #3d9be9;
+@define-color ink      #0b0d12;
+@define-color graphite #5a6270;
+@define-color chrome   #c6d0db;
+@define-color ok       #0f7b5a;
+@define-color warn     #a8650a;
+@define-color critical #c4283b;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Exo 2", sans-serif;
+    font-size: 12px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+window#waybar {
+    background: transparent;
+    color: @ink;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(255, 255, 255, 0.72) 47%,
+        rgba(227, 238, 249, 0.58) 53%,
+        rgba(245, 248, 251, 0.66) 100%);
+    border: 1px solid rgba(11, 13, 18, 0.78);
+    border-radius: 18px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+                inset 0 -1px 0 rgba(20, 70, 194, 0.18);
+    padding: 0 4px;
+}
+
+.modules-left {
+    margin-right: 12px;
+}
+
+.modules-center {
+    padding: 0 16px;
+    margin: 0 12px;
+}
+
+.modules-right {
+    margin-left: 12px;
+}
+
+tooltip {
+    background: rgba(245, 248, 251, 0.96);
+    border: 1px solid @ink;
+    border-radius: 12px;
+}
+
+tooltip label {
+    color: @ink;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 12px;
+    padding: 4px 6px;
+}
+
+#custom-aero {
+    font-family: "Michroma", sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: @ink;
+    padding: 0 12px 0 10px;
+    border-right: 1px solid rgba(90, 98, 112, 0.35);
+}
+
+#custom-aero:hover {
+    color: @cobalt;
+}
+
+#custom-ws1,
+#custom-ws2,
+#custom-ws3,
+#custom-ws4,
+#custom-ws5 {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: @graphite;
+    background: transparent;
+    padding: 0 7px;
+    margin: 6px 2px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#custom-ws1 {
+    margin-left: 8px;
+}
+
+#custom-ws5 {
+    margin-right: 8px;
+}
+
+#custom-ws1.empty,
+#custom-ws2.empty,
+#custom-ws3.empty,
+#custom-ws4.empty,
+#custom-ws5.empty {
+    color: rgba(90, 98, 112, 0.45);
+}
+
+#custom-ws1.occupied,
+#custom-ws2.occupied,
+#custom-ws3.occupied,
+#custom-ws4.occupied,
+#custom-ws5.occupied {
+    color: @ink;
+    border: 1px solid rgba(11, 13, 18, 0.35);
+}
+
+#custom-ws1:hover,
+#custom-ws2:hover,
+#custom-ws3:hover,
+#custom-ws4:hover,
+#custom-ws5:hover {
+    background: rgba(227, 238, 249, 0.9);
+    border: 1px solid rgba(20, 70, 194, 0.35);
+    color: @cobalt;
+}
+
+#custom-ws1.active,
+#custom-ws2.active,
+#custom-ws3.active,
+#custom-ws4.active,
+#custom-ws5.active {
+    color: #ffffff;
+    background-image: linear-gradient(to bottom,
+        #6fb6f2 0%,
+        #3d9be9 45%,
+        #1446c2 55%,
+        #1e6fd9 100%);
+    border: 1px solid @ink;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    padding: 0 12px;
+}
+
+#window {
+    font-family: "Exo 2", sans-serif;
+    font-size: 12px;
+    color: @graphite;
+    padding: 0 12px;
+    border-left: 1px solid rgba(90, 98, 112, 0.35);
+}
+
+window#waybar.empty #window {
+    border-left: none;
+    padding: 0;
+}
+
+#clock {
+    color: @ink;
+    padding: 0 2px;
+}
+
+#tray,
+#cpu,
+#memory,
+#network,
+#bluetooth,
+#wireplumber,
+#backlight,
+#battery,
+#custom-notification {
+    color: @ink;
+    padding: 0 8px;
+    border-left: 1px solid rgba(90, 98, 112, 0.35);
+}
+
+#tray {
+    border-left: none;
+}
+
+#tray > .needs-attention {
+    background: rgba(196, 40, 59, 0.15);
+    border-radius: 8px;
+}
+
+#bluetooth.off,
+#bluetooth.disabled {
+    color: @graphite;
+}
+
+#network.disconnected,
+#wireplumber.muted {
+    color: @critical;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @ok;
+}
+
+#battery.warning:not(.charging) {
+    color: @warn;
+}
+
+@keyframes aero-alert {
+    to {
+        background-color: rgba(196, 40, 59, 0.0);
+    }
+}
+
+#battery.critical:not(.charging) {
+    color: #ffffff;
+    background-color: @critical;
+    border-radius: 10px;
+    margin: 5px 2px;
+    animation-name: aero-alert;
+    animation-duration: 0.9s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#custom-power {
+    font-size: 13px;
+    color: #ffffff;
+    background-image: linear-gradient(to bottom,
+        #6fb6f2 0%,
+        #3d9be9 45%,
+        #1446c2 55%,
+        #1e6fd9 100%);
+    border: 1px solid @ink;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    min-width: 24px;
+    padding: 0 4px;
+    margin: 5px 3px 5px 8px;
+}
+
+#custom-power:hover {
+    background-image: linear-gradient(to bottom,
+        #ff9aa6 0%,
+        #e5484d 45%,
+        #a8182b 55%,
+        #c4283b 100%);
+}
+
+#custom-rec {
+    padding: 0 10px;
+    margin-left: 8px;
+    border-radius: 10px;
+    background: rgba(196, 40, 59, 0.12);
+    border: 1px solid rgba(196, 40, 59, 0.35);
+}

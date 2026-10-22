@@ -1,0 +1,59 @@
+.theme-light,
+.theme-light .theme-light,
+.visual-refresh.theme-light {
+    --background-primary: #f9f7f9;
+    --background-secondary: #f2eff4;
+    --background-secondary-alt: #f0ebf3;
+    --background-tertiary: #f0ebf3;
+    --background-floating: #ffffff;
+    --background-accent: #d5ccd9;
+    --background-modifier-hover: rgba(183, 128, 214, 0.10);
+    --background-modifier-active: rgba(183, 128, 214, 0.16);
+    --background-modifier-selected: rgba(128, 45, 142, 0.14);
+    --background-base-lowest: #f0ebf3;
+    --background-base-lower: #f2eff4;
+    --background-base-low: #f9f7f9;
+    --background-surface-high: #ffffff;
+    --background-surface-higher: #ffffff;
+    --background-surface-highest: #ffffff;
+    --chat-background-default: #f9f7f9;
+    --channeltextarea-background: #ffffff;
+    --text-normal: #0f0c0f;
+    --text-default: #0f0c0f;
+    --text-strong: #0f0c0f;
+    --text-muted: #695e6c;
+    --text-link: #802d8e;
+    --header-primary: #0f0c0f;
+    --header-secondary: #695e6c;
+    --interactive-normal: #695e6c;
+    --interactive-hover: #0f0c0f;
+    --interactive-active: #802d8e;
+    --channels-default: #695e6c;
+    --brand-500: #802d8e;
+    --brand-560: #a24cc1;
+    --brand-600: #802d8e;
+    --brand-experiment: #802d8e;
+    --brand-experiment-560: #a24cc1;
+    --control-brand-foreground: #802d8e;
+    --control-brand-foreground-new: #802d8e;
+    --font-primary: "Exo 2", sans-serif;
+    --font-display: "Exo 2", sans-serif;
+    --font-headline: "Michroma", "Exo 2", sans-serif;
+    --font-code: "JetBrainsMono Nerd Font", monospace;
+}
+
+[class*="channelTextArea_"] [class*="scrollableContainer_"] {
+    border: 1px solid rgba(15, 12, 15, 0.35) !important;
+    border-radius: 18px !important;
+    box-shadow: inset 0 1px 0 #ffffff !important;
+}
+
+[class*="channelTextArea_"]:focus-within [class*="scrollableContainer_"] {
+    border-color: #802d8e !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(105, 94, 108, 0.3) !important;
+    border-radius: 999px !important;
+}
+

@@ -1,0 +1,128 @@
+(defpoll desk_time
+  :interval "1s"
+  :initial '{"hm":"--:--","s":"--","date":"","doy":"---","week":"--"}'
+  `LC_ALL=C date '+{"hm":"%H:%M","s":"%S","date":"%A  ·  %d %B %Y","doy":"%j","week":"%V"}'`)
+
+(defpoll desk_weather
+  :interval "15m"
+  :initial '{"ok":false,"place":"","icon":"","temp":"--","desc":"","hi":"--","lo":"--","hum":"--","wind":"--"}'
+  `__HOME__/.config/hyper-aero/scripts/desk-weather.sh`)
+
+(deflisten desk_sky
+  :initial '{"tag":"","left":"","right":"","next":"","moon":"","img1":"","img2":"","night":false}'
+  `__HOME__/.config/hyper-aero/scripts/sky-arc.py`)
+
+(defpoll px_state
+  :interval "1s"
+  :initial '{"status":"Stopped","player":"NO PLAYER","pos":"0:00","len":"0:00","pct":0,"vol":"0","icon":"■","state":"STANDBY"}'
+  `__HOME__/.config/hyper-aero/scripts/px-state.sh`)
+
+(deflisten px_marquee
+  :initial "NO DISC"
+  `__HOME__/.config/hyper-aero/scripts/px-marquee.sh`)
+
+(defwidget pulse-x []
+  (box :class "px-wrap"
+    (box :class "px-shell" :space-evenly false :spacing 12
+      (box :class "px-side" :orientation "v" :space-evenly false :valign "center" :spacing 7
+        (button :class "pbtn" :onclick "playerctl previous" "󰒮")
+        (button :class {px_state.status == "Playing" ? "pbtn play live" : "pbtn play"} :onclick "playerctl play-pause"
+          {px_state.status == "Playing" ? "󰏤" : "󰐊"})
+        (button :class "pbtn" :onclick "playerctl next" "󰒭"))
+      (box :class "px-center" :orientation "v" :space-evenly false :hexpand true :spacing 8
+        (box :class "lcd" :orientation "v" :space-evenly false :spacing 1
+          (box :space-evenly false
+            (label :class "lcd-small" :halign "start" :hexpand true :text "◢ ${px_state.player}")
+            (label :class "lcd-small" :halign "end" :text "VOL ${px_state.vol}"))
+          (box :space-evenly false :spacing 8
+            (label :class "lcd-time" :text "${px_state.icon} ${px_state.pos}")
+            (label :class "lcd-viz" :hexpand true :halign "end" :text {px_state.status == "Playing" ? viz : "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁"}))
+          (label :class "lcd-small dim" :halign "start" :text "TOTAL ${px_state.len}  ·  STEREO  ·  ${px_state.state}")
+          (label :class "lcd-marquee" :halign "start" :text px_marquee))
+        (scale :class "px-seek" :min 0 :max 100 :value {px_state.pct} :onchange "__HOME__/.config/hyper-aero/scripts/px-ctl.sh seek {}"))
+      (box :class "px-side" :orientation "v" :space-evenly false :valign "center" :spacing 7
+        (button :class "pbtn small" :onclick "__HOME__/.config/hyper-aero/scripts/px-ctl.sh vol-up" "+")
+        (button :class "pbtn small" :onclick "__HOME__/.config/hyper-aero/scripts/px-ctl.sh vol-down" "−")
+        (label :class {px_state.status == "Playing" ? "px-led on" : (px_state.status == "Paused" ? "px-led paused" : "px-led")} :text "●")
+        (label :class "px-brand" :text "PULSE-X")))))
+
+(defwindow desk-pulsex
+  :monitor 0
+  :geometry (geometry :x "2px" :y "192px" :width "474px" :anchor "top left")
+  :stacking "bottom"
+  :exclusive false
+  :focusable false
+  :namespace "aero-desk"
+  (pulse-x))
+
+(defwidget desk-head [title tag]
+  (box :class "desk-head" :space-evenly false
+    (label :class "desk-title" :halign "start" :hexpand true :text title)
+    (label :class "desk-tag" :halign "end" :text tag)))
+
+(defwidget desk-chrono []
+  (box :class "desk-card chrono" :orientation "v" :space-evenly false :spacing 2
+    (desk-head :title "CHRONO" :tag "LOCAL · UTC−6")
+    (box :space-evenly false :halign "start"
+      (label :class "chrono-time" :text {desk_time.hm})
+      (label :class "chrono-sec" :valign "end" :text {desk_time.s}))
+    (label :class "chrono-date" :halign "start" :text {desk_time.date})
+    (box :class "chrono-foot" :space-evenly false :spacing 18
+      (label :class "desk-tag" :text "DAY ${desk_time.doy}")
+      (label :class "desk-tag" :text "WEEK ${desk_time.week}")
+      (label :class "desk-tag" :text "T+ ${stats.uptime}"))))
+
+(defwidget desk-atmos []
+  (box :class "desk-card atmos" :orientation "v" :space-evenly false :spacing 6
+    (desk-head :title "ATMOS" :tag {desk_weather.ok ? desk_weather.place : "NO SIGNAL"})
+    (box :space-evenly false :spacing 12
+      (label :class "atmos-icon" :text {desk_weather.ok ? desk_weather.icon : "—"})
+      (box :orientation "v" :space-evenly false :valign "center"
+        (box :space-evenly false
+          (label :class "atmos-temp" :text {desk_weather.temp})
+          (label :class "atmos-unit" :valign "start" :text "°C"))
+        (label :class "atmos-desc" :xalign 0 :limit-width 24 :text {desk_weather.ok ? desk_weather.desc : "Weather unavailable"})))
+    (box :class "atmos-stats" :space-evenly true
+      (stat :key "HI" :value "${desk_weather.hi}°" :alert false)
+      (stat :key "LO" :value "${desk_weather.lo}°" :alert false)
+      (stat :key "HUM" :value "${desk_weather.hum}%" :alert false))
+    (box :space-evenly false
+      (stat :key "WIND" :value {desk_weather.wind} :alert false))))
+
+(defwidget desk-sky []
+  (box :class "desk-card sky" :orientation "v" :space-evenly false :spacing 2
+    (desk-head :title "SKY ARC" :tag {desk_sky.tag})
+    (box :class "sky-canvas"
+         :style {desk_sky.img1 == "" ? "" : "background-image: -gtk-scaled(url('${desk_sky.img1}'), url('${desk_sky.img2}'));"})
+    (box :class "sky-foot" :space-evenly false
+      (label :class "sky-time" :halign "start" :hexpand true :xalign 0 :text {desk_sky.left})
+      (label :class "sky-next" :text {desk_sky.next})
+      (label :class "sky-time" :halign "end" :hexpand true :xalign 1 :text {desk_sky.right}))
+    (label :class "sky-moon" :halign "start" :visible {desk_sky.moon != ""} :text {desk_sky.moon})))
+
+(defwindow desk-chrono
+  :monitor 0
+  :geometry (geometry :x "28px" :y "22px" :width "390px" :anchor "top left")
+  :stacking "bottom"
+  :exclusive false
+  :focusable false
+  :namespace "aero-desk"
+  (desk-chrono))
+
+(defwindow desk-log
+  :monitor 0
+  :geometry (geometry :x "28px" :y "26px" :width "370px" :anchor "bottom left")
+  :stacking "bottom"
+  :exclusive false
+  :focusable false
+  :namespace "aero-desk"
+  (desk-sky))
+
+(defwindow desk-atmos
+  :monitor 0
+  :geometry (geometry :x "28px" :y "26px" :width "290px" :anchor "bottom right")
+  :stacking "bottom"
+  :exclusive false
+  :focusable false
+  :namespace "aero-desk"
+  (desk-atmos))

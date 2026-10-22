@@ -1,0 +1,153 @@
+:root {
+    --cc-bg: rgba(10, 18, 36, 0.96);
+    --text-color: #e6eefb;
+    --text-color-disabled: #4a5a78;
+    --bg-selected: #3d9be9;
+    --noti-border-color: rgba(111, 211, 255, 0.35);
+    --noti-bg-darker: #0b1426;
+    --noti-bg-hover: rgba(30, 52, 92, 0.95);
+    --noti-bg-focus: rgba(61, 155, 233, 0.22);
+    --noti-close-bg: rgba(230, 238, 251, 0.08);
+    --noti-close-bg-hover: #ff5d6c;
+}
+
+.control-center {
+    background: linear-gradient(to bottom,
+        rgba(26, 42, 76, 0.98) 0%,
+        rgba(12, 21, 40, 0.97) 28%,
+        rgba(8, 14, 28, 0.96) 100%);
+    border: 1px solid rgba(111, 211, 255, 0.35);
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.22);
+    color: #e6eefb;
+}
+
+.control-center-list-placeholder {
+    color: #8b97ab;
+}
+
+.notification-row .notification-background .notification {
+    background: linear-gradient(to bottom,
+        rgba(38, 60, 104, 0.97) 0%,
+        rgba(22, 36, 66, 0.96) 47%,
+        rgba(12, 21, 40, 0.96) 53%,
+        rgba(16, 27, 51, 0.97) 100%);
+    border: 1px solid rgba(111, 211, 255, 0.35);
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.22);
+    color: #e6eefb;
+}
+
+.notification-row .notification-background .notification.critical {
+    border: 1px solid #ff5d6c;
+    box-shadow: inset 4px 0 0 #ff5d6c, inset 0 1px 0 rgba(160, 220, 255, 0.22);
+}
+
+.notification-row .notification-background .notification.low {
+    border: 1px solid rgba(139, 151, 171, 0.35);
+}
+
+.floating-notifications .notification-row .notification-background .notification {
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.22), 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(61, 155, 233, 0.18);
+}
+
+.notification-default-action:hover {
+    background: rgba(61, 155, 233, 0.16);
+}
+
+.notification .summary {
+    color: #e6eefb;
+}
+
+.notification .time {
+    color: #8b97ab;
+}
+
+.notification .body {
+    color: #c3cee0;
+}
+
+.close-button {
+    background: rgba(230, 238, 251, 0.08);
+    color: #e6eefb;
+    border: 1px solid rgba(230, 238, 251, 0.30);
+}
+
+.close-button:hover {
+    background: #ff5d6c;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.notification-action > button {
+    color: #e6eefb;
+    background: rgba(230, 238, 251, 0.08);
+    border: 1px solid rgba(111, 211, 255, 0.35);
+}
+
+.notification-action > button:hover {
+    color: #ffffff;
+    border: 1px solid rgba(111, 211, 255, 0.75);
+}
+
+.widget-title {
+    border-bottom: 1px solid rgba(139, 151, 171, 0.25);
+}
+
+.widget-title > label {
+    color: #e6eefb;
+}
+
+.widget-title > button {
+    color: #e6eefb;
+    background: rgba(230, 238, 251, 0.08);
+    border: 1px solid rgba(111, 211, 255, 0.45);
+}
+
+.widget-title > button:hover {
+    color: #ffffff;
+    background: #ff5d6c;
+}
+
+.widget-dnd label {
+    color: #8b97ab;
+}
+
+.widget-dnd switch {
+    background: #1e2a44;
+    border: 1px solid rgba(111, 211, 255, 0.45);
+}
+
+.widget-dnd switch slider {
+    background: #e6eefb;
+    border: 1px solid rgba(11, 13, 18, 0.6);
+}
+
+.widget-mpris .widget-mpris-player {
+    border: 1px solid rgba(111, 211, 255, 0.35);
+}
+
+.widget-volume,
+.widget-backlight {
+    background: rgba(230, 238, 251, 0.05);
+    border: 1px solid rgba(111, 211, 255, 0.25);
+}
+
+.widget-volume label,
+.widget-backlight label {
+    color: #8b97ab;
+}
+
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: #1e2a44;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+    background: linear-gradient(to right, #1e6fd9, #6fd3ff);
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+    background: #e6eefb;
+    border: 1px solid rgba(111, 211, 255, 0.75);
+}

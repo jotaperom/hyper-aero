@@ -1,0 +1,467 @@
+$n-text: #e6eefb;
+$n-muted: #8b97ab;
+$n-dim: #4a5a78;
+$n-accent: #3d9be9;
+$n-glow: #6fd3ff;
+$n-line: rgba(111, 211, 255, 0.35);
+$n-sep: rgba(139, 151, 171, 0.30);
+$n-ok: #3ddc97;
+$n-warn: #f0b44c;
+$n-crit: #ff5d6c;
+$n-glass: linear-gradient(to bottom,
+    rgba(32, 52, 92, 0.90) 0%,
+    rgba(16, 27, 51, 0.84) 14%,
+    rgba(9, 16, 32, 0.80) 100%);
+$n-sheen: inset 0 1px 0 rgba(160, 220, 255, 0.24);
+$n-gloss: linear-gradient(to bottom, #8cc6f5 0%, #3d9be9 45%, #1446c2 55%, #1e6fd9 100%);
+$n-button: linear-gradient(to bottom, #2c4370 0%, #1d3058 46%, #14234a 54%, #1a2c52 100%);
+
+.hud {
+    background-image: $n-glass;
+    border: 1px solid $n-line;
+    box-shadow: $n-sheen;
+    color: $n-text;
+}
+
+.hud-brand,
+.card-title,
+.ring-num,
+.stat-val,
+.meter-pct,
+.dgpu-name,
+.track,
+.slim-val {
+    color: $n-text;
+}
+
+.hud-sub,
+.card-code,
+.ring-unit,
+.stat-key,
+.meter-detail,
+.artist,
+.media-pos,
+.slim-key,
+.slim-expand {
+    color: $n-muted;
+}
+
+.hud-collapse {
+    color: $n-muted;
+    border: 1px solid rgba(111, 211, 255, 0.30);
+}
+
+.hud-collapse:hover {
+    color: #ffffff;
+    background-color: $n-accent;
+    border-color: $n-glow;
+}
+
+.card {
+    background-color: rgba(230, 238, 251, 0.045);
+    border: 1px solid rgba(111, 211, 255, 0.20);
+}
+
+.card-head {
+    border-bottom: 1px dashed $n-sep;
+}
+
+.ring {
+    color: $n-glow;
+    background-color: rgba(111, 140, 190, 0.22);
+}
+
+.stat.alert .stat-val,
+.meter.alert .meter-pct {
+    color: $n-crit;
+}
+
+.spark {
+    color: $n-glow;
+    background-color: rgba(111, 211, 255, 0.08);
+}
+
+.spark.net {
+    color: $n-accent;
+}
+
+.bar trough {
+    background-color: rgba(111, 140, 190, 0.22);
+}
+
+.bar progress {
+    background-image: linear-gradient(to right, #1e6fd9, $n-glow);
+    box-shadow: 0 0 6px rgba(111, 211, 255, 0.45);
+}
+
+.meter.alert .bar progress {
+    background-image: linear-gradient(to right, #c4283b, $n-crit);
+}
+
+.dgpu.sleep {
+    color: $n-ok;
+    background-color: rgba(61, 220, 151, 0.08);
+    border-color: rgba(61, 220, 151, 0.40);
+}
+
+.dgpu.awake {
+    color: $n-warn;
+    background-color: rgba(240, 180, 76, 0.10);
+    border-color: rgba(240, 180, 76, 0.45);
+}
+
+.dgpu:hover {
+    background-color: rgba(61, 155, 233, 0.18);
+}
+
+.art {
+    border: 1px solid $n-line;
+    background-color: #13213d;
+}
+
+.viz {
+    color: $n-glow;
+}
+
+.ctl {
+    color: $n-text;
+    border: 1px solid rgba(111, 211, 255, 0.35);
+    background-color: rgba(230, 238, 251, 0.06);
+}
+
+.ctl:hover {
+    color: $n-glow;
+    background-color: rgba(61, 155, 233, 0.18);
+}
+
+.ctl.play {
+    color: #ffffff;
+    border-color: rgba(111, 211, 255, 0.75);
+    background-image: $n-gloss;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 8px rgba(61, 155, 233, 0.55);
+}
+
+.slim-brand,
+.slim-live.on {
+    color: $n-glow;
+}
+
+.slim-live {
+    color: $n-dim;
+}
+
+.slim-dgpu.sleep {
+    color: $n-ok;
+}
+
+.slim-dgpu.awake {
+    color: $n-warn;
+}
+
+.desk-card {
+    background-image: linear-gradient(to bottom,
+        rgba(32, 52, 92, 0.86) 0%,
+        rgba(18, 30, 56, 0.78) 46%,
+        rgba(10, 18, 36, 0.72) 54%,
+        rgba(14, 24, 46, 0.78) 100%);
+    border: 1px solid $n-line;
+    box-shadow: $n-sheen;
+    color: $n-text;
+}
+
+.desk-head,
+.chrono-foot,
+.atmos-stats {
+    border-color: $n-sep;
+}
+
+.desk-title,
+.chrono-time,
+.atmos-temp,
+.task-text {
+    color: $n-text;
+}
+
+.desk-tag,
+.chrono-date,
+.atmos-unit,
+.atmos-desc,
+.log-empty {
+    color: $n-muted;
+}
+
+.chrono-time {
+    text-shadow: 0 0 14px rgba(111, 211, 255, 0.30);
+}
+
+.chrono-sec,
+.atmos-icon,
+.task-box {
+    color: $n-glow;
+}
+
+.log-edit {
+    color: $n-text;
+    border: 1px solid rgba(111, 211, 255, 0.35);
+    background-color: rgba(230, 238, 251, 0.06);
+}
+
+.log-edit:hover {
+    color: #ffffff;
+    background-color: $n-accent;
+    border-color: $n-glow;
+}
+
+.task:hover {
+    background-color: rgba(61, 155, 233, 0.16);
+}
+
+.task.done .task-box {
+    color: $n-ok;
+}
+
+.task.done .task-text {
+    color: $n-dim;
+}
+
+.px-shell {
+    border: 3px solid rgba(150, 200, 245, 0.55);
+    background-image:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.30) 0%,
+            rgba(255, 255, 255, 0.08) 36%,
+            rgba(255, 255, 255, 0.0) 38%,
+            rgba(255, 255, 255, 0.0) 100%),
+        linear-gradient(to bottom,
+            #2f6fb8 0%,
+            #1e55a8 22%,
+            #163f8a 55%,
+            #0f2c6a 82%,
+            #0a1f4e 100%);
+    box-shadow:
+        0 0 0 2px rgba(42, 58, 92, 0.95),
+        inset 0 2px 0 rgba(170, 215, 255, 0.45),
+        inset 0 -8px 14px rgba(0, 0, 0, 0.35),
+        0 0 22px rgba(61, 155, 233, 0.22);
+}
+
+.lcd {
+    border: 2px solid rgba(111, 211, 255, 0.45);
+    box-shadow:
+        inset 0 3px 8px rgba(0, 0, 0, 0.55),
+        0 0 10px rgba(111, 211, 255, 0.18);
+}
+
+.pbtn {
+    color: $n-glow;
+    border: 2px solid rgba(111, 211, 255, 0.40);
+    background-image: $n-button;
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.pbtn:hover {
+    color: #ffffff;
+    background-image: linear-gradient(to bottom, #38558a 0%, #263d6c 46%, #1b2e5a 54%, #233a66 100%);
+}
+
+.pbtn:active {
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+
+.pbtn.play.live {
+    border: 3px solid #2fbf5a;
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.35), 0 0 10px rgba(76, 220, 120, 0.85);
+}
+
+.px-seek trough {
+    background-color: rgba(0, 0, 0, 0.40);
+}
+
+.px-seek slider {
+    border: 2px solid rgba(111, 211, 255, 0.60);
+    background-image: linear-gradient(to bottom, #e6eefb 0%, #b9cbe6 50%, #a3b9da 52%, #e6eefb 100%);
+}
+
+.px-led {
+    color: rgba(230, 238, 251, 0.25);
+}
+
+.osd-pill {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(38, 60, 104, 0.95) 0%,
+        rgba(20, 33, 62, 0.92) 46%,
+        rgba(10, 18, 36, 0.90) 54%,
+        rgba(14, 24, 46, 0.93) 100%);
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.28), 0 6px 18px rgba(0, 0, 0, 0.40), 0 0 12px rgba(61, 155, 233, 0.20);
+    color: $n-text;
+}
+
+.osd-icon {
+    color: $n-glow;
+}
+
+.osd-label,
+.osd-value {
+    color: $n-text;
+}
+
+.osd-device {
+    color: $n-muted;
+}
+
+.seg {
+    background-color: rgba(111, 140, 190, 0.20);
+    border: 1px solid rgba(111, 211, 255, 0.10);
+}
+
+.seg.on {
+    border: 1px solid rgba(111, 211, 255, 0.70);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(111, 211, 255, 0.55);
+}
+
+.osd-pill.muted .osd-icon,
+.osd-pill.muted .osd-value {
+    color: $n-crit;
+}
+
+.ov-scrim {
+    background-image: linear-gradient(to bottom,
+        rgba(7, 12, 24, 0.62) 0%,
+        rgba(10, 18, 36, 0.56) 60%,
+        rgba(14, 26, 52, 0.62) 100%);
+}
+
+.ov-header {
+    border-bottom: 1px dashed $n-sep;
+}
+
+.ov-heading,
+.ov-title {
+    color: $n-text;
+}
+
+.ov-meta,
+.ov-hint,
+.ov-state {
+    color: $n-muted;
+}
+
+.ov-card {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(36, 56, 98, 0.94) 0%,
+        rgba(20, 33, 62, 0.90) 46%,
+        rgba(11, 19, 38, 0.88) 54%,
+        rgba(15, 26, 50, 0.92) 100%);
+    box-shadow: $n-sheen, 0 6px 18px rgba(0, 0, 0, 0.40);
+}
+
+.ov-hit:hover > .ov-card {
+    border-color: $n-glow;
+    box-shadow: $n-sheen, 0 0 0 3px rgba(111, 211, 255, 0.30), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.ov-card.current {
+    border-color: $n-glow;
+    box-shadow: $n-sheen, 0 0 0 3px rgba(61, 155, 233, 0.55), 0 0 18px rgba(111, 211, 255, 0.30);
+}
+
+.ov-num {
+    color: $n-text;
+    border: 1px solid rgba(111, 211, 255, 0.40);
+    background-image: $n-button;
+}
+
+.ov-card.current .ov-num {
+    border-color: $n-glow;
+    background-image: $n-gloss;
+    color: #ffffff;
+}
+
+.ov-card.current .ov-state {
+    color: $n-glow;
+}
+
+.ov-bezel {
+    border: 1px solid rgba(111, 211, 255, 0.30);
+    background-color: #03060d;
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.15);
+}
+
+.dock {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(38, 60, 104, 0.88) 0%,
+        rgba(20, 33, 62, 0.80) 46%,
+        rgba(10, 18, 36, 0.76) 54%,
+        rgba(14, 24, 46, 0.82) 100%);
+    box-shadow: $n-sheen, inset 0 -1px 0 rgba(111, 211, 255, 0.10), 0 8px 22px rgba(0, 0, 0, 0.40),
+                0 0 16px rgba(61, 155, 233, 0.16);
+}
+
+.dock-hit:hover .dock-orb {
+    background-image: radial-gradient(ellipse at 50% 80%,
+        rgba(111, 211, 255, 0.30) 0%,
+        rgba(111, 211, 255, 0.0) 72%);
+}
+
+.dock-item.active .dock-orb {
+    background-image: radial-gradient(ellipse at 50% 85%,
+        rgba(111, 211, 255, 0.40) 0%,
+        rgba(111, 211, 255, 0.0) 70%);
+}
+
+.dock-reflect {
+    opacity: 0.55;
+}
+
+.dock-dot {
+    background-color: $n-glow;
+    box-shadow: 0 0 6px rgba(111, 211, 255, 0.95);
+}
+
+.dock-sep {
+    background-image: linear-gradient(to bottom,
+        rgba(139, 151, 171, 0.0) 0%,
+        rgba(139, 151, 171, 0.45) 50%,
+        rgba(139, 151, 171, 0.0) 100%);
+}
+
+.orb {
+    border: 1px solid rgba(111, 211, 255, 0.70);
+}
+
+.dock-grid {
+    color: $n-glow;
+}
+
+.dock-hit:hover .dock-grid {
+    color: #ffffff;
+}
+
+.dock-handle {
+    background-image: radial-gradient(ellipse 50% 100% at 50% 100%,
+        rgba(111, 211, 255, 0.26) 0%,
+        rgba(111, 211, 255, 0.10) 45%,
+        rgba(111, 211, 255, 0.0) 100%);
+}
+
+.dock-handle-wrap:hover .dock-handle {
+    background-image: radial-gradient(ellipse 50% 100% at 50% 100%,
+        rgba(160, 230, 255, 0.70) 0%,
+        rgba(111, 211, 255, 0.26) 45%,
+        rgba(111, 211, 255, 0.0) 100%);
+}
+
+.sky-time {
+    color: $n-text;
+}
+
+.sky-next {
+    color: $n-glow;
+}
+
+.sky-moon {
+    color: $n-muted;
+}

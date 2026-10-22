@@ -1,0 +1,125 @@
+@define-color paper    #0b1426;
+@define-color cloud    #13213d;
+@define-color cobalt   #6fd3ff;
+@define-color blue     #3d9be9;
+@define-color sky      #6fd3ff;
+@define-color ink      #e6eefb;
+@define-color graphite #8b97ab;
+@define-color chrome   #2a3a5c;
+@define-color ok       #3ddc97;
+@define-color warn     #f0b44c;
+@define-color critical #ff5d6c;
+
+window#waybar {
+    color: @ink;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    background-image: linear-gradient(to bottom,
+        rgba(38, 60, 104, 0.88) 0%,
+        rgba(20, 33, 62, 0.82) 47%,
+        rgba(10, 18, 36, 0.80) 53%,
+        rgba(14, 24, 46, 0.84) 100%);
+    border: 1px solid rgba(111, 211, 255, 0.35);
+    box-shadow: inset 0 1px 0 rgba(160, 220, 255, 0.26),
+                inset 0 -1px 0 rgba(111, 211, 255, 0.10);
+}
+
+tooltip {
+    background: rgba(10, 18, 36, 0.97);
+    border: 1px solid rgba(111, 211, 255, 0.45);
+}
+
+tooltip label {
+    color: @ink;
+}
+
+#custom-aero {
+    color: @ink;
+    border-right: 1px solid rgba(139, 151, 171, 0.28);
+}
+
+#custom-aero:hover {
+    color: #6fd3ff;
+}
+
+#custom-ws1.empty,
+#custom-ws2.empty,
+#custom-ws3.empty,
+#custom-ws4.empty,
+#custom-ws5.empty {
+    color: rgba(139, 151, 171, 0.45);
+}
+
+#custom-ws1.occupied,
+#custom-ws2.occupied,
+#custom-ws3.occupied,
+#custom-ws4.occupied,
+#custom-ws5.occupied {
+    color: @ink;
+    border: 1px solid rgba(230, 238, 251, 0.28);
+}
+
+#custom-ws1:hover,
+#custom-ws2:hover,
+#custom-ws3:hover,
+#custom-ws4:hover,
+#custom-ws5:hover {
+    background: rgba(61, 155, 233, 0.20);
+    border: 1px solid rgba(111, 211, 255, 0.50);
+    color: #6fd3ff;
+}
+
+#custom-ws1.active,
+#custom-ws2.active,
+#custom-ws3.active,
+#custom-ws4.active,
+#custom-ws5.active {
+    color: #ffffff;
+    border: 1px solid rgba(111, 211, 255, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 8px rgba(61, 155, 233, 0.65);
+}
+
+#window,
+#tray,
+#cpu,
+#memory,
+#network,
+#bluetooth,
+#wireplumber,
+#backlight,
+#battery,
+#custom-notification {
+    border-left: 1px solid rgba(139, 151, 171, 0.25);
+}
+
+#tray {
+    border-left: none;
+}
+
+#tray > .needs-attention {
+    background: rgba(255, 93, 108, 0.20);
+}
+
+#custom-power {
+    border: 1px solid rgba(111, 211, 255, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 8px rgba(61, 155, 233, 0.60);
+}
+
+#custom-nightdeck {
+    font-size: 14px;
+    color: #6fd3ff;
+    padding: 0 9px 0 8px;
+    border-left: 1px solid rgba(139, 151, 171, 0.25);
+}
+
+#custom-nightdeck:hover {
+    color: #ffffff;
+    background: rgba(61, 155, 233, 0.20);
+}
+
+#custom-nightdeck.warm {
+    color: #ffb86b;
+}

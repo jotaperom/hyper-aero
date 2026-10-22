@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+
+import os
+import re
+import sys
+import json
+import shutil
+import subprocess
+
+HOME = os.path.expanduser("~")
+AERO = os.path.join(HOME, ".config", "hyper-aero")
+SCRIPTS = os.path.join(AERO, "scripts")
+PROFILE = os.path.join(AERO, "profile.json")
+LUA = os.path.join(HOME, ".config", "hypr", "aero-profile.lua")
+
+PROFILES = {
+    "completo": {
+        "label": "Completo",
+        "wallpaper": "video",
+        "pause_when": "fullscreen",
+        "visualizer_fps": 24,
+        "desk_fps": 30,
+        "resident": True,
+        "transition": True,
+        "lua": [
+            'hl.config({ decoration = { inactive_opacity = 0.9, blur = { enabled = true, size = 10, passes = 3, vibrancy = 0.2 },',
+            '    shadow = { enabled = true, range = 30, render_power = 3 }, glow = { enabled = true } }, animations = { enabled = true } })',
+            'hl.animation({ leaf = "borderangle", enabled = true, speed = 14, bezier = "aeroGlide", style = "once" })',
+        ],
+    },
+    "equilibrado": {
+        "label": "Equilibrado",
+        "wallpaper": "video",
+        "pause_when": "covered",
+        "visualizer_fps": 15,
+        "desk_fps": 20,
+        "resident": True,
+        "transition": True,
+        "lua": [
+            'hl.config({ decoration = { inactive_opacity = 0.95, blur = { enabled = true, size = 8, passes = 2, vibrancy = 0.1 },',
+            '    shadow = { enabled = true, range = 16, render_power = 2 }, glow = { enabled = false } }, animations = { enabled = true } })',
+            'hl.animation({ leaf = "borderangle", enabled = false })',
+        ],
+    },
+    "ligero": {
+        "label": "Ligero",
+        "wallpaper": "still",
+        "pause_when": "covered",
+        "visualizer_fps": 0,
+        "desk_fps": 12,
+        "resident": False,
+        "transition": False,
+        "lua": [
+            'hl.config({ decoration = { inactive_opacity = 1.0, blur = { enabled = true, size = 6, passes = 1, vibrancy = 0.0 },',
+            '    shadow = { enabled = false }, glow = { enabled = false } }, animations = { enabled = true } })',
+            'hl.animation({ leaf = "borderangle", enabled = false })',
+            'hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "aeroGlide", style = "fade" })',
+            'hl.animation({ leaf = "workspacesIn", enabled = true, speed = 5, bezier = "aeroGlide", style = "fade" })',
+            'hl.animation({ leaf = "workspacesOut", enabled = true, speed = 5, bezier = "aeroGlide", style = "fade" })',
+        ],
+    },
+}
+ALIASES = {"full": "completo", "balanced": "equilibrado", "lite": "ligero", "light": "ligero"}
+
+
+def say(msg):
+    print(f"\033[38;2;61;155;233m◢\033[0m {msg}")
+
+
+def current():
+    try:
+        with open(PROFILE, encoding="utf-8") as f:
+            name = json.load(f).get("name", "equilibrado")
+    except (OSError, ValueError):
+        name = "equilibrado"
+    return name if name in PROFILES else "equilibrado"
+
+
+def run(args, timeout=20):
+    try:
+        return subprocess.run(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def spawn(args):
+    try:
+        subprocess.Popen(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    except OSError:
+        pass
+
+
+def set_fps(path, fps):
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except OSError:
+        return
+    text = re.sub(r"(?m)^framerate\s*=\s*\d+", f"framerate = {max(1, fps)}", text)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
+def write(name):
+    p = PROFILES[name]
+    data = {k: v for k, v in p.items() if k not in ("lua", "label")}
+    data["name"] = name
+    os.makedirs(AERO, exist_ok=True)
+    tmp = PROFILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    os.replace(tmp, PROFILE)
+    os.makedirs(os.path.dirname(LUA), exist_ok=True)
+    with open(LUA, "w", encoding="utf-8") as f:
+        f.write("\n".join(p["lua"]) + "\n")
+    set_fps(os.path.join(AERO, "cava-hud.conf"), p["visualizer_fps"] or 15)
+    set_fps(os.path.join(AERO, "desk", "cava-desk.conf"), p["desk_fps"])
+
+
+def live(name):
+    p = PROFILES[name]
+    if not os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
+        return
+    run(["hyprctl", "reload"])
+    spawn([os.path.join(SCRIPTS, "wallpaper.sh"), "restart"])
+    run(["pkill", "-f", "hud-visualizer.sh"])
+    run(["pkill", "-x", "cava"])
+    if p["resident"]:
+        spawn([os.path.join(SCRIPTS, "phone.sh"), "daemon"])
+        spawn([os.path.join(SCRIPTS, "veil.sh"), "daemon"])
+    else:
+        run(["pkill", "-f", "qs -c aero-phone$"])
+        run(["pkill", "-f", "qs -c aero-veil$"])
+    if shutil.which("eww"):
+        spawn([os.path.join(SCRIPTS, "aero-eww"), "reload"])
+
+
+def main(argv):
+    arg = (argv[0] if argv else "status").lower()
+    arg = ALIASES.get(arg, arg)
+    if arg in ("status", "estado"):
+        name = current()
+        print(name)
+        return 0
+    if arg == "menu":
+        lines = [f"{v['label']}{'  ●' if k == current() else ''}" for k, v in PROFILES.items()]
+        try:
+            r = subprocess.run(["rofi", "-dmenu", "-i", "-no-custom", "-p", "Rendimiento"], input="\n".join(lines),
+                               capture_output=True, text=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired):
+            return 1
+        pick = r.stdout.strip().split("  ")[0]
+        for k, v in PROFILES.items():
+            if v["label"] == pick:
+                arg = k
+                break
+        else:
+            return 0
+    if arg == "list":
+        for k, v in PROFILES.items():
+            print(f"{k}{' *' if k == current() else ''}")
+        return 0
+    if arg not in PROFILES:
+        print("uso: aero-profile completo|equilibrado|ligero|status|list")
+        return 1
+    write(arg)
+    if "--no-apply" not in argv:
+        live(arg)
+        if shutil.which("notify-send"):
+            spawn(["notify-send", "-a", "HYPER·AERO", "◢ Perfil " + PROFILES[arg]["label"], "Rendimiento ajustado"])
+    say(f"Perfil: {PROFILES[arg]['label']}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

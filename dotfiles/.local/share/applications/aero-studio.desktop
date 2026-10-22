@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Estudio de temas
+Comment=Colores y fondos animados de HYPER·AERO
+Exec=sh -c "$HOME/.config/hyper-aero/scripts/studio.sh"
+Icon=preferences-desktop-theme
+Categories=Settings;DesktopSettings;
+Keywords=tema;color;fondo;wallpaper;theme;
