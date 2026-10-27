@@ -6,6 +6,8 @@ W.edge = 6
 W.gap = 10
 W.tick_ms = 25
 W.dwell_ticks = 28
+W.grace_ticks = 6
+W.settle_ms = 60
 W.max_ticks = 2400
 W.tile_w = 66
 W.tile_h = 44
@@ -74,18 +76,32 @@ function W.area(mon)
     return { name = mon.name or "", x = x, y = y, w = w, h = h, wx = x + l, wy = y + t, ww = w - l - r, wh = h - t - b }
 end
 
-function W.workspace_id()
+function W.workspace_id(mon)
+    if mon then
+        local mw = mon.active_workspace or mon.activeWorkspace
+        if type(mw) == "table" and mw.id and mw.id > 0 then return mw.id end
+    end
     local ws = try(hl.get_active_workspace)
     if ws and ws.id and ws.id > 0 then return ws.id end
     return 1
 end
 
-function W.tiles(a)
+function W.neighbor(a, side, y)
+    local x = side == "left" and a.x - 2 or a.x + a.w + 2
+    local m = try(hl.get_monitor_at, x, y)
+    if not m then m = try(hl.get_monitor_at, { x = x, y = y }) end
+    if not m then return false end
+    local b = W.area(m)
+    if b.name == "" or b.name == a.name then return false end
+    return x >= b.x and x <= b.x + b.w and y >= b.y and y <= b.y + b.h
+end
+
+function W.tiles(a, cur)
     local count = 5
     for _, ws in ipairs(try(hl.get_workspaces) or {}) do
         if ws.id and ws.id > count and ws.id <= 9 then count = ws.id end
     end
-    local cur = W.workspace_id()
+    cur = cur or W.workspace_id()
     if cur > count and cur <= 9 then count = cur end
     local out = {}
     for i = 1, count do
@@ -98,8 +114,10 @@ function W.zone(c, a, d)
     for _, t in ipairs(d.tiles) do
         if inside(c.x, c.y, t) then return "ws:" .. t.id end
     end
-    if c.x <= a.x + W.edge then return "left" end
-    if c.x >= a.x + a.w - W.edge then return "right" end
+    local reach = W.edge
+    if d.zone == "left" or d.zone == "right" then reach = W.edge * 4 end
+    if c.x <= a.x + reach and not W.neighbor(a, "left", c.y) then return "left" end
+    if c.x >= a.x + a.w - reach and not W.neighbor(a, "right", c.y) then return "right" end
     return nil
 end
 
@@ -145,15 +163,23 @@ function W.stop_timer()
     end
 end
 
+local function adopt(d, win)
+    d.addr = win.address
+    d.floating = win.floating and true or false
+    d.x, d.y, d.w, d.h = vx(win.at), vy(win.at), vx(win.size), vy(win.size)
+end
+
 function W.press(super)
+    if not super and W.drag and W.drag.super and not W.drag.moving then return end
     W.stop_timer()
     W.drag = nil
     local win = try(hl.get_active_window)
-    if not win or (win.fullscreen and win.fullscreen > 0) then return end
+    if win and win.fullscreen and win.fullscreen > 0 then return end
     local c = try(hl.get_cursor_pos)
     if not c then return end
-    W.drag = { addr = win.address, super = super and true or false, floating = win.floating and true or false, x = vx(win.at), y = vy(win.at), w = vx(win.size), h = vy(win.size), cx = c.x, cy = c.y,
-               moving = false, zone = nil, dwell = 0, ticks = 0, flip = nil, tiles = {} }
+    W.drag = { super = super and true or false, cx = c.x, cy = c.y,
+               moving = false, zone = nil, dwell = 0, away = 0, ticks = 0, flip = nil, tiles = {} }
+    if win then adopt(W.drag, win) end
     W.timer = try(hl.timer, function() try(W.tick) end, { timeout = W.tick_ms, type = "repeat" })
 end
 
@@ -167,7 +193,13 @@ function W.tick()
         return W.stop_timer()
     end
     local win = try(hl.get_active_window)
-    if not win or win.address ~= d.addr then return end
+    if not win then return end
+    if win.address ~= d.addr then
+        if d.moving then return end
+        if win.fullscreen and win.fullscreen > 0 then return end
+        adopt(d, win)
+        if not d.super then return end
+    end
     local c = try(hl.get_cursor_pos)
     if not c then return end
     if not d.moving then
@@ -189,12 +221,24 @@ function W.tick()
     end
     local mon = try(hl.get_monitor_at_cursor) or try(hl.get_active_monitor)
     if not mon then return end
-    d.area = W.area(mon)
-    d.tiles = W.tiles(d.area)
+    local area = W.area(mon)
+    if d.area and d.area.name ~= area.name then
+        d.zone = nil
+        d.dwell = 0
+        d.away = 0
+    end
+    d.area = area
+    local cur = W.workspace_id(mon)
+    d.tiles = W.tiles(d.area, cur)
     local z = W.zone(c, d.area, d)
+    if z == nil and (d.zone == "left" or d.zone == "right") and d.away < W.grace_ticks then
+        d.away = d.away + 1
+        z = d.zone
+    elseif z ~= nil then
+        d.away = 0
+    end
     if z == "left" or z == "right" then
         if d.zone == z then d.dwell = d.dwell + 1 else d.dwell = 0 end
-        local cur = W.workspace_id()
         local target = z == "left" and cur - 1 or cur + 1
         if target >= 1 and target <= 10 and d.dwell > W.dwell_ticks * 0.35 then
             local p = clamp((d.dwell - W.dwell_ticks * 0.35) / (W.dwell_ticks * 0.65), 0, 1)
@@ -216,8 +260,22 @@ function W.release()
     W.drag = nil
     W.publish(nil)
     if not d or not d.moving or not d.area then return end
+    if not (d.flip and d.flip.ready) and not (d.zone and d.zone:sub(1, 3) == "ws:") then return end
+    local done = false
+    local t
+    t = try(hl.timer, function()
+        if t then try(function() t:cancel() end) end
+        if done then return end
+        done = true
+        try(W.drop, d)
+    end, { timeout = W.settle_ms, type = "oneshot" })
+    if not t then W.drop(d) end
+end
+
+function W.drop(d)
     local a = d.area
     local win = try(hl.get_active_window)
+    if win and d.addr and win.address ~= d.addr then return end
     if d.flip and d.flip.ready then
         if win and win.floating then
             local x = clamp(vx(win.at), a.wx + W.gap, a.wx + a.ww - vx(win.size) - W.gap)

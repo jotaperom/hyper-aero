@@ -50,7 +50,7 @@ Item {
             asynchronous: true
             cache: false
             smooth: true
-            playing: !w.paused && !!w.core && !w.core.hidden && !w.core.editing && w.visible
+            playing: !w.paused && !!w.core && !w.core.hidden && !w.core.anyEditing() && w.visible
             opacity: w.ready ? 1 : 0
             scale: w.ready ? 1 : 1.04
             Behavior on opacity { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }

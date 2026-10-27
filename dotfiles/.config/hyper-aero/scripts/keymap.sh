@@ -10,6 +10,8 @@ printf '%s\n' \
     "SUPER + E              Files" \
     "SUPER + C              Close window" \
     "SUPER + V              Float / tile window" \
+    "SUPER + F              Fullscreen on / off" \
+    "SUPER + SHIFT + F      Maximize (keeps the bar)" \
     "SUPER + P              Displays: duplicate, extend, arrange" \
     "SUPER + SHIFT + P      Pseudo-tile window" \
     "SUPER + J              Flip split direction" \
@@ -44,7 +46,7 @@ printf '%s\n' \
     "SUPER + ALT + T        Day / night automatic" \
     "SUPER + SHIFT + D      Motion wallpaper play / pause" \
     "SUPER + M              Exit Hyprland" \
-    "SUPER+drag to edge/01-05 Move window to desktop" \
+    "SUPER+drag to edge/tile Move window to desktop" \
     "SUPER+CTRL+SHIFT+arrows Move window to desktop" \
     "SUPER + F1             This keymap" \
     "SUPER + F2             Performance profile" \

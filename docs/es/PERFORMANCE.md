@@ -65,6 +65,10 @@ El cambio se aplica al instante, sin cerrar sesión.
 
 Qué significa «en memoria»: en *Completo* y *Equilibrado* el teléfono NEXUS y la capa de transiciones se quedan cargados para aparecer al instante. En *Ligero* arrancan cuando los abrís (tardan un poquito) y si no, no usan memoria.
 
+### Perfiles y herramientas de energía
+
+Los perfiles solo cambian efectos visuales (desenfoque, sombras, animaciones, fotogramas del fondo y de los widgets). **No** tocan el gobernador de la CPU ni la energía, y no usan ni necesitan `power-profiles-daemon`, TLP ni tuned. Cualquiera de esos funciona junto con HYPER·AERO; solo instalá **uno**, porque se pelean por los mismos ajustes.
+
 ## Cosas que siempre ayudan
 
 - El **fondo animado también se pausa con batería** por debajo del 50 %, y mientras corre el protector de pantalla.

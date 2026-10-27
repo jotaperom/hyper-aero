@@ -63,9 +63,21 @@ Luego cerrá sesión y volvé a entrar.
 
 Si el panel siempre muestra solo la laptop, mirá `$XDG_RUNTIME_DIR/aero-displays.log`.
 
+## El mouse no pasa al otro monitor
+
+Actualizá a la 1.2.0 o más nueva: ahora los monitores siempre quedan pegados borde con borde. Si igual pasa, presioná `SUPER + P` una vez (vuelve a escribir el acomodo) o corré `hyprctl reload`. Muy de vez en cuando Hyprland encierra el cursor justo al entrar; HYPER·AERO recarga una vez unos segundos después de arrancar para soltarlo.
+
+## El mouse y el teclado no funcionan al entrar
+
+Esto viene del administrador de inicio de sesión o del kernel, no del escritorio en sí, y pasa sobre todo con **LightDM**. Lo que normalmente lo arregla:
+
+1. Cambiá a otro administrador de inicio de sesión: `./install.sh --with-login` (greetd), o SDDM/GDM.
+2. Revisá que tu distribución de teclado exista: `hyprctl devices` debería mostrar tu teclado. Una distribución o variante que no existe (`kb_layout`, `kb_variant` en `user.lua`) puede dejar el teclado fallando; corré `hyprctl configerrors` para revisarlo.
+3. Si sigue pasando, abrí un issue con la salida de `hyprctl devices`, `journalctl -b -u display-manager` y el nombre de tu administrador de inicio de sesión.
+
 ## Todo se ve muy grande o muy pequeño
 
-El instalador elige un tamaño según la resolución de la pantalla de la laptop (125 % para 1080p, 150 % para 1440p/1600p, 200 % para 4K). Para cambiarlo, presioná `SUPER + P` y elegí otro valor en **TAMAÑO EN LA LAPTOP** (por ejemplo 125 % en una laptop de 15" con 1080p). La elección se recuerda.
+El instalador elige un tamaño según la resolución de la pantalla de la laptop (125 % para 1080p, 150 % para 1440p/1600p, 200 % para 4K). Para cambiarlo, presioná `SUPER + P` y elegí otro valor en **TAMAÑO EN LA LAPTOP** (por ejemplo 125 % en una laptop de 15" con 1080p). La elección se recuerda. Los monitores externos tienen su propia fila de tamaño en el mismo panel.
 
 Con 150 % o más en una pantalla 1080p, el TELEMETRY HUD puede no caber; usá el HUD delgado (`SUPER + H`) o un tamaño menor.
 

@@ -93,7 +93,8 @@ El perfil escribe `~/.config/hypr/aero-profile.lua` (desenfoque, sombras, animac
 
 - `SUPER + ALT + D` abre el editor: agregá widgets desde la bandeja, arrastralos en la cuadrícula y cambiales el tamaño desde la esquina.
 - Clic derecho sobre un widget para ver sus opciones.
-- El acomodo se guarda en `~/.config/hyper-aero/desk/layout.json`.
+- Cada pantalla tiene su propio escritorio: el editor se abre en la pantalla donde está el mouse, y cada acomodo se guarda aparte en `~/.config/hyper-aero/desk/layout-PANTALLA.json` (por ejemplo `layout-DP-1.json`).
+- Abrir o cerrar TELEMETRY nunca cambia un acomodo guardado; los widgets solo se corren en pantalla mientras está abierto.
 
 ## Terminal
 
@@ -103,7 +104,7 @@ El perfil escribe `~/.config/hypr/aero-profile.lua` (desenfoque, sombras, animac
 
 ## Pantallas
 
-`SUPER + P` cubre casi todo. El panel escribe sus reglas en `~/.config/hypr/aero-displays.lua`; no edités ese archivo, se vuelve a generar.
+`SUPER + P` cubre casi todo. En una compu de escritorio con varios monitores (sin pantalla de laptop) el panel muestra una fila de tamaño por pantalla, en cuál va TELEMETRY y un botón para intercambiar izquierda y derecha. El panel escribe sus reglas en `~/.config/hypr/aero-displays.lua`; no edités ese archivo, se vuelve a generar.
 
 ## Mapa de archivos
 

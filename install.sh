@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-VERSION="1.1.0"
+VERSION="1.2.0"
 UPSTREAM="jotaperom/hyper-aero"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 C="$HOME/.config"
@@ -167,6 +167,9 @@ check_base() {
     command -v pacman >/dev/null || die "$(t "HYPER·AERO necesita Arch Linux (o una distro basada en Arch con pacman).")"
     [ "$(uname -m)" = "x86_64" ] || warn "$(t "Solo está probado en x86_64.")"
     command -v sudo >/dev/null || die "$(t "Falta sudo.")"
+    if systemctl is-enabled lightdm >/dev/null 2>&1; then
+        warn "$(t "Usás LightDM: con Hyprland a veces deja el teclado y el mouse sin responder al entrar. Si te pasa, usá --with-login o SDDM/GDM.")"
+    fi
 }
 
 hw_report() {
@@ -207,6 +210,7 @@ detect_settings() {
     [ -n "$KB_LAYOUT" ] || KB_LAYOUT=$(localectl status 2>/dev/null | awk -F': ' '/VC Keymap/ { print $2 }' | sed 's/-.*//')
     [ -n "$KB_LAYOUT" ] && [ "$KB_LAYOUT" != "n/a" ] || KB_LAYOUT="us"
     ask "$(t "Distribución de teclado (us, es, latam, de…)")" "$KB_LAYOUT"
+    [ "$REPLY" != "$KB_LAYOUT" ] && KB_VARIANT=""
     KB_LAYOUT="$REPLY"
 
     BROWSER="firefox"

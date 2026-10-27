@@ -25,10 +25,12 @@
 |---|---|
 | `SUPER + C` | Close window |
 | `SUPER + V` | Float / tile |
+| `SUPER + F` | Fullscreen on / off |
+| `SUPER + SHIFT + F` | Maximize (keeps the bar and gaps) |
 | `SUPER + J` | Flip split direction |
 | `SUPER + SHIFT + P` | Pseudo-tile |
 | `SUPER + arrows` | Move focus |
-| `SUPER + left drag` | Move window (drag to the screen edge to send it to another desktop) |
+| `SUPER + left drag` | Move window (hold it at the outer edge of the screen, or drop it on a desktop tile at the top, to send it to another desktop) |
 | `SUPER + right drag` | Resize window |
 | `SUPER + CTRL + SHIFT + ←/→` | Move window to the next / previous desktop |
 | `ALT + TAB` | Switch windows (hold ALT, tap TAB) |

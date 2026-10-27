@@ -25,10 +25,12 @@
 |---|---|
 | `SUPER + C` | Cerrar ventana |
 | `SUPER + V` | Flotante / mosaico |
+| `SUPER + F` | Pantalla completa sí / no |
+| `SUPER + SHIFT + F` | Maximizar (deja la barra y los márgenes) |
 | `SUPER + J` | Cambiar la dirección de división |
 | `SUPER + SHIFT + P` | Pseudo-mosaico |
 | `SUPER + flechas` | Mover el foco |
-| `SUPER + arrastrar con clic izquierdo` | Mover ventana (arrastrala al borde para mandarla a otro escritorio) |
+| `SUPER + arrastrar con clic izquierdo` | Mover ventana (mantenela en el borde exterior de la pantalla, o soltala sobre un escritorio de arriba, para mandarla a otro escritorio) |
 | `SUPER + arrastrar con clic derecho` | Cambiar tamaño |
 | `SUPER + CTRL + SHIFT + ←/→` | Mover la ventana al escritorio siguiente / anterior |
 | `ALT + TAB` | Cambiar de ventana (mantené ALT, tocá TAB) |

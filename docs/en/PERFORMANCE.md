@@ -65,6 +65,10 @@ The change applies right away, no logout needed.
 
 What “kept in memory” means: in *Full* and *Balanced* the NEXUS phone and the transition layer stay loaded so they appear instantly. In *Lite* they start when you open them (a short delay) and use no memory otherwise.
 
+### Profiles and power tools
+
+The profiles only change visual effects (blur, shadows, animations, wallpaper and widget frame rates). They do **not** touch CPU governors or power settings, and they don't use or require `power-profiles-daemon`, TLP or tuned. Any of those works alongside HYPER·AERO; just install **one** of them, since they fight each other over the same settings.
+
 ## Things that always help
 
 - The **animated wallpaper also pauses on battery** below 50 %, and while the screensaver is running.

@@ -45,7 +45,7 @@ Eight skins (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): open the cont
 
 ## Desk widgets
 
-`SUPER + D` shows or hides the widgets; `SUPER + ALT + D` opens the editor grid. Right-click a widget for its menu.
+`SUPER + D` shows or hides the widgets; `SUPER + ALT + D` opens the editor grid on the screen the mouse is on. Each monitor has its own independent set of widgets. Right-click a widget for its menu.
 
 | Widget | What it does |
 |---|---|
@@ -63,7 +63,7 @@ Eight skins (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): open the cont
 | LYRICS | Synced lyrics for the current song (lrclib.net) |
 | GIF | Any animated image |
 
-Drag a window with `SUPER + left mouse` to the screen edge to send it to another desktop.
+Drag a window with `SUPER + left mouse` and hold it at the screen edge, or drop it on one of the desktop tiles at the top, to send it to another desktop. With several monitors, only the outer edges switch desktops; the edges between screens just move the window across. `SUPER + F` makes a window fullscreen.
 
 ## TELEMETRY HUD
 
@@ -77,6 +77,8 @@ A Windows-style panel:
 - Drag the screens to match where they physically are.
 - Plugging or unplugging a monitor switches automatically.
 - **Size on the laptop** and **size on the monitor**: 100 % to 200 % for each screen.
+- Monitors start at their best resolution and refresh rate, with a size picked from their real pixel density (a 27" 4K starts at 150 %, a 34" ultrawide at 100 %).
+- **Desktops with several monitors** (no laptop): one size per screen, choose where TELEMETRY goes, swap left and right. Screens always touch each other, so the mouse moves freely between them.
 
 ## Everyday tools
 

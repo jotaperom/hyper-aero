@@ -257,6 +257,8 @@ hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/script
 hl.bind("Escape", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/overview.sh escape"), { non_consuming = true })
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/motion-toggle.sh"))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd(classicMenu))
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/phone.sh controls"))

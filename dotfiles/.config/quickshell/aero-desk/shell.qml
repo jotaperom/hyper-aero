@@ -15,6 +15,8 @@ ShellRoot {
     readonly property string scripts: aero + "/scripts"
 
     property string primaryName: ""
+    property string hudScreen: ""
+    readonly property var hub: core
 
     FileView {
         path: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/aero-primary"
@@ -25,16 +27,20 @@ ShellRoot {
         onLoaded: shell.primaryName = text().trim()
     }
 
-    function pickScreen() {
+    FileView {
+        path: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/aero-hud.screen"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: shell.hudScreen = text().trim()
+    }
+
+    function mainName() {
         var list = Quickshell.screens
         for (var p = 0; p < list.length; p++) {
-            if (shell.primaryName.length && list[p].name === shell.primaryName) return list[p]
+            if (shell.primaryName.length && list[p].name === shell.primaryName) return list[p].name
         }
-        var mon = Hyprland.focusedMonitor
-        for (var i = 0; i < list.length; i++) {
-            if (mon && list[i].name === mon.name) return list[i]
-        }
-        return list.length ? list[0] : null
+        return list.length ? list[0].name : ""
     }
 
     PwObjectTracker {
@@ -52,11 +58,10 @@ ShellRoot {
         property var sky: ({ ok: false })
         property var weather: ({ ok: false, place: "", icon: "", temp: "--", desc: "", hi: "--", lo: "--", hum: "--", wind: "--" })
         property var user: ({ name: "", full: "", host: "", kernel: "", face: "", pkgs: 0, uptime: "", shell: "" })
-        property var layout: []
         property bool hidden: false
-        property bool editing: false
-        property bool loaded: false
-        property bool fresh: false
+        property var placedMap: ({})
+        property var boards: ({})
+        readonly property string deskDir: shell.aero + "/desk"
         property var tasks: []
         property string notes: ""
         property var usage: ({})
@@ -66,7 +71,7 @@ ShellRoot {
         readonly property var lyricPlayer: pickLyricPlayer(Mpris.players.values)
         readonly property string lyricKey: lyricPlayer && lyricPlayer.trackTitle ? (lyricPlayer.trackArtist || "") + "\u241f" + lyricPlayer.trackTitle : ""
         onLyricKeyChanged: lyricsWait.restart()
-        onLayoutChanged: lyricsWait.restart()
+        onPlacedMapChanged: lyricsWait.restart()
         readonly property var sink: Pipewire.defaultAudioSink
         readonly property real volume: sink && sink.audio ? sink.audio.volume : 0
         readonly property bool muted: sink && sink.audio ? sink.audio.muted : false
@@ -75,10 +80,47 @@ ShellRoot {
         readonly property var favorites: pickFavs(DesktopEntries.applications.values, usage)
 
         function placed(id) {
-            for (var i = 0; i < layout.length; i++) {
-                if (layout[i].id === id) return true
+            for (var k in placedMap) {
+                if (placedMap[k].indexOf(id) >= 0) return true
             }
             return false
+        }
+
+        function setPlaced(key, list) {
+            var m = Object.assign({}, placedMap)
+            var ids = []
+            for (var i = 0; i < list.length; i++) ids.push(list[i].id)
+            if (ids.length) m[key] = ids
+            else delete m[key]
+            placedMap = m
+        }
+
+        function registerBoard(key, b) {
+            var m = Object.assign({}, boards)
+            if (b) m[key] = b
+            else delete m[key]
+            boards = m
+        }
+
+        function boardFor(name) {
+            if (boards[name]) return boards[name]
+            var main = shell.mainName()
+            if (boards[main]) return boards[main]
+            for (var k in boards) return boards[k]
+            return null
+        }
+
+        function anyEditing() {
+            for (var k in boards) {
+                if (boards[k].editing) return true
+            }
+            return false
+        }
+
+        function setHidden(v) {
+            if (hidden === v) return
+            hidden = v
+            stateFile.setText(JSON.stringify({ hidden: hidden }) + "\n")
         }
 
         function pickPlayer(list) {
@@ -262,49 +304,8 @@ ShellRoot {
             return out
         }
 
-        function setLayout(list) {
-            layout = sanitize(list)
-            saveLayout()
-        }
-
-        property int savedCols: 0
-        property int savedRows: 0
-
-        function adapt(cols, rows) {
-            if (!loaded || cols < 4 || rows < 4) return
-            if (savedCols <= 0 || savedRows <= 0) {
-                savedCols = 30
-                savedRows = 16
-            }
-            if (savedCols === cols && savedRows === rows) return
-            var oc = savedCols, orr = savedRows
-            var out = []
-            for (var i = 0; i < layout.length; i++) {
-                var w = layout[i]
-                var c = w.c, r = w.r
-                if (w.c + w.w / 2 > oc / 2) c = cols - (oc - w.c)
-                if (w.r + w.h / 2 > orr / 2) r = rows - (orr - w.r)
-                out.push({ id: w.id, c: Math.max(0, Math.min(cols - w.w, c)), r: Math.max(0, Math.min(rows - w.h, r)), w: w.w, h: w.h })
-            }
-            savedCols = cols
-            savedRows = rows
-            layout = out
-            saveLayout()
-        }
-
-        function saveLayout() {
-            layoutFile.setText(JSON.stringify({ version: 2, cell: 48, cols: savedCols, rows: savedRows, hidden: hidden, widgets: layout }, null, 2) + "\n")
-        }
-
         function toggleHidden() {
-            hidden = !hidden
-            saveLayout()
-        }
-
-        function openEdit() {
-            if (editing) return
-            hidden = false
-            editing = true
+            setHidden(!hidden)
         }
     }
 
@@ -336,26 +337,14 @@ ShellRoot {
     }
 
     FileView {
-        id: layoutFile
-        path: shell.aero + "/desk/layout.json"
+        id: stateFile
+        path: core.deskDir + "/state.json"
         printErrors: false
         onLoaded: {
             try {
-                var d = JSON.parse(text())
-                core.hidden = !!d.hidden
-                core.savedCols = d.cols | 0
-                core.savedRows = d.rows | 0
-                core.layout = core.sanitize(d.widgets || [])
+                core.hidden = !!JSON.parse(text()).hidden
             } catch (err) {
-                core.layout = []
-                core.fresh = true
             }
-            core.loaded = true
-        }
-        onLoadFailed: {
-            core.layout = []
-            core.fresh = true
-            core.loaded = true
         }
     }
 
@@ -480,56 +469,77 @@ ShellRoot {
         }
     }
 
-    PanelWindow {
-        id: deskWin
-        screen: shell.pickScreen()
-        color: "transparent"
-        anchors {
-            top: true
-            bottom: true
-            left: true
-            right: true
-        }
-        exclusionMode: ExclusionMode.Normal
-        WlrLayershell.namespace: "aero-desk"
-        WlrLayershell.layer: WlrLayer.Bottom
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    Variants {
+        model: Quickshell.screens
 
-        Desk {
-            id: desk
-            anchors.fill: parent
-            core: core
-            onEditRequested: core.openEdit()
-        }
-    }
+        Scope {
+            id: scope
+            required property var modelData
+            readonly property string name: modelData.name
 
-    PanelWindow {
-        id: editWin
-        visible: core.editing
-        screen: deskWin.screen
-        color: "transparent"
-        anchors {
-            top: true
-            bottom: true
-            left: true
-            right: true
-        }
-        exclusionMode: ExclusionMode.Normal
-        WlrLayershell.namespace: "aero-desk-edit"
-        WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            Board {
+                id: board
+                core: shell.hub
+                screenName: scope.name
+                primary: shell.mainName() === scope.name
+                Component.onCompleted: shell.hub.registerBoard(scope.name, board)
+                Component.onDestruction: shell.hub.registerBoard(scope.name, null)
+            }
 
-        Editor {
-            id: editor
-            anchors.fill: parent
-            core: core
-            cols: desk.cols
-            rows: desk.rows
-            cell: desk.cell
-            ox: desk.ox
-            oy: desk.oy
-            focus: true
-            onFinished: core.editing = false
+            PanelWindow {
+                id: deskWin
+                screen: scope.modelData
+                color: "transparent"
+                anchors {
+                    top: true
+                    bottom: true
+                    left: true
+                    right: true
+                }
+                exclusionMode: ExclusionMode.Normal
+                WlrLayershell.namespace: "aero-desk"
+                WlrLayershell.layer: WlrLayer.Bottom
+                WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+
+                Desk {
+                    id: desk
+                    anchors.fill: parent
+                    core: shell.hub
+                    board: board
+                    onHud: (shell.hudScreen.length ? shell.hudScreen : shell.mainName()) === scope.name
+                    onEditRequested: board.openEdit()
+                }
+            }
+
+            PanelWindow {
+                id: editWin
+                visible: board.editing
+                screen: scope.modelData
+                color: "transparent"
+                anchors {
+                    top: true
+                    bottom: true
+                    left: true
+                    right: true
+                }
+                exclusionMode: ExclusionMode.Normal
+                WlrLayershell.namespace: "aero-desk-edit"
+                WlrLayershell.layer: WlrLayer.Overlay
+                WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+                Editor {
+                    id: editor
+                    anchors.fill: parent
+                    core: shell.hub
+                    board: board
+                    cols: desk.cols
+                    rows: desk.rows
+                    cell: desk.cell
+                    ox: desk.ox
+                    oy: desk.oy
+                    focus: true
+                }
+            }
         }
     }
 
@@ -537,27 +547,32 @@ ShellRoot {
         target: "desk"
 
         function toggle(): void {
-            if (core.editing) return
+            if (core.anyEditing()) return
             core.toggleHidden()
         }
 
         function show(): void {
-            core.hidden = false
-            core.saveLayout()
+            core.setHidden(false)
         }
 
         function hide(): void {
-            core.hidden = true
-            core.saveLayout()
+            core.setHidden(true)
         }
 
         function edit(): void {
-            if (core.editing) editor.done()
-            else core.openEdit()
+            if (core.anyEditing()) {
+                done()
+                return
+            }
+            var mon = Hyprland.focusedMonitor
+            var b = core.boardFor(mon ? mon.name : "")
+            if (b) b.openEdit()
         }
 
         function done(): void {
-            if (core.editing) editor.done()
+            for (var k in core.boards) {
+                if (core.boards[k].editing) core.boards[k].doneRequested()
+            }
         }
     }
 }

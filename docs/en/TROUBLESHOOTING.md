@@ -63,9 +63,21 @@ Then log out and back in.
 
 If the panel always shows only the laptop, look at `$XDG_RUNTIME_DIR/aero-displays.log`.
 
+## The mouse doesn't move to the other monitor
+
+Update to 1.2.0 or newer: monitors are now always placed edge to edge. If it still happens, press `SUPER + P` once (it rewrites the layout), or run `hyprctl reload`. Very rarely Hyprland confines the cursor right after login; HYPER·AERO reloads once a few seconds after startup to clear it.
+
+## Mouse and keyboard don't work right after login
+
+This comes from the login manager or the kernel, not from the desktop itself, and it happens mostly with **LightDM**. What usually fixes it:
+
+1. Switch to another login manager: `./install.sh --with-login` (greetd), or SDDM/GDM.
+2. Make sure your keyboard layout exists: `hyprctl devices` should list your keyboard. A layout or variant that doesn't exist (`kb_layout`, `kb_variant` in `user.lua`) can leave the keyboard misbehaving; run `hyprctl configerrors` to check.
+3. If it keeps happening, open an issue with the output of `hyprctl devices`, `journalctl -b -u display-manager` and your login manager's name.
+
 ## Everything looks too big or too small
 
-The installer picks a size from the laptop screen's resolution (125 % for 1080p, 150 % for 1440p/1600p, 200 % for 4K). To change it, press `SUPER + P` and choose another value under **SIZE ON THE LAPTOP** (for example 125 % on a 15" 1080p laptop). The choice is remembered.
+The installer picks a size from the laptop screen's resolution (125 % for 1080p, 150 % for 1440p/1600p, 200 % for 4K). To change it, press `SUPER + P` and choose another value under **SIZE ON THE LAPTOP** (for example 125 % on a 15" 1080p laptop). The choice is remembered. External monitors get their own size row in the same panel.
 
 At 150 % or more on a 1080p screen, the TELEMETRY HUD may not fit; use the slim HUD (`SUPER + H`) or a smaller size.
 

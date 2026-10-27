@@ -45,7 +45,7 @@ Ocho pieles (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): abrí la pág
 
 ## Widgets de escritorio
 
-`SUPER + D` muestra u oculta los widgets; `SUPER + ALT + D` abre la cuadrícula de edición. Clic derecho sobre un widget para ver su menú.
+`SUPER + D` muestra u oculta los widgets; `SUPER + ALT + D` abre la cuadrícula de edición en la pantalla donde está el mouse. Cada monitor tiene sus propios widgets, independientes. Clic derecho sobre un widget para ver su menú.
 
 | Widget | Qué hace |
 |---|---|
@@ -63,7 +63,7 @@ Ocho pieles (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): abrí la pág
 | LYRICS | Letra sincronizada de la canción que suena (lrclib.net) |
 | GIF | Cualquier imagen animada |
 
-Arrastrá una ventana con `SUPER + clic izquierdo` hasta el borde de la pantalla para mandarla a otro escritorio.
+Arrastrá una ventana con `SUPER + clic izquierdo` y mantenela en el borde de la pantalla, o soltala sobre uno de los escritorios de arriba, para mandarla a otro escritorio. Con varios monitores solo los bordes exteriores cambian de escritorio; los bordes entre pantallas solo pasan la ventana al otro lado. `SUPER + F` pone una ventana en pantalla completa.
 
 ## TELEMETRY HUD
 
@@ -77,6 +77,8 @@ Un panel como el de Windows:
 - Arrastrá las pantallas para que coincidan con dónde están físicamente.
 - Al conectar o desconectar un monitor, cambia solo.
 - **Tamaño en la laptop** y **tamaño en el monitor**: de 100 % a 200 % para cada pantalla.
+- Los monitores arrancan en su mejor resolución y frecuencia, con un tamaño elegido según su densidad real de píxeles (un 4K de 27" arranca al 150 %, un ultrawide de 34" al 100 %).
+- **Compus de escritorio con varios monitores** (sin laptop): un tamaño por pantalla, elegir dónde va TELEMETRY e intercambiar izquierda y derecha. Las pantallas siempre quedan pegadas, así que el mouse pasa libremente entre ellas.
 
 ## Herramientas de todos los días
 

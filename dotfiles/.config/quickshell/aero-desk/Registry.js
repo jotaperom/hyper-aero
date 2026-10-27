@@ -34,3 +34,11 @@ function defaults(cols, rows) {
         { id: "atmos", c: c - 6, r: r - 5, w: 6, h: 5 }
     ]
 }
+
+function secondary(cols, rows) {
+    var c = Math.max(cols, 24)
+    return [
+        { id: "chrono", c: 0, r: 0, w: 8, h: 4 },
+        { id: "calendar", c: c - 6, r: 0, w: 6, h: 6 }
+    ]
+}

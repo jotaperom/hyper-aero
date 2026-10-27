@@ -193,13 +193,36 @@ def native(m):
     return int(m.get("width") or 1920), int(m.get("height") or 1080)
 
 
+def best_mode(m):
+    best = None
+    for mode in m.get("availableModes") or []:
+        mm = re.match(r"(\d+)x(\d+)@([\d.]+)", mode)
+        if not mm:
+            continue
+        w, h, r = int(mm.group(1)), int(mm.group(2)), float(mm.group(3))
+        key = (w * h, r)
+        if best is None or key > best[0]:
+            best = (key, f"{w}x{h}@{r:g}")
+    return best[1] if best else "preferred"
+
+
 def default_scale(m):
-    w, _ = native(m)
-    if w >= 3800:
+    w, h = native(m)
+    try:
+        pw = float(m.get("physicalWidth") or 0)
+    except (TypeError, ValueError):
+        pw = 0
+    if pw >= 150:
+        dpi = w / (pw / 25.4)
+        if 50 <= dpi <= 400:
+            return max(1.0, min(2.0, round(dpi / 110 * 4) / 4))
+    if h >= 2160:
         return 1.5
-    if w >= 2500:
-        return 1.25
     return 1
+
+
+def by_size(mons):
+    return sorted(mons, key=lambda m: (-(native(m)[0] * native(m)[1]), m["name"]))
 
 
 def settings(store, ext):
@@ -281,17 +304,62 @@ def place(side, offset, ew, eh, lw, lh):
     return (-mx, -my), (lx - mx, ly - my)
 
 
+def stack_right(store, mons, boxes, rules, fresh):
+    x = max([bx + bw for bx, by, bw, bh in boxes] or [0])
+    for m in mons:
+        ms, new = settings(store, m)
+        if new:
+            fresh.append((key_of(m), ms))
+        w, h = logical(*native(m), ms["scale"])
+        rules.append(rule(m["name"], best_mode(m), f"{x}x0", ms["scale"]))
+        boxes.append((x, 0, w, h))
+        x += w
+
+
+def desktop_order(store, exts):
+    names = [m["name"] for m in exts]
+    order = [n for n in store.get("order", []) if n in names]
+    rest = sorted((m for m in exts if m["name"] not in order), key=lambda m: (int(m.get("x") or 0), m["name"]))
+    return order + [m["name"] for m in rest]
+
+
+def desktop_plan(store, exts):
+    byname = {m["name"]: m for m in exts}
+    order = desktop_order(store, exts)
+    fresh = []
+    sizes = []
+    for n in order:
+        ms, new = settings(store, byname[n])
+        if new:
+            fresh.append((key_of(byname[n]), ms))
+        sizes.append((n, ms["scale"]) + logical(*native(byname[n]), ms["scale"]))
+    top = max(h for _, _, _, h in sizes)
+    rules = []
+    x = 0
+    for n, sc, w, h in sizes:
+        rules.append(rule(n, best_mode(byname[n]), f"{x}x{int(round((top - h) / 2))}", sc))
+        x += w
+    main = store.get("hud_screen")
+    if main not in byname:
+        main = max(sizes, key=lambda t: (t[2] * t[3], -order.index(t[0])))[0]
+    return rules, main, main, "desktop", fresh, None
+
+
 def plan(store, lap, exts):
     prof = laptop_profile(store, lap) if lap else {}
     rules = []
     if not exts:
         if lap:
             rules.append(rule(lap["name"], prof["mode"], "0x0", prof["scale"]))
-            return rules, lap["name"], lap["name"], "laptop", False, None
-        return rules, None, None, "laptop", False, None
-    e = exts[0]
-    s, fresh = settings(store, e)
-    mode = s["mode"] if lap else "external"
+            return rules, lap["name"], lap["name"], "laptop", [], None
+        return rules, None, None, "laptop", [], None
+    if not lap:
+        return desktop_plan(store, exts)
+    ordered = by_size(exts)
+    e, others = ordered[0], ordered[1:]
+    s, new = settings(store, e)
+    fresh = [(key_of(e), s)] if new else []
+    mode = s["mode"]
     es = s["scale"]
     ew, eh = logical(*native(e), es)
     if mode == "laptop":
@@ -299,28 +367,27 @@ def plan(store, lap, exts):
         rules += [rule(x["name"], disabled=True) for x in exts]
         return rules, lap["name"], lap["name"], mode, fresh, s
     primary = hud = e["name"]
+    boxes = [(0, 0, ew, eh)]
     if mode == "duplicate":
-        rules.append(rule(e["name"], "preferred", "0x0", es))
+        rules.append(rule(e["name"], best_mode(e), "0x0", es))
         rules.append(rule(lap["name"], prof["mode"], "auto", prof["scale"], mirror=e["name"]))
-    elif mode == "external" or not lap:
-        rules.append(rule(e["name"], "preferred", "0x0", es))
-        if lap:
-            rules.append(f"if aero_has({lua_str(e['name'])}) then")
-            rules.append("    " + rule(lap["name"], disabled=True))
-            rules.append("else")
-            rules.append("    " + rule(lap["name"], prof["mode"], f"{ew}x0", prof["scale"]))
-            rules.append("end")
+    elif mode == "external":
+        rules.append(rule(e["name"], best_mode(e), "0x0", es))
+        lw, lh = logical(prof["w"], prof["h"], prof["scale"])
+        rules.append(f"if aero_has({lua_str(e['name'])}) then")
+        rules.append("    " + rule(lap["name"], disabled=True))
+        rules.append("else")
+        rules.append("    " + rule(lap["name"], prof["mode"], f"{ew}x0", prof["scale"]))
+        rules.append("end")
     else:
         lw, lh = logical(prof["w"], prof["h"], prof["scale"])
         (ex, ey), (lx, ly) = place(s["side"], s["offset"], ew, eh, lw, lh)
-        rules.append(rule(e["name"], "preferred", f"{ex}x{ey}", es))
+        rules.append(rule(e["name"], best_mode(e), f"{ex}x{ey}", es))
         rules.append(rule(lap["name"], prof["mode"], f"{lx}x{ly}", prof["scale"]))
+        boxes = [(ex, ey, ew, eh), (lx, ly, lw, lh)]
         if s.get("hud") == "laptop":
             hud = lap["name"]
-    x = 10000
-    for other in exts[1:]:
-        rules.append(rule(other["name"], "preferred", f"{x}x0", 1))
-        x += native(other)[0]
+    stack_right(store, others, boxes, rules, fresh)
     return rules, primary, hud, mode, fresh, s
 
 
@@ -393,14 +460,15 @@ def apply(reason="manual"):
     if not rules:
         log("no encontré pantallas para configurar")
         return None
-    reloaded = install_rules(render(rules), force=reason == "inicio")
-    if exts and fresh:
-        store["monitors"][key_of(exts[0])] = s
+    needs = reason == "inicio" and mode == "external" and lap is not None
+    reloaded = install_rules(render(rules), force=needs)
+    for k, v in fresh:
+        store["monitors"][k] = v
     save(store)
     after = settle()
     if mode == "external" and lap and exts:
         now = {m["name"]: m for m in monitors()}
-        if not now.get(lap["name"], {}).get("disabled") and now.get(exts[0]["name"]):
+        if not now.get(lap["name"], {}).get("disabled") and now.get(by_size(exts)[0]["name"]):
             log("el monitor venía apagado; recargo otra vez para apagar la laptop")
             sh(["hyprctl", "reload"], 10)
             after = settle()
@@ -417,13 +485,13 @@ def apply(reason="manual"):
         telemetry(target)
     write_text(HUDSCREEN, target)
     if reason == "hotplug":
-        if exts and fresh:
+        if exts and fresh and lap:
             spawn([os.path.join(SCRIPTS, "displays.sh"), "show"])
         elif exts:
             notify(_t("◢ Monitor conectado"), _t("{} · SUPER + P para cambiar").format(MODE_NAMES.get(mode, mode)))
         if exts:
             gpu_hint()
-        else:
+        elif lap:
             notify(_t("◢ Monitor desconectado"), _t("Volviste a la pantalla de la laptop"))
     return primary
 
@@ -587,21 +655,34 @@ def locked(fn, *args, wait=15):
         fd.close()
 
 
+def describe(m):
+    return (str(m.get("make") or "") + " " + str(m.get("model") or "")).strip() or m.get("description") or m["name"]
+
+
 def snapshot():
     store = load()
-    lap, exts = split(monitors())
+    mons = monitors()
+    lap, exts = split(mons)
     out = {"laptop": None, "external": None, "mode": "laptop", "side": "right", "offset": 0.5, "scale": 1,
-           "hud": "primary", "extra": max(0, len(exts) - 1)}
+           "hud": "primary", "extra": max(0, len(exts) - 1), "desktop": lap is None and bool(exts), "screens": []}
     if lap:
         prof = laptop_profile(store, lap)
         out["laptop"] = {"name": lap["name"], "w": prof["w"], "h": prof["h"], "scale": prof["scale"]}
-    if exts:
-        e = exts[0]
+    if exts and lap:
+        e = by_size(exts)[0]
         s, _ = settings(store, e)
         w, h = native(e)
-        desc = (str(e.get("make") or "") + " " + str(e.get("model") or "")).strip() or e.get("description") or e["name"]
-        out["external"] = {"name": e["name"], "desc": desc, "w": w, "h": h}
+        out["external"] = {"name": e["name"], "desc": describe(e), "w": w, "h": h}
         out.update({k: s[k] for k in ("mode", "side", "offset", "scale", "hud")})
+    if exts and not lap:
+        out["mode"] = "desktop"
+        byname = {m["name"]: m for m in exts}
+        for n in desktop_order(store, exts):
+            m = byname[n]
+            ms, _ = settings(store, m)
+            w, h = native(m)
+            out["screens"].append({"name": n, "desc": describe(m), "w": w, "h": h, "scale": ms["scale"]})
+        out["hudScreen"] = read_text(HUDSCREEN)
     out["primary"] = read_text(PRIMARY)
     out["stamp"] = int(time.time() * 1000)
     return out
@@ -636,10 +717,35 @@ def update(changes):
             save(store)
             locked(apply, "manual", wait=30)
             return 0
+    extra = [(f, v) for f, v in changes if f in ("mscale", "hudon", "swap")]
+    changes = [(f, v) for f, v in changes if f not in ("mscale", "hudon", "swap")]
+    if extra:
+        byname = {m["name"]: m for m in exts}
+        for field, value in extra:
+            try:
+                if field == "mscale":
+                    name, _, val = value.partition("=")
+                    m = byname[name]
+                    ms, _ = settings(store, m)
+                    ms["scale"] = round(max(0.5, min(3.0, float(val))), 2)
+                    store["monitors"][key_of(m)] = ms
+                elif field == "hudon" and value in byname:
+                    store["hud_screen"] = value
+                elif field == "swap":
+                    store["order"] = list(reversed(desktop_order(store, exts)))
+                else:
+                    raise ValueError
+            except (ValueError, KeyError):
+                print(json.dumps({"error": _t("valor inválido: {}").format(f"{field} {value}")}), flush=True)
+                return 1
+        if not changes:
+            save(store)
+            locked(apply, "manual", wait=30)
+            return 0
     if not exts:
         print(json.dumps({"error": _t("No hay otro monitor conectado")}), flush=True)
         return 1
-    e = exts[0]
+    e = by_size(exts)[0]
     s, _ = settings(store, e)
     for field, value in changes:
         try:
@@ -718,6 +824,14 @@ def daemon():
         locked(apply, "inicio", wait=30)
     except Exception as e:
         log(f"inicio falló: {e}")
+
+    def late():
+        time.sleep(6)
+        if len([m for m in monitors() if not m.get("disabled")]) > 1:
+            log("varias pantallas al iniciar: recargo una vez para fijar los límites del cursor")
+            locked(lambda: sh(["hyprctl", "reload"], 10), wait=30)
+
+    threading.Thread(target=late, daemon=True).start()
     while True:
         try:
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
@@ -756,15 +870,18 @@ def main(argv):
         return 0
     if cmd == "set" and len(argv) >= 3 and len(argv) % 2 == 1:
         return update(list(zip(argv[1::2], argv[2::2])))
-    if cmd in ("mode", "side", "scale", "lapscale", "offset", "hud") and len(argv) > 1:
+    if cmd in ("mode", "side", "scale", "lapscale", "offset", "hud", "mscale", "hudon", "swap") and len(argv) > 1:
         return update([(cmd, argv[1])])
     if cmd == "next":
         store = load()
         lap, exts = split(monitors())
+        if exts and not lap:
+            spawn([os.path.join(SCRIPTS, "displays.sh"), "show"])
+            return 0
         if not exts:
             notify(_t("◢ Pantallas"), _t("No hay otro monitor conectado"))
             return 0
-        s, _ = settings(store, exts[0])
+        s, _ = settings(store, by_size(exts)[0])
         nxt = MODES[(MODES.index(s["mode"]) + 1) % len(MODES)] if s["mode"] in MODES else "extend"
         notify(_t("◢ Pantallas"), MODE_NAMES[nxt])
         return update([("mode", nxt)])

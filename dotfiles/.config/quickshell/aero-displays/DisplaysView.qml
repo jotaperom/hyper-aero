@@ -11,6 +11,8 @@ Item {
     readonly property var st: api ? api.st : ({})
     readonly property var ext: st && st.external ? st.external : null
     readonly property var lap: st && st.laptop ? st.laptop : null
+    readonly property bool desktop: !!(st && st.desktop)
+    readonly property var screens: st && st.screens ? st.screens : []
     readonly property string mode: ext ? (st.mode || "extend") : "laptop"
     readonly property string busy: api ? api.busy : ""
     readonly property var pal: Pal.make(api ? api.night : false, api ? api.accent : "blue")
@@ -32,6 +34,7 @@ Item {
     focus: true
 
     function pick(m) {
+        if (desktop) return
         if (!ext && m !== "laptop") return
         if (m === mode || busy.length) return
         api.set(["mode", m])
@@ -181,7 +184,8 @@ Item {
                         color: v.pal.ink
                     }
                     Text {
-                        text: v.ext ? L.t("Monitor: ") + v.ext.desc + "  ·  " + v.ext.w + "×" + v.ext.h + (v.st.extra > 0 ? "  ·  +" + v.st.extra + L.t(" más") : "")
+                        text: v.desktop ? L.f("%1 pantallas", v.screens.length)
+                            : v.ext ? L.t("Monitor: ") + v.ext.desc + "  ·  " + v.ext.w + "×" + v.ext.h + (v.st.extra > 0 ? "  ·  +" + v.st.extra + L.t(" más") : "")
                                     : L.t("Solo la pantalla de la laptop")
                         font.family: "Exo 2"
                         font.pixelSize: 12
@@ -202,6 +206,7 @@ Item {
 
             Row {
                 id: cards
+                visible: !v.desktop
                 spacing: 14
                 readonly property real cw: (body.width - spacing * 3) / 4
                 Repeater {
@@ -222,7 +227,7 @@ Item {
             }
 
             Rectangle {
-                visible: !v.ext
+                visible: !v.ext && !v.desktop
                 width: parent.width
                 height: 64
                 radius: 14
@@ -251,7 +256,7 @@ Item {
 
             Column {
                 id: arrange
-                visible: !!v.ext && v.mode === "extend"
+                visible: !v.desktop && !!v.ext && v.mode === "extend"
                 width: parent.width
                 spacing: 10
 
@@ -307,8 +312,116 @@ Item {
                 }
             }
 
+            Column {
+                visible: v.desktop
+                width: parent.width
+                spacing: 12
+
+                Text {
+                    text: L.t("TAMAÑO DE CADA PANTALLA")
+                    font.family: "Exo 2"
+                    font.weight: Font.Black
+                    font.pixelSize: 12
+                    font.letterSpacing: 1.2
+                    color: v.pal.accent
+                }
+
+                Repeater {
+                    model: v.desktop ? v.screens : []
+                    delegate: Row {
+                        id: srow
+                        required property var modelData
+                        spacing: 18
+                        Column {
+                            width: 250
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 1
+                            Text {
+                                width: parent.width
+                                elide: Text.ElideRight
+                                text: modelData.desc
+                                font.family: "Exo 2"
+                                font.weight: Font.Bold
+                                font.pixelSize: 13
+                                color: v.pal.ink
+                            }
+                            Text {
+                                text: modelData.name + "  ·  " + modelData.w + "×" + modelData.h
+                                font.family: "Exo 2"
+                                font.pixelSize: 11
+                                color: v.pal.muted
+                            }
+                        }
+                        Row {
+                            spacing: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                            Repeater {
+                                model: v.scales
+                                Pill {
+                                    required property var modelData
+                                    pal: v.pal
+                                    text: Math.round(modelData * 100) + "%"
+                                    on: Math.abs(Number(srow.modelData.scale || 1) - modelData) < 0.01
+                                    onClicked: if (!on) v.api.set(["mscale", srow.modelData.name + "=" + String(modelData)])
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    visible: v.screens.length > 1
+                    spacing: 18
+                    Text {
+                        width: 250
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: L.t("TELEMETRY EN")
+                        font.family: "Exo 2"
+                        font.weight: Font.Black
+                        font.pixelSize: 12
+                        font.letterSpacing: 1.2
+                        color: v.pal.accent
+                    }
+                    Row {
+                        spacing: 8
+                        Repeater {
+                            model: v.desktop ? v.screens : []
+                            Pill {
+                                required property var modelData
+                                pal: v.pal
+                                glyph: "\u{F0379}"
+                                text: modelData.name
+                                on: (v.st.hudScreen || v.st.primary || "") === modelData.name
+                                onClicked: if (!on) v.api.set(["hudon", modelData.name])
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    visible: v.screens.length > 1
+                    spacing: 18
+                    Text {
+                        width: 250
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: L.t("ORDEN")
+                        font.family: "Exo 2"
+                        font.weight: Font.Black
+                        font.pixelSize: 12
+                        font.letterSpacing: 1.2
+                        color: v.pal.accent
+                    }
+                    Pill {
+                        pal: v.pal
+                        glyph: "\u{F04E1}"
+                        text: L.t("Intercambiar izquierda y derecha")
+                        onClicked: v.api.set(["swap", "1"])
+                    }
+                }
+            }
+
             Grid {
-                visible: (!!v.lap && v.mode !== "external") || (!!v.ext && v.mode !== "laptop")
+                visible: !v.desktop && ((!!v.lap && v.mode !== "external") || (!!v.ext && v.mode !== "laptop"))
                 columns: 2
                 columnSpacing: 18
                 rowSpacing: 12
@@ -393,7 +506,7 @@ Item {
                 width: parent.width
                 height: 18
                 Text {
-                    text: L.t("1 – 4  elegir modo   ·   P  siguiente   ·   Esc  cerrar")
+                    text: v.desktop ? L.t("Esc  cerrar") : L.t("1 – 4  elegir modo   ·   P  siguiente   ·   Esc  cerrar")
                     font.family: "Exo 2"
                     font.pixelSize: 11
                     color: v.pal.dim

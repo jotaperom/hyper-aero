@@ -6,6 +6,7 @@ import "Lang.js" as L
 FocusScope {
     id: ed
     property var core
+    property var board
     readonly property var pal: core.pal
     property int cols: 1
     property int rows: 1
@@ -41,9 +42,9 @@ FocusScope {
 
     function begin() {
         draft.clear()
-        var list = core.layout
+        var list = board ? board.layout : []
         for (var i = 0; i < list.length; i++) {
-            var s = fit(list[i])
+            var s = fit(board.project(list[i], cols, rows))
             draft.append({ wid: s.id, c: s.c, r: s.r, w: s.w, h: s.h })
         }
         act = -1
@@ -56,9 +57,12 @@ FocusScope {
     }
 
     Connections {
-        target: ed.core
+        target: ed.board
         function onEditingChanged() {
-            if (ed.core.editing) ed.begin()
+            if (ed.board.editing) ed.begin()
+        }
+        function onDoneRequested() {
+            if (ed.board.editing) ed.done()
         }
     }
 
@@ -138,13 +142,13 @@ FocusScope {
     function done() {
         var out = []
         for (var i = 0; i < draft.count; i++) out.push(specAt(i))
-        core.setLayout(out)
-        core.editing = false
+        board.setLayout(out, cols, rows)
+        board.editing = false
         finished()
     }
 
     function cancel() {
-        core.editing = false
+        board.editing = false
         finished()
     }
 

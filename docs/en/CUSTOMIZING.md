@@ -93,7 +93,8 @@ The profile writes `~/.config/hypr/aero-profile.lua` (blur, shadows, animations)
 
 - `SUPER + ALT + D` opens the editor: add widgets from the tray, drag them on the grid, resize from the corner.
 - Right-click a widget for its options.
-- The layout is saved in `~/.config/hyper-aero/desk/layout.json`.
+- Every screen has its own desk: the editor opens on the screen the mouse is on, and each layout is saved separately in `~/.config/hyper-aero/desk/layout-SCREEN.json` (for example `layout-DP-1.json`).
+- Opening or closing TELEMETRY never changes a saved layout; widgets only shift on screen while it is open.
 
 ## Terminal
 
@@ -103,7 +104,7 @@ The profile writes `~/.config/hypr/aero-profile.lua` (blur, shadows, animations)
 
 ## Displays
 
-`SUPER + P` covers most needs. The panel writes its rules to `~/.config/hypr/aero-displays.lua`; don't edit that file, it is regenerated.
+`SUPER + P` covers most needs. On a desktop with several monitors (no laptop screen) the panel shows one size row per screen, where TELEMETRY goes, and a button to swap left and right. The panel writes its rules to `~/.config/hypr/aero-displays.lua`; don't edit that file, it is regenerated.
 
 ## Files at a glance
 

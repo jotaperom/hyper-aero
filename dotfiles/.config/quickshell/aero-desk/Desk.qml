@@ -7,6 +7,8 @@ import "Lang.js" as L
 Item {
     id: desk
     property var core
+    property var board
+    property bool onHud: true
     readonly property var pal: core.pal
     readonly property int cell: 48
     readonly property int margin: 16
@@ -31,15 +33,15 @@ Item {
     }
 
     function specOf(id) {
-        var l = core.layout || []
+        var l = board ? board.layout || [] : []
         for (var i = 0; i < l.length; i++) {
-            if (l[i].id === id) return l[i]
+            if (l[i].id === id) return board.project(l[i], cols, rows)
         }
         return { id: id, c: 0, r: 0, w: 1, h: 1 }
     }
 
     function syncIds() {
-        var l = core.layout || []
+        var l = board ? board.layout || [] : []
         var n = []
         for (var i = 0; i < l.length; i++) n.push(l[i].id)
         if (n.join("|") !== ids.join("|")) ids = n
@@ -49,7 +51,6 @@ Item {
         stableW = w
         stableH = h
         maybeDefaults()
-        sizeUp()
     }
 
     function settle() {
@@ -70,7 +71,7 @@ Item {
         if (!v.length || v === hudVariant) return
         var old = hudVariant
         hudVariant = v
-        if (!old.length || stableW <= 0) return
+        if (!onHud || !old.length || stableW <= 0) return
         var target = hudWidths[v] !== undefined ? hudWidths[v] : stableW + hudSize(old) - hudSize(v)
         predicting = true
         settleTimer.stop()
@@ -79,16 +80,10 @@ Item {
     }
 
     function maybeDefaults() {
-        if (core.loaded && core.fresh && stableW > 200 && stableH > 200) {
-            core.fresh = false
-            core.savedCols = cols
-            core.savedRows = rows
-            core.setLayout(Reg.defaults(cols, rows))
+        if (board && board.loaded && board.fresh && stableW > 200 && stableH > 200) {
+            board.fresh = false
+            board.setLayout(board.primary ? Reg.defaults(cols, rows) : Reg.secondary(cols, rows), cols, rows)
         }
-    }
-
-    function sizeUp() {
-        if (core.loaded && !core.fresh && stableW > 200 && stableH > 200) core.adapt(cols, rows)
     }
 
     onWidthChanged: if (stableW <= 0) settle(); else if (!predicting) settleTimer.restart()
@@ -115,9 +110,9 @@ Item {
         onLoaded: desk.hudChanged(text().trim())
     }
     Connections {
-        target: desk.core
+        target: desk.board
         function onFreshChanged() { desk.maybeDefaults() }
-        function onLoadedChanged() { desk.maybeDefaults(); desk.sizeUp() }
+        function onLoadedChanged() { desk.maybeDefaults() }
         function onLayoutChanged() { desk.syncIds() }
     }
 
@@ -133,7 +128,7 @@ Item {
     Item {
         id: layer
         anchors.fill: parent
-        opacity: desk.core.hidden || desk.core.editing ? 0 : 1
+        opacity: desk.core.hidden || (desk.board && desk.board.editing) ? 0 : 1
         visible: opacity > 0.01
         Behavior on opacity { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
 
