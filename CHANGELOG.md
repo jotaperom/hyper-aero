@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2
+
+- `SUPER + drag` to another desktop works reliably on Hyprland 0.57: the new keybind system silently swallowed the mouse release, so the window was never moved. The end of the drag is now detected three independent ways, and the dragged window is moved by its address, even if focus changes.
+- Works on both Hyprland 0.56 and 0.57.
+
 ## 1.2.1
 
 - Fixed a config error on recent Hyprland versions (`hl.bind: mouse is exclusive`) that also stopped `SUPER + drag` from sending windows to another desktop.

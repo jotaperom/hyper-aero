@@ -8,6 +8,8 @@ W.tick_ms = 25
 W.dwell_ticks = 28
 W.grace_ticks = 6
 W.settle_ms = 60
+W.up_ticks = 2
+W.slip_px = 36
 W.max_ticks = 2400
 W.tile_w = 66
 W.tile_h = 44
@@ -41,6 +43,18 @@ end
 
 local function run(d)
     if d then try(hl.dispatch, d) end
+end
+
+local function button_down()
+    if not hl.is_key_down then return nil end
+    local ok, v = pcall(hl.is_key_down, 0)
+    if not ok then return nil end
+    return v and true or false
+end
+
+local function target(d)
+    if d and d.addr and d.addr ~= "" then return "address:" .. d.addr end
+    return nil
 end
 
 local function write_file(path, text)
@@ -177,7 +191,8 @@ function W.press(super)
     if win and win.fullscreen and win.fullscreen > 0 then return end
     local c = try(hl.get_cursor_pos)
     if not c then return end
-    W.drag = { super = super and true or false, cx = c.x, cy = c.y,
+    W.drag = { super = super and true or false, cx = c.x, cy = c.y, lx = c.x, ly = c.y,
+               probe = button_down() == true, up = 0, followed = false, slip = 0,
                moving = false, zone = nil, dwell = 0, away = 0, ticks = 0, flip = nil, tiles = {} }
     if win then adopt(W.drag, win) end
     W.timer = try(hl.timer, function() try(W.tick) end, { timeout = W.tick_ms, type = "repeat" })
@@ -192,7 +207,13 @@ function W.tick()
         W.publish(nil)
         return W.stop_timer()
     end
-    local win = try(hl.get_active_window)
+    if d.probe then
+        if button_down() == false then d.up = d.up + 1 else d.up = 0 end
+        if d.up >= W.up_ticks then return W.release() end
+    end
+    local win
+    if d.moving and d.addr then win = try(hl.get_window, target(d)) end
+    win = win or try(hl.get_active_window)
     if not win then return end
     if win.address ~= d.addr then
         if d.moving then return end
@@ -219,6 +240,19 @@ function W.tick()
         end
         d.moving = true
     end
+    local wx, wy = vx(win.at), vy(win.at)
+    if d.wx then
+        local wmove = math.abs(wx - d.wx) + math.abs(wy - d.wy)
+        local cmove = math.abs(c.x - d.lx) + math.abs(c.y - d.ly)
+        if wmove > 2 then
+            d.followed = true
+            d.slip = 0
+        elseif d.super and d.followed and not d.probe and cmove > 0 then
+            d.slip = d.slip + cmove
+            if d.slip > W.slip_px then return W.release() end
+        end
+    end
+    d.wx, d.wy, d.lx, d.ly = wx, wy, c.x, c.y
     local mon = try(hl.get_monitor_at_cursor) or try(hl.get_active_monitor)
     if not mon then return end
     local area = W.area(mon)
@@ -274,21 +308,23 @@ end
 
 function W.drop(d)
     local a = d.area
-    local win = try(hl.get_active_window)
-    if win and d.addr and win.address ~= d.addr then return end
+    local sel = target(d)
+    local win = sel and try(hl.get_window, sel) or try(hl.get_active_window)
+    if not win then return end
+    if d.addr and win.address ~= d.addr then return end
     if d.flip and d.flip.ready then
-        if win and win.floating then
+        if win.floating then
             local x = clamp(vx(win.at), a.wx + W.gap, a.wx + a.ww - vx(win.size) - W.gap)
             local y = clamp(vy(win.at), a.wy + W.gap, a.wy + a.wh - vy(win.size) - W.gap)
-            run(try(hl.dsp.window.move, { x = math.floor(x), y = math.floor(y) }))
+            run(try(hl.dsp.window.move, { x = math.floor(x), y = math.floor(y), window = sel }))
         end
-        run(try(hl.dsp.window.move, { workspace = tostring(d.flip.ws), follow = true }))
+        run(try(hl.dsp.window.move, { workspace = tostring(d.flip.ws), follow = true, window = sel }))
         return
     end
     local z = d.zone
     if z and z:sub(1, 3) == "ws:" then
-        if win and win.floating then run(try(hl.dsp.window.move, { x = d.x, y = d.y })) end
-        run(try(hl.dsp.window.move, { workspace = z:sub(4), follow = false }))
+        if win.floating then run(try(hl.dsp.window.move, { x = d.x, y = d.y, window = sel })) end
+        run(try(hl.dsp.window.move, { workspace = z:sub(4), follow = false, window = sel }))
     end
 end
 
@@ -299,9 +335,9 @@ end
 
 function W.init()
     try(hl.unbind, "SUPER + mouse:272")
-    try(hl.bind, "mouse:272", function() try(W.press, false) end, { mouse = true, non_consuming = true, ignore_mods = true })
-    try(hl.bind, "mouse:272", function() try(W.release) end, { release = true, non_consuming = true, ignore_mods = true })
-    try(hl.bind, "SUPER + mouse:272", function() try(W.press, true) end, { mouse = true, non_consuming = true })
+    try(hl.bind, "mouse:272", function() try(W.press, false) end, { non_consuming = true, transparent = true, ignore_mods = true })
+    try(hl.bind, "mouse:272", function() try(W.release) end, { release = true, non_consuming = true, transparent = true, ignore_mods = true })
+    try(hl.bind, "SUPER + mouse:272", function() try(W.press, true) end, { non_consuming = true, transparent = true })
     try(function() hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true }) end)
     try(hl.bind, "SUPER + CTRL + SHIFT + left", function() try(W.shift_desk, -1) end)
     try(hl.bind, "SUPER + CTRL + SHIFT + right", function() try(W.shift_desk, 1) end)
