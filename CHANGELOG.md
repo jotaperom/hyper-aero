@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Fixed a config error on recent Hyprland versions (`hl.bind: mouse is exclusive`) that also stopped `SUPER + drag` from sending windows to another desktop.
+
 ## 1.2.0
 
 - Every monitor has its own desk with its own widgets. The editor (`SUPER + ALT + D`) opens on the screen the mouse is on. Your old layout moves to the main screen automatically.

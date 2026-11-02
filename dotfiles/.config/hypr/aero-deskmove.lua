@@ -300,7 +300,7 @@ end
 function W.init()
     try(hl.unbind, "SUPER + mouse:272")
     try(hl.bind, "mouse:272", function() try(W.press, false) end, { mouse = true, non_consuming = true, ignore_mods = true })
-    try(hl.bind, "mouse:272", function() try(W.release) end, { mouse = true, release = true, non_consuming = true, ignore_mods = true })
+    try(hl.bind, "mouse:272", function() try(W.release) end, { release = true, non_consuming = true, ignore_mods = true })
     try(hl.bind, "SUPER + mouse:272", function() try(W.press, true) end, { mouse = true, non_consuming = true })
     try(function() hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true }) end)
     try(hl.bind, "SUPER + CTRL + SHIFT + left", function() try(W.shift_desk, -1) end)
