@@ -170,11 +170,25 @@ function W.publish(d)
     end
 end
 
-function W.stop_timer()
-    if W.timer then
-        try(function() W.timer:cancel() end)
-        W.timer = nil
+local function halt(t)
+    if not t then return end
+    try(function() t:set_enabled(false) end)
+end
+
+function W.ensure_timer()
+    if not W.timer then
+        W.timer = try(hl.timer, function() try(W.tick) end, { timeout = W.tick_ms, type = "repeat" })
     end
+    return W.timer
+end
+
+function W.start_timer()
+    local t = W.ensure_timer()
+    if t then try(function() t:set_enabled(true) end) end
+end
+
+function W.stop_timer()
+    halt(W.timer)
 end
 
 local function adopt(d, win)
@@ -195,7 +209,7 @@ function W.press(super)
                probe = button_down() == true, up = 0, followed = false, slip = 0,
                moving = false, zone = nil, dwell = 0, away = 0, ticks = 0, flip = nil, tiles = {} }
     if win then adopt(W.drag, win) end
-    W.timer = try(hl.timer, function() try(W.tick) end, { timeout = W.tick_ms, type = "repeat" })
+    W.start_timer()
 end
 
 function W.tick()
@@ -298,7 +312,7 @@ function W.release()
     local done = false
     local t
     t = try(hl.timer, function()
-        if t then try(function() t:cancel() end) end
+        halt(t)
         if done then return end
         done = true
         try(W.drop, d)
@@ -341,6 +355,8 @@ function W.init()
     try(function() hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true }) end)
     try(hl.bind, "SUPER + CTRL + SHIFT + left", function() try(W.shift_desk, -1) end)
     try(hl.bind, "SUPER + CTRL + SHIFT + right", function() try(W.shift_desk, 1) end)
+    W.ensure_timer()
+    W.stop_timer()
     W.publish(nil)
 end
 

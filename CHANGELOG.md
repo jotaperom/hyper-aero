@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+- Fixed `SUPER + drag` to another desktop dying after a while: every click left a small timer running in Hyprland, and after enough clicks they piled up and broke the feature (and wasted CPU). Now a single timer is reused and fully stopped between drags.
+
 ## 1.2.2
 
 - `SUPER + drag` to another desktop works reliably on Hyprland 0.57: the new keybind system silently swallowed the mouse release, so the window was never moved. The end of the drag is now detected three independent ways, and the dragged window is moved by its address, even if focus changes.
