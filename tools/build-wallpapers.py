@@ -12,6 +12,15 @@ ROOT = os.path.dirname(HERE)
 ART = os.path.join(HERE, "aero-artgen.py")
 GEN = os.path.join(ROOT, "dotfiles", ".config", "hyper-aero", "scripts", "aero-wallgen.py")
 
+
+def inside(path, roots):
+    p = os.path.realpath(path)
+    for r in roots:
+        r = os.path.realpath(r)
+        if p == r or p.startswith(r + os.sep):
+            return p
+    sys.exit("ruta no permitida: " + path)
+
 PRESETS = {
     "blue": {"day": "aero-motion", "night": "aero-motion-night",
              "layers": [("bubbles", 0.7, 1), ("waves", 0.6, 1), ("sparkles", 0.5, 1)]},
@@ -55,7 +64,7 @@ def build(name, out, frames):
 
 
 def main(argv):
-    out = argv[0] if argv else os.path.join(ROOT, "build", "wallpapers")
+    out = inside(argv[0] if argv else os.path.join(ROOT, "build", "wallpapers"), [ROOT, os.path.expanduser("~")])
     names = [a for a in argv[1:] if a in PRESETS] or list(PRESETS)
     frames = int(os.environ.get("AERO_FRAMES", "0")) or None
     os.makedirs(out, exist_ok=True)

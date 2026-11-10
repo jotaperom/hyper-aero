@@ -6,6 +6,15 @@ import wave
 
 import numpy as np
 
+
+def inside(path, roots):
+    p = os.path.realpath(path)
+    for r in roots:
+        r = os.path.realpath(r)
+        if p == r or p.startswith(r + os.sep):
+            return p
+    sys.exit("ruta no permitida: " + path)
+
 RATE = 48000
 
 
@@ -109,6 +118,7 @@ def critical():
 def main(argv):
     out = argv[0] if argv else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                              "dotfiles", ".config", "hyper-aero", "sounds")
+    out = inside(out, [os.path.dirname(os.path.dirname(os.path.abspath(__file__))), os.path.expanduser("~")])
     os.makedirs(out, exist_ok=True)
     for name, fn in (("notify", notify), ("lock", lock), ("unlock", unlock), ("critical", critical)):
         write(os.path.join(out, name + ".wav"), fn())

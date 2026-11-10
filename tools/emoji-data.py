@@ -5,7 +5,17 @@ import sys
 import json
 import emoji
 
-out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "dotfiles", ".config", "quickshell", "aero-phone", "emoji.json")
+
+def inside(path, roots):
+    p = os.path.realpath(path)
+    for r in roots:
+        r = os.path.realpath(r)
+        if p == r or p.startswith(r + os.sep):
+            return p
+    sys.exit("ruta no permitida: " + path)
+
+
+out = inside(sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "dotfiles", ".config", "quickshell", "aero-phone", "emoji.json"), [os.path.dirname(os.path.dirname(os.path.abspath(__file__))), os.path.expanduser("~")])
 emoji.config.load_language("es")
 
 PEOPLE = ("hand", "person", "man", "woman", "people", "family", "boy", "girl", "baby", "kiss", "couple", "finger", "thumbs",

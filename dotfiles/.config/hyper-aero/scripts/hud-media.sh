@@ -12,7 +12,7 @@ playerctl --follow metadata --format $'{{status}}\t{{title}}\t{{artist}}\t{{mpri
                 path=$(printf '%b' "${raw//%/\\x}")
                 ;;
             http*)
-                path="$cache/cover-$(printf '%s' "$art" | md5sum | cut -c1-12).jpg"
+                path="$cache/cover-$(printf '%s' "$art" | sha256sum | cut -c1-16).jpg"
                 [ -f "$path" ] || curl -sfL "$art" -o "$path" || path=""
                 ;;
         esac

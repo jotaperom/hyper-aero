@@ -2,10 +2,20 @@
 
 import os
 import sys
+import tempfile
 import math
 
 import numpy as np
 from PIL import Image, ImageFilter
+
+
+def inside(path, roots):
+    p = os.path.realpath(path)
+    for r in roots:
+        r = os.path.realpath(r)
+        if p == r or p.startswith(r + os.sep):
+            return p
+    sys.exit("ruta no permitida: " + path)
 
 W, H = 1920, 1080
 Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
@@ -202,7 +212,7 @@ def finish(img):
 
 
 def main(argv):
-    out = argv[0] if argv else "."
+    out = inside(argv[0] if argv else ".", [os.getcwd(), os.path.expanduser("~"), tempfile.gettempdir()])
     names = argv[1:] or list(ARTS)
     os.makedirs(out, exist_ok=True)
     for n in names:

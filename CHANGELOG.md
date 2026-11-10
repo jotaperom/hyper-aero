@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.8
+
+**Security**
+
+- Asset generators in `tools/` only write inside the project, your home folder or the temp folder (for the wallpaper builder), and refuse any other output path.
+- The media widget names its cover art cache with SHA-256 instead of MD5.
+
 ## 2.0.7
 
 **Security**

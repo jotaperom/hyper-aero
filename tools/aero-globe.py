@@ -7,6 +7,15 @@ import math
 import numpy as np
 from PIL import Image
 
+
+def inside(path, roots):
+    p = os.path.realpath(path)
+    for r in roots:
+        r = os.path.realpath(r)
+        if p == r or p.startswith(r + os.sep):
+            return p
+    sys.exit("ruta no permitida: " + path)
+
 CELL = 320
 COLS = 10
 ROWS = 6
@@ -123,6 +132,7 @@ def build(name, out):
 def main(argv):
     out = argv[0] if argv else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                              "dotfiles", ".config", "quickshell", "aero-phone", "globe")
+    out = inside(out, [os.path.dirname(os.path.dirname(os.path.abspath(__file__))), os.path.expanduser("~")])
     os.makedirs(out, exist_ok=True)
     for name in PRESETS:
         build(name, out)
