@@ -118,3 +118,5 @@ HYPER·AERO has no telemetry and no AI features. It only goes online for:
 ## License
 
 [GPL-3.0](LICENSE)
+
+## FRUTIGER AERO YAMS 9 O'CLOCK!!!!!
