@@ -25,7 +25,7 @@ check() {
         fi
         sleep 20
     fi
-    info=$(curl -fsSL --max-time 15 -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest") || {
+    info=$(curl -fsSL --proto =https --proto-redir =https --max-time 15 -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest") || {
         [ "$quiet" = 1 ] || echo "$(t "No pude consultar GitHub. Revisá tu conexión.")"
         return 1
     }
@@ -61,7 +61,7 @@ install_update() {
     rm -rf "$dir"
     mkdir -p "$dir"
     echo "$(tf "Descargando HYPER·AERO %s…" "$latest")"
-    curl -fL --max-time 300 -o "$dir/src.tar.gz" "$url" || { echo "$(t "Falló la descarga.")"; exit 1; }
+    curl -fL --proto =https --proto-redir =https --max-time 300 -o "$dir/src.tar.gz" "$url" || { echo "$(t "Falló la descarga.")"; exit 1; }
     tar -xzf "$dir/src.tar.gz" -C "$dir" || { echo "$(t "El archivo descargado está dañado.")"; exit 1; }
     local src
     src=$(find "$dir" -mindepth 1 -maxdepth 1 -type d | head -n1)

@@ -29,7 +29,7 @@ download() {
     tmp=$(mktemp -d)
     url="https://github.com/$repo/releases/download/$TAG/$FILE"
     say "$(t "Descargando fondos:") $url"
-    if curl -fL --progress-bar -o "$tmp/$FILE" "$url"; then
+    if curl -fL --proto =https --proto-redir =https --progress-bar -o "$tmp/$FILE" "$url"; then
         tar -xzf "$tmp/$FILE" -C "$WALL" && rm -rf "$tmp" && have && return 0
     fi
     rm -rf "$tmp"
@@ -39,7 +39,7 @@ download() {
 build() {
     [ -n "$src" ] && [ -f "$src/tools/build-wallpapers.py" ] || return 1
     say "$(t "Generando los fondos en esta compu (tarda varios minutos)…")"
-    python3 "$src/tools/build-wallpapers.py" "$WALL"
+    python3 "$src/tools/build-wallpapers.py" --user
 }
 
 case "${1:-auto}" in

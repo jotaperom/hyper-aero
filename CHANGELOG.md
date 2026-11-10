@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.9
+
+**Security**
+
+- CI installs its Python tools from a hash-locked list (`tools/ci-requirements.txt`) and only from prebuilt wheels.
+- The wallpaper builder no longer takes an output path from the command line: it writes to `build/wallpapers` in the project, or to your wallpaper folder with `--user`.
+- Downloads in `aero-update` and the wallpaper fetcher refuse anything that isn't HTTPS, including redirects.
+
 ## 2.0.8
 
 **Security**

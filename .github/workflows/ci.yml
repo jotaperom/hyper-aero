@@ -23,6 +23,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.4
-          pip install lupa PySide6-Essentials
+          pip install --only-binary :all: --require-hashes -r tools/ci-requirements.txt
       - name: Run checks
         run: tools/ci.sh

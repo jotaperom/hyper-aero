@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-VERSION="2.0.8"
+VERSION="2.0.9"
 UPSTREAM="jotaperom/hyper-aero"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 C="$HOME/.config"
