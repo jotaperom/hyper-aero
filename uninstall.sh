@@ -71,6 +71,9 @@ for f in .bashrc .zshrc; do
     [ -f "$HOME/$f" ] && sed -i '/hyper-aero\/shell\/hyper-aero/d' "$HOME/$f"
 done
 rm -rf "$HOME/.local/share/fonts/hyper-aero" "$HOME/.local/share/applications/aero-studio.desktop"
+rm -f "$HOME/.local/share/applications/hyper-aero-theme.desktop" "$HOME/.local/share/mime/packages/hyper-aero-theme.xml"
+[ -f "$HOME/.config/mimeapps.list" ] && sed -i "/hyper-aero-theme.desktop/d" "$HOME/.config/mimeapps.list" || true
+update-mime-database "$HOME/.local/share/mime" >/dev/null 2>&1 || true
 fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1
 
 say "$(t "Listo. Cerrá sesión y volvé a entrar para usar tu configuración de antes.")"

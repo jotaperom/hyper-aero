@@ -23,7 +23,7 @@ hl.config({
 Add new shortcuts in `user.lua`:
 
 ```lua
-hl.bind("SUPER + O", hl.dsp.exec_cmd("obsidian"))
+hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd("obsidian"))
 hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd("kitty --class aero-float"))
 ```
 
@@ -95,6 +95,32 @@ The profile writes `~/.config/hypr/aero-profile.lua` (blur, shadows, animations)
 - Right-click a widget for its options.
 - Every screen has its own desk: the editor opens on the screen the mouse is on, and each layout is saved separately in `~/.config/hyper-aero/desk/layout-SCREEN.json` (for example `layout-DP-1.json`).
 - Opening or closing TELEMETRY never changes a saved layout; widgets only shift on screen while it is open.
+
+## Control Panel and settings
+
+`SUPER + O` opens the **Control Panel**: appearance, effects, desk and dock, sound and displays, language and region, performance, shortcuts and system (updates, diagnostics, Welcome Center). Its switches are stored in `~/.config/hyper-aero/settings.json`:
+
+| Key | Default | What |
+|---|---|---|
+| `fx.glow` | `true` | Music-reactive window borders |
+| `fx.ripple` | `true` | Ripples on click |
+| `fx.peek` | `true` | Aero Peek corner and `SUPER + ,` |
+| `fx.shake` | `true` | Aero Shake |
+| `fx.weather` | `true` | Weather effects on the desktop |
+| `lyrics.words` | `true` | Word-by-word lyrics |
+| `auto.game` | `true` | Lite profile while a game is fullscreen |
+| `auto.battery` | `false` | Lite profile on battery |
+| `update.check` | `true` | Daily update check |
+
+From a terminal: `aero-control.py set fx.ripple false`.
+
+## Dock
+
+Pin apps by pressing and holding them in NEXUS (`SUPER + R`) and dragging them to the dock; right-click for *Pin*, *Remove* and *Move*. On the desk DOCK widget, right-click an icon to edit it. Both docks share `~/.config/hyper-aero/dock.json`.
+
+## Sharing themes
+
+Control Panel → Appearance → **Export** saves every theme you made in the Studio as an `.aerotheme` file in `Documents/HYPER-AERO`. To install one, double-click it, or put it in Downloads and press **Import**. From a terminal: `aero-theme import FILE.aerotheme`.
 
 ## Terminal
 

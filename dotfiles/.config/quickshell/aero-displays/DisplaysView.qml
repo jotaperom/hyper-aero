@@ -77,7 +77,7 @@ Item {
     Item {
         id: card
         width: Math.min(parent.width - 40, 840)
-        height: body.implicitHeight + 44
+        height: Math.min(body.implicitHeight + 44, v.height - 24)
         anchors.centerIn: parent
         opacity: v.open ? 1 : 0
         scale: v.open ? 1 : 0.95
@@ -130,10 +130,20 @@ Item {
             }
         }
 
+        Flickable {
+            id: scroller
+            y: 22
+            width: card.width
+            height: card.height - 30
+            contentWidth: width
+            contentHeight: body.implicitHeight + 14
+            clip: true
+            interactive: contentHeight > height + 1
+            boundsBehavior: Flickable.StopAtBounds
+
         Column {
             id: body
             x: 24
-            y: 22
             width: card.width - 48
             spacing: 18
 
@@ -256,7 +266,7 @@ Item {
 
             Column {
                 id: arrange
-                visible: !v.desktop && !!v.ext && v.mode === "extend"
+                visible: !v.desktop && !!v.ext
                 width: parent.width
                 spacing: 10
 
@@ -283,7 +293,7 @@ Item {
                 Arrange {
                     id: board
                     width: parent.width
-                    height: 230
+                    height: v.height < 820 ? 170 : 230
                     pal: v.pal
                     ew: v.ext ? v.ext.w / v.extScale : 1920
                     eh: v.ext ? v.ext.h / v.extScale : 1080
@@ -295,10 +305,34 @@ Item {
                     lapName: "Laptop"
                     hudOnLaptop: v.st.hud === "laptop"
                     onMoved: function(s, o) { v.api.set(["side", s, "offset", String(Math.round(o * 1000) / 1000)]) }
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 14
+                        visible: v.mode !== "extend"
+                        color: v.api && v.api.night ? "#d90b1530" : "#d9eef4fb"
+                        Text {
+                            anchors.centerIn: parent
+                            width: parent.width - 40
+                            horizontalAlignment: Text.AlignHCenter
+                            wrapMode: Text.WordWrap
+                            text: L.t("Elegí «Extender» para acomodar las pantallas")
+                            font.family: "Exo 2"
+                            font.weight: Font.Bold
+                            font.pixelSize: 14
+                            color: v.pal.accent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: v.pick("extend")
+                        }
+                    }
                 }
 
                 Row {
                     spacing: 8
+                    visible: v.mode === "extend"
                     Repeater {
                         model: v.sides
                         Pill {
@@ -545,6 +579,7 @@ Item {
                     color: v.pal.bad
                 }
             }
+        }
         }
     }
 }

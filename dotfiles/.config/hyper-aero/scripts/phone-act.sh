@@ -51,6 +51,10 @@ case "$1" in
         sleep 0.6
         exec "$S/screenshot.sh" region
         ;;
+    color)
+        sleep 0.5
+        exec "$S/color.sh"
+        ;;
     rec)
         exec "$S/screenrec.sh" toggle full
         ;;

@@ -18,6 +18,8 @@
 | `SUPER + W` | Wi-Fi (teléfono) |
 | `SUPER + SHIFT + W` | Wi-Fi (rofi) |
 | `SUPER + A` | Bluetooth (teléfono) |
+| `SUPER + O` | Panel de control |
+| `SUPER + Z` / `SUPER + clic central` | Menú radial alrededor del cursor (1–8 o clic para elegir, Esc para cerrar) |
 
 ## Ventanas
 
@@ -35,6 +37,9 @@
 | `SUPER + CTRL + SHIFT + ←/→` | Mover la ventana al escritorio siguiente / anterior |
 | `ALT + TAB` | Cambiar de ventana (mantené ALT, tocá TAB) |
 | `ALT + SHIFT + TAB` | Cambiar de ventana hacia atrás |
+| `SUPER + ALT + TAB` / `SUPER + SHIFT + TAB` | Flip 3D (Tab o la rueda para pasar, Enter o soltar SUPER para abrir) |
+| `SUPER + ,` (mantener) | Aero Peek: ver el escritorio a través de las ventanas |
+| `SUPER + arrastrar` y sacudir | Aero Shake: minimizar las demás ventanas (sacudí otra vez para traerlas) |
 
 ## Escritorios
 
@@ -73,6 +78,14 @@
 | `SUPER + M` | Cerrar sesión |
 | `SUPER + F1` | Lista de atajos |
 | `SUPER + F12` | Editar tu `user.lua` |
+
+## Herramientas
+
+| Teclas | Acción |
+|---|---|
+| `SUPER + SHIFT + V` | Historial del portapapeles (teléfono) |
+| `SUPER + .` | Emojis (teléfono) |
+| `SUPER + SHIFT + C` | Selector de color (copia el código hex) |
 
 ## Capturas
 

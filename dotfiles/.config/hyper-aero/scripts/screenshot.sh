@@ -9,8 +9,18 @@ file="$dir/$(t "captura")-$(date +%Y%m%d-%H%M%S).png"
 case "${1:-region}" in
     region)
         pidof slurp >/dev/null && exit 0
-        geom=$(slurp -b 0b0d1240 -c 1446c2ff -s 3d9be926 -w 2 -B 0b0d1240) || exit 0
-        grim -g "$geom" "$file" || exit 1
+        freeze=""
+        if command -v hyprpicker >/dev/null; then
+            hyprpicker -r -z >/dev/null 2>&1 &
+            freeze=$!
+            sleep 0.15
+        fi
+        unfreeze() { [ -n "$freeze" ] && kill "$freeze" 2>/dev/null; true; }
+        geom=$(slurp -b 0b0d1240 -c 1446c2ff -s 3d9be926 -w 2 -B 0b0d1240) || { unfreeze; exit 0; }
+        grim -g "$geom" "$file"
+        rc=$?
+        unfreeze
+        [ "$rc" = 0 ] || exit 1
         label="$(t "Zona capturada")"
         ;;
     window)

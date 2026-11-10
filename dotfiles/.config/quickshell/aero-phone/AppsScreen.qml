@@ -18,6 +18,22 @@ Item {
     readonly property var results: rank(apps, query, usage)
     readonly property var favorites: pickFavs(apps, usage)
     readonly property int cols: width > 440 ? 6 : 4
+    readonly property var pins: backend ? backend.pins : []
+    readonly property bool pinsSet: backend ? backend.pinsSet : false
+    readonly property int dockGap: compact ? 12 : 16
+    readonly property int dockSlots: Math.max(3, Math.min(7, Math.floor((width - 40 + dockGap) / (iconSize + dockGap))))
+    readonly property var dockApps: pinsSet ? byKeys(pins, apps).slice(0, dockSlots) : favorites
+    property var dragApp: null
+    property string dragFrom: ""
+    property point dragPos: Qt.point(0, 0)
+    property bool overDock: false
+    property int dropAt: -1
+    property var menuApp: null
+    property string menuFrom: ""
+    property string toast: ""
+    readonly property bool hinting: !!(backend && backend.dockHint)
+    readonly property bool dragDocked: !!dragApp && dockApps.some(function(a) { return a.key === dragApp.key })
+    readonly property bool canDrop: dragDocked || dockApps.length < dockSlots
     signal launch(string key)
     signal closeRequested()
     signal pageRequested(int p)
@@ -67,6 +83,143 @@ Item {
         return out
     }
 
+    function byKeys(keys, list) {
+        var map = {}
+        for (var i = 0; i < list.length; i++) map[list[i].key] = list[i]
+        var out = []
+        for (var j = 0; j < keys.length; j++) {
+            if (map[keys[j]]) out.push(map[keys[j]])
+        }
+        return out
+    }
+
+    function dockKeys() {
+        return dockApps.map(function(a) { return a.key })
+    }
+
+    function say(msg) {
+        toast = msg
+        toastTimer.restart()
+    }
+
+    function pinApp(key, at) {
+        if (!backend) return
+        var cur = dockKeys()
+        var l = cur.filter(function(k) { return k !== key })
+        if (cur.indexOf(key) < 0 && l.length >= dockSlots) {
+            say(L.t("El dock está lleno: quitá una app primero"))
+            return
+        }
+        if (at === undefined || at < 0 || at > l.length) at = l.length
+        l.splice(at, 0, key)
+        backend.setPins(l)
+    }
+
+    function unpinApp(key) {
+        if (!backend) return
+        backend.setPins(dockKeys().filter(function(k) { return k !== key }))
+    }
+
+    function shiftApp(key, dir) {
+        var l = dockKeys()
+        var i = l.indexOf(key)
+        var j = i + dir
+        if (i < 0 || j < 0 || j >= l.length) return
+        l.splice(i, 1)
+        l.splice(j, 0, key)
+        backend.setPins(l)
+    }
+
+    function isDocked(key) {
+        return dockKeys().indexOf(key) >= 0
+    }
+
+    function beginDrag(app, from, p) {
+        closeMenu()
+        if (backend) backend.dockHint = false
+        dragApp = app
+        dragFrom = from
+        dragTo(p)
+    }
+
+    function dragTo(p) {
+        dragPos = p
+        var r = dock.mapToItem(scr, 0, 0)
+        overDock = !searching && p.x >= r.x - 12 && p.x <= r.x + dock.width + 12 && p.y >= r.y - 26 && p.y <= r.y + dock.height + 14
+        if (!overDock) {
+            dropAt = -1
+            return
+        }
+        var keys = dragDocked ? dockKeys().filter(function(k) { return k !== dragApp.key }) : dockKeys()
+        var n = keys.length
+        var step = iconSize + dockGap
+        var start = r.x + (dock.width - ((n + 1) * step - dockGap)) / 2
+        dropAt = Math.max(0, Math.min(n, Math.floor((p.x - start + dockGap / 2) / step)))
+    }
+
+    function endDrag() {
+        var app = dragApp
+        var from = dragFrom
+        var over = overDock
+        var at = dropAt
+        dragApp = null
+        dragFrom = ""
+        overDock = false
+        dropAt = -1
+        if (!app) return
+        if (over) pinApp(app.key, at)
+        else if (from === "dock") unpinApp(app.key)
+    }
+
+    function cancelDrag() {
+        dragApp = null
+        dragFrom = ""
+        overDock = false
+        dropAt = -1
+    }
+
+    function openMenu(app, from, p) {
+        menuApp = app
+        menuFrom = from
+        bubble.x = Math.max(8, Math.min(scr.width - bubble.width - 8, p.x - bubble.width / 2))
+        bubble.y = Math.max(8, Math.min(scr.height - bubble.height - 8, from === "dock" ? p.y - bubble.height - 18 : p.y + 10))
+    }
+
+    function closeMenu() {
+        menuApp = null
+        menuFrom = ""
+    }
+
+    function menuItems() {
+        if (!menuApp) return []
+        if (menuFrom === "dock") {
+            var l = dockKeys()
+            var i = l.indexOf(menuApp.key)
+            var out = [{ id: "open", glyph: "\u{F040A}", text: L.t("Abrir") }]
+            if (i > 0) out.push({ id: "left", glyph: "\u{F0141}", text: L.t("Mover a la izquierda") })
+            if (i >= 0 && i < l.length - 1) out.push({ id: "right", glyph: "\u{F0142}", text: L.t("Mover a la derecha") })
+            out.push({ id: "unpin", glyph: "\u{F0931}", text: L.t("Quitar del dock") })
+            return out
+        }
+        return [
+            { id: "open", glyph: "\u{F040A}", text: L.t("Abrir") },
+            isDocked(menuApp.key)
+                ? { id: "unpin", glyph: "\u{F0931}", text: L.t("Quitar del dock") }
+                : { id: "pin", glyph: "\u{F0403}", text: L.t("Anclar al dock") }
+        ]
+    }
+
+    function menuPick(id) {
+        var app = menuApp
+        closeMenu()
+        if (!app) return
+        if (id === "open") launch(app.key)
+        else if (id === "pin") pinApp(app.key)
+        else if (id === "unpin") unpinApp(app.key)
+        else if (id === "left") shiftApp(app.key, -1)
+        else if (id === "right") shiftApp(app.key, 1)
+    }
+
     function focusSearch() {
         search.forceActiveFocus()
     }
@@ -75,6 +228,8 @@ Item {
         search.text = ""
         sel = 0
         nav = false
+        cancelDrag()
+        closeMenu()
         grid.positionViewAtBeginning()
     }
 
@@ -305,8 +460,29 @@ Item {
                 id: cell
                 anchors.fill: parent
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: scr.launch(modelData.key)
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                cursorShape: scr.dragApp ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+                pressAndHoldInterval: 380
+                onClicked: function(m) {
+                    if (m.button === Qt.RightButton) scr.openMenu(modelData, "grid", mapToItem(scr, m.x, m.y))
+                    else scr.launch(modelData.key)
+                }
+                onPressAndHold: function(m) {
+                    if (m.button !== Qt.LeftButton) return
+                    preventStealing = true
+                    scr.beginDrag(modelData, "grid", mapToItem(scr, m.x, m.y))
+                }
+                onPositionChanged: function(m) {
+                    if (scr.dragApp && pressed) scr.dragTo(mapToItem(scr, m.x, m.y))
+                }
+                onReleased: {
+                    preventStealing = false
+                    if (scr.dragApp) scr.endDrag()
+                }
+                onCanceled: {
+                    preventStealing = false
+                    scr.cancelDrag()
+                }
             }
         }
     }
@@ -343,9 +519,11 @@ Item {
         opacity: scr.searching ? 0 : 1
         visible: opacity > 0
         color: scr.pal.shelf
-        border.width: 1
-        border.color: scr.pal.tileBorder
+        border.width: scr.overDock ? 2 : 1
+        border.color: scr.overDock ? (scr.canDrop ? scr.pal.glow : "#e63a4a") : scr.pal.tileBorder
+        scale: scr.overDock && scr.canDrop ? 1.03 : 1
         Behavior on opacity { NumberAnimation { duration: 180 } }
+        Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
         Rectangle {
             x: 2; y: 1
@@ -359,29 +537,233 @@ Item {
             }
         }
 
-        Row {
+        Text {
             anchors.centerIn: parent
-            spacing: scr.compact ? 14 : 18
+            visible: scr.dockApps.length === 0 && !scr.dragApp
+            text: L.t("Arrastrá apps acá")
+            font.family: "Exo 2"
+            font.weight: Font.DemiBold
+            font.pixelSize: 12
+            color: scr.pal.muted
+        }
+
+        Item {
+            id: dockRow
+            anchors.fill: parent
             Repeater {
-                model: scr.favorites
-                delegate: AppIcon {
+                model: scr.dockApps
+                delegate: Item {
+                    id: slot
                     required property int index
                     required property var modelData
-                    opacity: Math.max(0, Math.min(1, (scr.reveal * 1.9 - 0.9 - index * 0.08) * 3))
-                    size: scr.iconSize
-                    pal: scr.pal
-                    source: modelData.icon
-                    name: modelData.name
-                    hot: fav.containsMouse
+                    readonly property bool lifted: !!scr.dragApp && scr.dragApp.key === modelData.key
+                    readonly property bool gap: !!scr.dragApp && scr.overDock && scr.canDrop
+                    readonly property int rank: {
+                        var keys = scr.dockKeys()
+                        if (gap && scr.dragDocked) keys = keys.filter(function(k) { return k !== scr.dragApp.key })
+                        return keys.indexOf(modelData.key)
+                    }
+                    readonly property int spot: gap && rank >= scr.dropAt ? rank + 1 : rank
+                    readonly property int total: scr.dockApps.length - (gap && scr.dragDocked ? 1 : 0) + (gap ? 1 : 0)
+                    readonly property real step: scr.iconSize + scr.dockGap
+                    width: scr.iconSize
+                    height: scr.iconSize
+                    y: (dock.height - height) / 2
+                    x: (dock.width - (total * step - scr.dockGap)) / 2 + Math.max(0, spot) * step
+                    opacity: lifted ? (gap ? 0 : 0.25) : Math.max(0, Math.min(1, (scr.reveal * 1.9 - 0.9 - index * 0.08) * 3))
+                    Behavior on x { enabled: !!scr.dragApp; NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+                    AppIcon {
+                        size: scr.iconSize
+                        pal: scr.pal
+                        source: slot.modelData.icon
+                        name: slot.modelData.name
+                        hot: fav.containsMouse && !scr.dragApp
+                    }
                     MouseArea {
                         id: fav
                         anchors.fill: parent
                         hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: scr.launch(modelData.key)
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        preventStealing: true
+                        cursorShape: scr.dragApp ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+                        pressAndHoldInterval: 380
+                        onClicked: function(m) {
+                            if (m.button === Qt.RightButton) scr.openMenu(slot.modelData, "dock", mapToItem(scr, m.x, m.y))
+                            else scr.launch(slot.modelData.key)
+                        }
+                        onPressAndHold: function(m) {
+                            if (m.button === Qt.LeftButton) scr.beginDrag(slot.modelData, "dock", mapToItem(scr, m.x, m.y))
+                        }
+                        onPositionChanged: function(m) {
+                            if (scr.dragApp && pressed) scr.dragTo(mapToItem(scr, m.x, m.y))
+                        }
+                        onReleased: if (scr.dragApp) scr.endDrag()
+                        onCanceled: scr.cancelDrag()
                     }
                 }
             }
         }
+    }
+
+    Rectangle {
+        id: hintBox
+        anchors.bottom: dock.top
+        anchors.bottomMargin: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 28, hintText.implicitWidth + 28)
+        height: hintText.implicitHeight + 16
+        radius: 14
+        antialiasing: true
+        color: scr.pal.field
+        border.width: 1
+        border.color: scr.pal.glow
+        opacity: scr.hinting && !scr.searching && !scr.dragApp ? 1 : 0
+        visible: opacity > 0.01
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+        Text {
+            id: hintText
+            anchors.centerIn: parent
+            width: Math.min(implicitWidth, scr.width - 56)
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            text: L.t("Mantené presionada una app y arrastrala al dock. Clic derecho para más opciones.")
+            font.family: "Exo 2"
+            font.weight: Font.DemiBold
+            font.pixelSize: 12
+            color: scr.pal.text
+        }
+    }
+
+    Timer {
+        running: scr.hinting
+        interval: 7000
+        onTriggered: if (scr.backend) scr.backend.dockHint = false
+    }
+
+    AppIcon {
+        id: ghost
+        visible: !!scr.dragApp
+        z: 50
+        size: scr.iconSize
+        pal: scr.pal
+        source: scr.dragApp ? scr.dragApp.icon : ""
+        name: scr.dragApp ? scr.dragApp.name : ""
+        lit: scr.overDock && scr.canDrop
+        x: scr.dragPos.x - width / 2
+        y: scr.dragPos.y - height / 2
+        scale: 1.15
+        opacity: 0.92
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        z: 60
+        visible: !!scr.menuApp
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed: scr.closeMenu()
+    }
+
+    Rectangle {
+        id: bubble
+        z: 61
+        width: 200
+        height: menuCol.implicitHeight + 12
+        radius: 14
+        antialiasing: true
+        color: scr.pal.field
+        border.width: 1
+        border.color: scr.pal.glow
+        opacity: scr.menuApp ? 1 : 0
+        scale: scr.menuApp ? 1 : 0.92
+        visible: opacity > 0.01
+        Behavior on opacity { NumberAnimation { duration: 120 } }
+        Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutBack } }
+
+        Column {
+            id: menuCol
+            x: 6
+            y: 6
+            width: parent.width - 12
+            spacing: 2
+            Text {
+                width: parent.width
+                leftPadding: 8
+                bottomPadding: 4
+                elide: Text.ElideRight
+                text: scr.menuApp ? scr.menuApp.name : ""
+                font.family: "Michroma"
+                font.pixelSize: 10
+                color: scr.pal.muted
+            }
+            Repeater {
+                model: scr.menuItems()
+                delegate: Rectangle {
+                    required property var modelData
+                    width: menuCol.width
+                    height: 30
+                    radius: 9
+                    color: itemArea.containsMouse ? scr.pal.badge : "transparent"
+                    Row {
+                        x: 8
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 9
+                        Text {
+                            text: modelData.glyph
+                            font.family: "JetBrainsMono Nerd Font"
+                            font.pixelSize: 14
+                            color: scr.pal.accent
+                        }
+                        Text {
+                            text: modelData.text
+                            font.family: "Exo 2"
+                            font.weight: Font.DemiBold
+                            font.pixelSize: 13
+                            color: scr.pal.text
+                        }
+                    }
+                    MouseArea {
+                        id: itemArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: scr.menuPick(modelData.id)
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        z: 62
+        anchors.bottom: dock.top
+        anchors.bottomMargin: 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 40, toastText.implicitWidth + 30)
+        height: 32
+        radius: 16
+        antialiasing: true
+        color: scr.pal.field
+        border.width: 1
+        border.color: scr.pal.glow
+        opacity: scr.toast.length ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 180 } }
+        Text {
+            id: toastText
+            anchors.centerIn: parent
+            width: Math.min(implicitWidth, parent.width - 24)
+            elide: Text.ElideRight
+            text: scr.toast
+            font.family: "Exo 2"
+            font.weight: Font.Bold
+            font.pixelSize: 12
+            color: scr.pal.text
+        }
+    }
+
+    Timer {
+        id: toastTimer
+        interval: 3200
+        onTriggered: scr.toast = ""
     }
 }

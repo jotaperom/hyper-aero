@@ -113,6 +113,15 @@ Adds an *HYPER·AERO* session (pick it in your login screen) and a udev rule tha
 
 ## Updating
 
+From 2.0 on, HYPER·AERO checks GitHub once a day and tells you when a new version is out. Update from **Control Panel → System → Update**, or in a terminal:
+
+```bash
+aero-update check
+aero-update install
+```
+
+`aero-update install` downloads the new release and runs the installer with your current language, profile and location. Updating by hand still works:
+
 ```bash
 cd hyper-aero
 git pull

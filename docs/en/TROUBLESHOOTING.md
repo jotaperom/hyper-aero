@@ -127,9 +127,24 @@ cd hyper-aero
 
 Your backups are in `~/.local/share/hyper-aero/backups/`.
 
+## Turning the new effects off
+
+Control Panel (`SUPER + O`) → **Effects** has a switch for each one: music-reactive borders, ripples, Aero Peek, Aero Shake and weather. The *Lite* profile pauses the borders and the weather by itself.
+
+To preview the weather effects without waiting for rain:
+
+```bash
+aero-control.py set fx.weather.demo rain     # rain, drizzle, storm, snow, fog, cloudy
+aero-control.py set fx.weather.demo ""       # back to the real weather
+```
+
+(`~/.config/hyper-aero/scripts/aero-control.py` if the alias isn't loaded.)
+
 ## Reporting a bug
 
-Open an issue with:
+Run **`aero-doctor`** (or Control Panel → System → Diagnostics). It checks Hyprland, your screens, the login manager and every HYPER·AERO service, saves a report in your home folder and copies it to the clipboard, with your user and host names removed. Paste it into the issue.
+
+Also include:
 
 - `hyprctl version`
 - your profile (`aero-profile`)

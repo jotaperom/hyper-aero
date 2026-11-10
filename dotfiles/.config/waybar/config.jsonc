@@ -125,6 +125,7 @@
         "format": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#5a6270' letter_spacing='1400'>VOL</span> {volume}",
         "format-muted": "<span font_family='Exo 2' size='7680' weight='bold' foreground='#5a6270' letter_spacing='1400'>VOL</span> MUTE",
         "on-click": "__HOME__/.config/hyper-aero/scripts/osd.sh mute",
+        "on-click-right": "__HOME__/.config/hyper-aero/scripts/phone.sh audio",
         "max-volume": 100,
         "tooltip-format": "{node_name}",
         "on-scroll-up": "__HOME__/.config/hyper-aero/scripts/osd.sh vol-up",

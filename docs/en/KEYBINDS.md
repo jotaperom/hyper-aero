@@ -18,6 +18,8 @@
 | `SUPER + W` | Wi-Fi (phone) |
 | `SUPER + SHIFT + W` | Wi-Fi (rofi) |
 | `SUPER + A` | Bluetooth (phone) |
+| `SUPER + O` | Control Panel |
+| `SUPER + Z` / `SUPER + middle click` | Radial menu around the cursor (1–8 or click to pick, Esc to close) |
 
 ## Windows
 
@@ -35,6 +37,9 @@
 | `SUPER + CTRL + SHIFT + ←/→` | Move window to the next / previous desktop |
 | `ALT + TAB` | Switch windows (hold ALT, tap TAB) |
 | `ALT + SHIFT + TAB` | Switch windows backwards |
+| `SUPER + ALT + TAB` / `SUPER + SHIFT + TAB` | Flip 3D (Tab or scroll to flip, Enter or release SUPER to open) |
+| `SUPER + ,` (hold) | Aero Peek: look at the desktop through your windows |
+| `SUPER + drag` and shake | Aero Shake: minimize the other windows (shake again to restore) |
 
 ## Workspaces
 
@@ -73,6 +78,14 @@
 | `SUPER + M` | Log out |
 | `SUPER + F1` | Shortcut list |
 | `SUPER + F12` | Edit your `user.lua` |
+
+## Tools
+
+| Keys | Action |
+|---|---|
+| `SUPER + SHIFT + V` | Clipboard history (phone) |
+| `SUPER + .` | Emoji picker (phone) |
+| `SUPER + SHIFT + C` | Color picker (copies the hex code) |
 
 ## Capture
 

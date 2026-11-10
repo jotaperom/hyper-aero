@@ -16,8 +16,75 @@ CACHE = os.path.join(os.path.expanduser("~"), ".cache", "hyper-aero", "lyrics")
 MISS_TTL = 6 * 3600
 
 
-def out(key, status, lines=None, synced=False):
-    print(json.dumps({"key": key, "status": status, "synced": synced, "lines": lines or []}, ensure_ascii=False), flush=True)
+WORD_TAG = re.compile(r"<(\d+):(\d+(?:[.:]\d+)?)>")
+VOWELS = re.compile(r"[aeiouyáéíóúüàèìòùâêîôûäëïöæøåœ]+", re.I)
+
+
+def syllables(word):
+    core = re.sub(r"[^\w']", "", word, flags=re.UNICODE)
+    if not core:
+        return 0.4
+    if re.search(r"[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]", core):
+        return float(len(core))
+    n = len(VOWELS.findall(core))
+    if n > 1 and core.lower().endswith("e") and not core.lower().endswith(("le", "ee")):
+        n -= 1
+    return float(max(1, n))
+
+
+def tagged(text):
+    marks = list(WORD_TAG.finditer(text))
+    if not marks:
+        return None
+    words = []
+    for i, m in enumerate(marks):
+        t = int(m.group(1)) * 60 + float(m.group(2).replace(":", "."))
+        chunk = text[m.end(): marks[i + 1].start() if i + 1 < len(marks) else len(text)]
+        for j, w in enumerate(chunk.split()):
+            words.append([round(t + j * 0.05, 2), w])
+    return words
+
+
+def wordify(lines, length):
+    timed = [i for i, l in enumerate(lines) if l[0] >= 0]
+    result = []
+    for idx, line in enumerate(lines):
+        t, text = line[0], line[1]
+        if t < 0:
+            result.append([t, WORD_TAG.sub("", text).strip(), [], -1])
+            continue
+        later = [lines[k][0] for k in timed if lines[k][0] > t]
+        nxt = later[0] if later else (length if length > t else t + 5)
+        tags = tagged(text)
+        clean = " ".join(WORD_TAG.sub("", text).split())
+        if tags:
+            words = []
+            for k, (wt, w) in enumerate(tags):
+                end = tags[k + 1][0] if k + 1 < len(tags) else min(nxt, wt + 1.2)
+                words.append([wt, round(max(wt + 0.05, end), 2), w])
+            result.append([t, " ".join(w for _, w in tags), words, words[-1][1] if words else nxt])
+            continue
+        parts = clean.split()
+        if not parts:
+            result.append([t, clean, [], nxt])
+            continue
+        gap = max(0.2, nxt - t)
+        weights = [syllables(w) + 0.35 for w in parts]
+        total = sum(weights)
+        sung = min(gap * 0.94, max(0.7, (total - 0.35 * len(parts)) * 0.27 + 0.25 * len(parts)))
+        words = []
+        acc = t
+        for w, wt in zip(parts, weights):
+            d = sung * wt / total
+            words.append([round(acc, 2), round(acc + d, 2), w])
+            acc += d
+        result.append([t, clean, words, round(acc, 2)])
+    return result
+
+
+def out(key, status, lines=None, synced=False, length=0):
+    rows = wordify(lines or [], length) if synced else [[l[0], WORD_TAG.sub("", l[1]).strip()] for l in (lines or [])]
+    print(json.dumps({"key": key, "status": status, "synced": synced, "lines": rows}, ensure_ascii=False), flush=True)
 
 
 def fetch(path, params):
@@ -103,7 +170,7 @@ def main(argv):
         with open(cpath, encoding="utf-8") as f:
             c = json.load(f)
         if c.get("status") != "none" or time.time() - c.get("at", 0) < MISS_TTL:
-            out(key, c["status"], c.get("lines"), c.get("synced", False))
+            out(key, c["status"], c.get("lines"), c.get("synced", False), length)
             return 0
     except (OSError, ValueError, KeyError):
         pass
@@ -129,7 +196,7 @@ def main(argv):
         os.replace(cpath + ".tmp", cpath)
     except OSError:
         pass
-    out(key, res["status"], res["lines"], res["synced"])
+    out(key, res["status"], res["lines"], res["synced"], length)
     return 0
 
 

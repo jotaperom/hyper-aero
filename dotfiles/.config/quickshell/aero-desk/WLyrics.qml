@@ -17,6 +17,7 @@ Card {
     property real anchorAt: 0
     property real pos: 0
     readonly property int current: locate(lines, pos)
+    readonly property bool wordMode: !(core && core.settings && core.settings["lyrics.words"] === false)
 
     title: "LYRICS"
     tag: p ? String(p.trackTitle || "").toUpperCase() : ""
@@ -126,27 +127,77 @@ Card {
             Repeater {
                 id: rep
                 model: w.lines
-                delegate: Text {
+                delegate: Item {
                     id: ln
                     required property var modelData
                     required property int index
                     readonly property bool on: index === w.current
+                    readonly property var words: w.synced && modelData.length > 2 ? modelData[2] : []
+                    readonly property bool karaoke: on && w.wordMode && words.length > 0
                     readonly property real lineTop: strip.y + y
                     readonly property real edge: Math.max(0, Math.min(1, Math.min(lineTop + height, view.height - lineTop) / (w.fs * 2.2)))
                     width: strip.width
-                    wrapMode: Text.WordWrap
-                    text: modelData[1].length ? modelData[1] : "♪"
-                    font.family: "Exo 2"
-                    font.weight: on ? Font.Bold : Font.DemiBold
-                    font.pixelSize: w.fs
-                    lineHeight: 1.08
-                    color: on ? w.pal.ink : w.pal.muted
+                    height: karaoke ? flow.implicitHeight : txt.implicitHeight
                     transformOrigin: Item.Left
                     scale: on ? 1 : 0.9
                     opacity: edge * (on ? 1 : (index < w.current ? 0.42 : 0.62))
-                    Behavior on color { ColorAnimation { duration: 380 } }
                     Behavior on scale { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }
                     Behavior on opacity { NumberAnimation { duration: 300 } }
+
+                    Text {
+                        id: txt
+                        width: parent.width
+                        visible: !ln.karaoke
+                        wrapMode: Text.WordWrap
+                        text: ln.modelData[1].length ? ln.modelData[1] : "♪"
+                        font.family: "Exo 2"
+                        font.weight: ln.on ? Font.Bold : Font.DemiBold
+                        font.pixelSize: w.fs
+                        lineHeight: 1.08
+                        color: ln.on ? w.pal.ink : w.pal.muted
+                        Behavior on color { ColorAnimation { duration: 380 } }
+                    }
+
+                    Flow {
+                        id: flow
+                        width: parent.width
+                        visible: ln.karaoke
+                        spacing: Math.round(w.fs * 0.3)
+                        Repeater {
+                            model: ln.karaoke ? ln.words : []
+                            delegate: Item {
+                                id: wd
+                                required property var modelData
+                                readonly property real frac: Math.max(0, Math.min(1, (w.pos + 0.08 - modelData[0]) / Math.max(0.05, modelData[1] - modelData[0])))
+                                readonly property bool live: frac > 0 && frac < 1
+                                width: base.implicitWidth
+                                height: base.implicitHeight
+                                scale: live ? 1.06 : 1
+                                Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                                Text {
+                                    id: base
+                                    text: wd.modelData[2]
+                                    font.family: "Exo 2"
+                                    font.weight: Font.Bold
+                                    font.pixelSize: w.fs
+                                    color: w.pal.ink
+                                    opacity: 0.34
+                                }
+                                Item {
+                                    width: base.width * wd.frac
+                                    height: base.height
+                                    clip: true
+                                    Text {
+                                        text: wd.modelData[2]
+                                        font: base.font
+                                        color: wd.frac >= 1 ? w.pal.ink : w.pal.accent
+                                        style: Text.Outline
+                                        styleColor: Qt.rgba(1, 1, 1, w.core && w.core.night ? 0.0 : 0.12)
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     MouseArea {
                         anchors.fill: parent

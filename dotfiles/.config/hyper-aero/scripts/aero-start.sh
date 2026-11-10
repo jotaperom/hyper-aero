@@ -13,3 +13,7 @@ if ! eww active-windows 2>/dev/null | grep -q '^telemetry'; then
 fi
 
 pgrep -x waybar >/dev/null || setsid -f "$S/aerobar.sh" >/dev/null 2>&1 </dev/null
+
+if [ ! -e "$HOME/.config/hyper-aero/welcome-done" ]; then
+    (sleep 4; "$S/control.sh" welcome) >/dev/null 2>&1 &
+fi

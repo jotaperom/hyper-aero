@@ -113,6 +113,15 @@ Agrega una sesión *HYPER·AERO* (elegila en la pantalla de inicio de sesión) y
 
 ## Actualizar
 
+Desde la 2.0, HYPER·AERO revisa GitHub una vez al día y te avisa cuando sale una versión nueva. Actualizá desde **Panel de control → Sistema → Actualizar**, o en una terminal:
+
+```bash
+aero-update check
+aero-update install
+```
+
+`aero-update install` descarga la versión nueva y corre el instalador con tu idioma, perfil y ubicación actuales. Actualizar a mano sigue funcionando:
+
 ```bash
 cd hyper-aero
 git pull

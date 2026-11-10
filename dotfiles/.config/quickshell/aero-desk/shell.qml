@@ -67,6 +67,11 @@ ShellRoot {
         property var usage: ({})
         property var bars: []
         property var lyrics: ({ key: "", status: "idle", synced: false, lines: [] })
+        property var settings: ({})
+        property string profileName: "equilibrado"
+        readonly property string weatherKind: settings["fx.weather"] === false ? "clear"
+            : (typeof settings["fx.weather.demo"] === "string" && settings["fx.weather.demo"].length ? settings["fx.weather.demo"] : (weather.fx || "clear"))
+        readonly property real weatherDensity: profileName === "ligero" ? 0 : (profileName === "completo" ? 1 : 0.6)
         property var gif: ({ file: "", fit: "cover", paused: false })
         readonly property var lyricPlayer: pickLyricPlayer(Mpris.players.values)
         readonly property string lyricKey: lyricPlayer && lyricPlayer.trackTitle ? (lyricPlayer.trackArtist || "") + "\u241f" + lyricPlayer.trackTitle : ""
@@ -77,7 +82,40 @@ ShellRoot {
         readonly property bool muted: sink && sink.audio ? sink.audio.muted : false
         readonly property var player: pickPlayer(Mpris.players.values)
         readonly property bool playing: !!(player && player.isPlaying)
-        readonly property var favorites: pickFavs(DesktopEntries.applications.values, usage)
+        property var pins: []
+        property bool pinsSet: false
+        readonly property var favorites: pinsSet ? pinnedApps(DesktopEntries.applications.values, pins) : pickFavs(DesktopEntries.applications.values, usage)
+
+        function pinnedApps(list, keys) {
+            var byId = {}
+            for (var i = 0; i < list.length; i++) {
+                var e = list[i]
+                if (e && !byId[e.id]) byId[e.id] = { key: e.id, name: e.name || e.id, icon: Quickshell.iconPath(e.icon, "application-x-executable") }
+            }
+            var out = []
+            for (var j = 0; j < keys.length; j++) {
+                if (byId[keys[j]]) out.push(byId[keys[j]])
+            }
+            return out
+        }
+
+        function setPins(list) {
+            var seen = {}
+            var out = []
+            for (var i = 0; i < list.length; i++) {
+                var k = String(list[i] || "")
+                if (!k.length || seen[k]) continue
+                seen[k] = true
+                out.push(k)
+            }
+            pins = out
+            pinsSet = true
+            pinsFile.setText(JSON.stringify({ version: 1, pins: out }, null, 2) + "\n")
+        }
+
+        function openDockPicker() {
+            run([shell.scripts + "/phone.sh", "dock"])
+        }
 
         function placed(id) {
             for (var k in placedMap) {
@@ -371,6 +409,56 @@ ShellRoot {
     }
 
     FileView {
+        path: shell.aero + "/settings.json"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: {
+            try {
+                core.settings = JSON.parse(text()) || {}
+            } catch (err) {
+                core.settings = {}
+            }
+        }
+        onLoadFailed: core.settings = {}
+    }
+
+    FileView {
+        path: shell.aero + "/profile.json"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: {
+            try {
+                core.profileName = JSON.parse(text()).name || "equilibrado"
+            } catch (err) {
+            }
+        }
+    }
+
+    FileView {
+        id: pinsFile
+        path: shell.aero + "/dock.json"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: {
+            try {
+                var d = JSON.parse(text())
+                core.pins = Array.isArray(d.pins) ? d.pins : []
+                core.pinsSet = true
+            } catch (err) {
+                core.pins = []
+                core.pinsSet = false
+            }
+        }
+        onLoadFailed: {
+            core.pins = []
+            core.pinsSet = false
+        }
+    }
+
+    FileView {
         path: shell.home + "/.local/state/hyper-aero/phone-usage.json"
         watchChanges: true
         printErrors: false
@@ -484,6 +572,77 @@ ShellRoot {
                 primary: shell.mainName() === scope.name
                 Component.onCompleted: shell.hub.registerBoard(scope.name, board)
                 Component.onDestruction: shell.hub.registerBoard(scope.name, null)
+            }
+
+            PanelWindow {
+                id: weatherWin
+                property bool busy: false
+                screen: scope.modelData
+                color: "transparent"
+                visible: !busy && shell.hub.weatherKind !== "clear" && shell.hub.weatherDensity > 0
+                anchors {
+                    top: true
+                    bottom: true
+                    left: true
+                    right: true
+                }
+                exclusionMode: ExclusionMode.Ignore
+                mask: Region {}
+                WlrLayershell.namespace: "aerofx-weather"
+                WlrLayershell.layer: WlrLayer.Bottom
+                WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+                WeatherFx {
+                    anchors.fill: parent
+                    visible: weatherWin.visible
+                    kind: shell.hub.weatherKind
+                    heavy: !!(shell.hub.weather && shell.hub.weather.heavy) || shell.hub.settings["fx.weather.heavy"] === true
+                    night: shell.hub.night
+                    density: shell.hub.weatherDensity
+                }
+
+                Process {
+                    id: busyProc
+                    command: ["sh", "-c", "hyprctl -j monitors; echo @@; hyprctl -j workspaces"]
+                    stdout: StdioCollector {
+                        onStreamFinished: {
+                            try {
+                                var parts = text.split("@@")
+                                var mons = JSON.parse(parts[0])
+                                var wss = JSON.parse(parts[1])
+                                var id = null
+                                var extra = false
+                                for (var i = 0; i < mons.length; i++) {
+                                    if (mons[i].name !== scope.name) continue
+                                    id = mons[i].activeWorkspace ? mons[i].activeWorkspace.id : null
+                                    var sp = mons[i].specialWorkspace
+                                    extra = !!(sp && sp.id && String(sp.name || "").indexOf("aero-min") < 0)
+                                }
+                                var n = 0
+                                for (var j = 0; j < wss.length; j++) {
+                                    if (wss[j].id === id) n = wss[j].windows
+                                }
+                                weatherWin.busy = extra || n > 0
+                            } catch (err) {
+                            }
+                        }
+                    }
+                }
+
+                Timer {
+                    id: busyKick
+                    interval: 200
+                    running: true
+                    onTriggered: if (!busyProc.running) busyProc.running = true
+                }
+
+                Connections {
+                    target: Hyprland
+                    function onRawEvent(ev) {
+                        var n = ev.name
+                        if (n === "openwindow" || n === "closewindow" || n === "movewindowv2" || n === "workspacev2" || n === "focusedmonv2" || n === "activespecialv2" || n === "changefloatingmode" || n === "moveworkspacev2") busyKick.restart()
+                    }
+                }
             }
 
             PanelWindow {

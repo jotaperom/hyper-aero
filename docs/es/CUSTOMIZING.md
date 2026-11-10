@@ -23,7 +23,7 @@ hl.config({
 Agregá atajos nuevos en `user.lua`:
 
 ```lua
-hl.bind("SUPER + O", hl.dsp.exec_cmd("obsidian"))
+hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd("obsidian"))
 hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd("kitty --class aero-float"))
 ```
 
@@ -95,6 +95,32 @@ El perfil escribe `~/.config/hypr/aero-profile.lua` (desenfoque, sombras, animac
 - Clic derecho sobre un widget para ver sus opciones.
 - Cada pantalla tiene su propio escritorio: el editor se abre en la pantalla donde está el mouse, y cada acomodo se guarda aparte en `~/.config/hyper-aero/desk/layout-PANTALLA.json` (por ejemplo `layout-DP-1.json`).
 - Abrir o cerrar TELEMETRY nunca cambia un acomodo guardado; los widgets solo se corren en pantalla mientras está abierto.
+
+## Panel de control y ajustes
+
+`SUPER + O` abre el **Panel de control**: apariencia, efectos, escritorio y dock, sonido y pantallas, idioma y región, rendimiento, atajos y sistema (actualizaciones, diagnóstico, Centro de bienvenida). Sus interruptores se guardan en `~/.config/hyper-aero/settings.json`:
+
+| Clave | Por defecto | Qué es |
+|---|---|---|
+| `fx.glow` | `true` | Bordes que reaccionan a la música |
+| `fx.ripple` | `true` | Ondas al hacer clic |
+| `fx.peek` | `true` | Esquina de Aero Peek y `SUPER + ,` |
+| `fx.shake` | `true` | Aero Shake |
+| `fx.weather` | `true` | Clima en el escritorio |
+| `lyrics.words` | `true` | Letras palabra por palabra |
+| `auto.game` | `true` | Perfil Ligero mientras un juego está en pantalla completa |
+| `auto.battery` | `false` | Perfil Ligero con batería |
+| `update.check` | `true` | Buscar actualizaciones una vez al día |
+
+Desde la terminal: `aero-control.py set fx.ripple false`.
+
+## Dock
+
+Anclá apps manteniéndolas presionadas en NEXUS (`SUPER + R`) y arrastrándolas al dock; con clic derecho tenés *Anclar*, *Quitar* y *Mover*. En el widget DOCK del escritorio, clic derecho sobre un ícono para editarlo. Los dos docks comparten `~/.config/hyper-aero/dock.json`.
+
+## Compartir temas
+
+Panel de control → Apariencia → **Exportar** guarda cada tema que hiciste en el Estudio como un archivo `.aerotheme` en `Documentos/HYPER-AERO`. Para instalar uno, abrilo con doble clic, o ponelo en Descargas y tocá **Importar**. Desde la terminal: `aero-theme import ARCHIVO.aerotheme`.
 
 ## Terminal
 

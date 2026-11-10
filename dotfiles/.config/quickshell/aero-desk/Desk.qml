@@ -116,6 +116,7 @@ Item {
         function onLayoutChanged() { desk.syncIds() }
     }
 
+
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton

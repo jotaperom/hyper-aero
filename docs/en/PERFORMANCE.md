@@ -59,11 +59,22 @@ The change applies right away, no logout needed.
 | Workspace animation | slide + fade | slide + fade | fade |
 | Visualizer | 24 fps | 15 fps | off |
 | Desk widgets refresh | 30 fps | 20 fps | 12 fps |
+| Music-reactive borders | 30 fps | 20 fps | off |
+| Weather effects | full | lighter | off |
 | Theme / day-night transition | on | on | off |
 | Phone and transitions kept in memory | yes | yes | no (open on demand) |
 | Recommended for | 8+ threads, dedicated or strong integrated GPU | most computers | 4 threads, 8 GB, older GPUs, battery |
 
 What “kept in memory” means: in *Full* and *Balanced* the NEXUS phone and the transition layer stay loaded so they appear instantly. In *Lite* they start when you open them (a short delay) and use no memory otherwise.
+
+### Automatic profiles
+
+Control Panel → **Performance** can switch to *Lite* by itself and back to your profile afterwards:
+
+- **Game mode** (on by default): while a game is fullscreen (Steam, Proton/Wine, Lutris, Heroic, emulators, or any window that says it is a game).
+- **Battery saver** (off by default): while the charger is unplugged.
+
+The music-reactive borders only run while something is playing, and ripples cost nothing until you click.
 
 ### Profiles and power tools
 

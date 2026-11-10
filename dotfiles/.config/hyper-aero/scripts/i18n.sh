@@ -7,3 +7,10 @@ t() {
     local v="${AERO_T[$1]-}"
     printf '%s' "${v:-$1}"
 }
+
+tf() {
+    local f
+    f=$(t "$1")
+    shift
+    printf "$f" "$@"
+}

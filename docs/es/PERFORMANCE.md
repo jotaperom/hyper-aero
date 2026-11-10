@@ -59,11 +59,22 @@ El cambio se aplica al instante, sin cerrar sesión.
 | Animación de escritorios | deslizar + desvanecer | deslizar + desvanecer | desvanecer |
 | Visualizador | 24 fps | 15 fps | apagado |
 | Refresco de widgets | 30 fps | 20 fps | 12 fps |
+| Bordes que reaccionan a la música | 30 fps | 20 fps | apagados |
+| Clima en el fondo | completo | más liviano | apagado |
 | Transición de tema / día-noche | sí | sí | no |
 | Teléfono y transiciones en memoria | sí | sí | no (se abren cuando los pedís) |
 | Recomendado para | 8+ hilos, GPU dedicada o integrada potente | la mayoría de compus | 4 hilos, 8 GB, GPUs viejas, batería |
 
 Qué significa «en memoria»: en *Completo* y *Equilibrado* el teléfono NEXUS y la capa de transiciones se quedan cargados para aparecer al instante. En *Ligero* arrancan cuando los abrís (tardan un poquito) y si no, no usan memoria.
+
+### Perfiles automáticos
+
+Panel de control → **Rendimiento** puede pasarse a *Ligero* solo y volver a tu perfil después:
+
+- **Modo juego** (encendido por defecto): mientras un juego está en pantalla completa (Steam, Proton/Wine, Lutris, Heroic, emuladores, o cualquier ventana que diga que es un juego).
+- **Ahorro con batería** (apagado por defecto): mientras el cargador está desconectado.
+
+Los bordes que reaccionan a la música solo corren mientras algo suena, y las ondas no cuestan nada hasta que hacés clic.
 
 ### Perfiles y herramientas de energía
 

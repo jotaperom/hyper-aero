@@ -43,6 +43,11 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/phone.sh daemon")
     hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/veil.sh daemon")
     hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/desk.sh daemon")
+    hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/fx.sh daemon")
+    hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/aero-auto.py spawn")
+    hl.exec_cmd("sh -c 'command -v cliphist >/dev/null && exec wl-paste --type text --watch cliphist store'")
+    hl.exec_cmd("sh -c 'command -v cliphist >/dev/null && exec wl-paste --type image --watch cliphist store'")
+    hl.exec_cmd("__HOME__/.config/hyper-aero/scripts/aero-update check --quiet")
 end)
 
 
@@ -429,6 +434,15 @@ hl.window_rule({
     float = true,
 })
 
+hl.window_rule({
+    name  = "aero-control-panel",
+    match = { class = "^org.quickshell$", title = "^(Panel de control|Control Panel|Bienvenido a HYPER·AERO|Welcome to HYPER·AERO)$" },
+
+    float  = true,
+    center = true,
+    size   = "1060 700",
+})
+
 
 hl.layer_rule({
     name  = "aero-veil-still",
@@ -446,10 +460,16 @@ hl.layer_rule({
 })
 
 pcall(dofile, "__HOME__/.config/hypr/aero-deskmove.lua")
+pcall(dofile, "__HOME__/.config/hypr/aero-fx.lua")
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/carousel.sh"))
 
 hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/aero-profile menu"))
+
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/control.sh"))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/phone.sh clipboard"))
+hl.bind(mainMod .. " + period", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/phone.sh emoji"))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("__HOME__/.config/hyper-aero/scripts/color.sh"))
 
 pcall(dofile, "__HOME__/.config/hypr/aero-profile.lua")
 pcall(dofile, "__HOME__/.config/hypr/user.lua")

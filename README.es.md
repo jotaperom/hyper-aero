@@ -28,6 +28,11 @@ Vidrio brillante, burbujas, cielos animados y un centro de control con forma de 
 | **TELEMETRY HUD** | Un panel lateral con CPU, RAM, GPU, red y batería |
 | **Panel de pantallas** | Como el *Win + P* de Windows: solo laptop, duplicar, extender, solo monitor, y acomodar arrastrando; cambia solo al conectar o desconectar |
 | **Perfiles de rendimiento** | *Completo*, *Equilibrado* y *Ligero*, se cambian cuando querás |
+| **Efectos Aero** | Bordes de ventana que reaccionan a la música, ondas de agua al hacer clic, Aero Peek, Aero Shake, Flip 3D y un menú radial |
+| **Clima en el escritorio** | Lluvia, llovizna, nieve, niebla y tormentas sobre el fondo, según el clima real |
+| **Panel de control** | `SUPER + O`: todos los ajustes en una ventana estilo Vista, y un Centro de bienvenida al primer inicio |
+| **Audio y dock** | Cambiar salida y entrada con volumen por dispositivo y por app en NEXUS, y apps que anclás al dock arrastrándolas |
+| **Herramientas** | Historial del portapapeles, emojis, selector de color, letras palabra por palabra, modo juego / batería automático |
 | **Bilingüe** | Interfaz en español o inglés: el instalador te pregunta y `aero-lang es\|en` la cambia después |
 | **Extras** | Pantalla de bloqueo, protector de pantalla, alt-tab con vistas previas, vista de escritorios, capturas, grabación de pantalla, pantalla de inicio de sesión opcional |
 
@@ -70,6 +75,8 @@ Guía completa, opciones y pasos manuales: [Instalación](docs/es/INSTALL.md).
 | `SUPER + T` | Día / noche |
 | `SUPER + P` | Pantallas |
 | `SUPER + F2` | Perfil de rendimiento |
+| `SUPER + O` | Panel de control |
+| `SUPER + Z` | Menú radial |
 
 Todos los atajos: [Atajos](docs/es/KEYBINDS.md).
 
@@ -97,7 +104,8 @@ HYPER·AERO no tiene telemetría ni funciones de IA. Solo se conecta a internet 
 - `ipapi.co`: una vez, al instalar, para sugerir tu ubicación para el ciclo día/noche (podés decir que no o escribirla vos).
 - `wttr.in`: el clima de los widgets.
 - `lrclib.net`: las letras de canciones del widget LYRICS, solo si lo tenés en el escritorio.
-- GitHub: para descargar los fondos al instalar.
+- GitHub: para descargar los fondos al instalar, y una vez al día para ver si hay una versión nueva (se apaga en Panel de control → Sistema).
+- `ipapi.co` de nuevo solo si tocás **Detectar** en el Panel de control o en el Centro de bienvenida.
 
 ## Créditos
 

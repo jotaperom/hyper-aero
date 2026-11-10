@@ -12,6 +12,14 @@ printf '%s\n' \
     "SUPER + V              Float / tile window" \
     "SUPER + F              Fullscreen on / off" \
     "SUPER + SHIFT + F      Maximize (keeps the bar)" \
+    "SUPER + O              Control Panel" \
+    "SUPER + Z              Radial menu (also SUPER + middle click)" \
+    "SUPER + ALT + TAB      Flip 3D (also SUPER + SHIFT + TAB)" \
+    "SUPER + ,              Aero Peek (hold)" \
+    "SUPER + DRAG + SHAKE   Aero Shake: minimize the other windows" \
+    "SUPER + SHIFT + V      Clipboard history" \
+    "SUPER + .              Emoji picker" \
+    "SUPER + SHIFT + C      Color picker" \
     "SUPER + P              Displays: duplicate, extend, arrange" \
     "SUPER + SHIFT + P      Pseudo-tile window" \
     "SUPER + J              Flip split direction" \

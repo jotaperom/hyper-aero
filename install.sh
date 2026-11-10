@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-VERSION="1.2.3"
+VERSION="2.0.6"
 UPSTREAM="jotaperom/hyper-aero"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 C="$HOME/.config"
@@ -255,7 +255,7 @@ detect_settings() {
 }
 
 PKGS=(hyprland hyprlock hypridle hyprsunset xdg-desktop-portal-hyprland quickshell waybar swaync rofi kitty
-      mpv ffmpeg python python-numpy python-pillow jq socat curl playerctl cava grim slurp wf-recorder wl-clipboard
+      mpv ffmpeg python python-numpy python-pillow jq socat curl playerctl cava grim slurp wf-recorder wl-clipboard cliphist hyprpicker
       brightnessctl networkmanager bluez bluez-utils pipewire pipewire-pulse wireplumber libnotify starship zenity
       pciutils glib2 nano pavucontrol imagemagick xdg-utils ttf-jetbrains-mono-nerd noto-fonts noto-fonts-emoji
       papirus-icon-theme adw-gtk-theme qt6-declarative qt6-svg)
@@ -314,7 +314,7 @@ check_versions() {
 }
 
 TARGETS=(hypr hyper-aero quickshell/aero-carousel quickshell/aero-desk quickshell/aero-displays quickshell/aero-phone
-         quickshell/aero-snap quickshell/aero-studio quickshell/aero-veil eww waybar kitty rofi swaync gtk-3.0 gtk-4.0 cava
+         quickshell/aero-snap quickshell/aero-studio quickshell/aero-veil quickshell/aero-fx quickshell/aero-control eww waybar kitty rofi swaync gtk-3.0 gtk-4.0 cava
          starship.toml)
 
 backup() {
@@ -342,7 +342,8 @@ src, home, kb, kbv, browser, files, lat, lon = sys.argv[1:9]
 subs = {"__HOME__": home, "__KB_LAYOUT__": kb, "__KB_VARIANT__": kbv, "__BROWSER__": browser,
         "__FILEMANAGER__": files, "__LAT__": lat, "__LON__": lon}
 keep = {os.path.join(".config", "hypr", "user.lua"), os.path.join(".config", "hyper-aero", "desk", "notes.txt"),
-        os.path.join(".config", "hyper-aero", "studio", "themes.json"), os.path.join(".config", "hyper-aero", "desk", "layout.json")}
+        os.path.join(".config", "hyper-aero", "studio", "themes.json"), os.path.join(".config", "hyper-aero", "desk", "layout.json"),
+        os.path.join(".config", "hyper-aero", "settings.json"), os.path.join(".config", "hyper-aero", "dock.json")}
 n = 0
 for root, dirs, fs in os.walk(src):
     for f in fs:
@@ -544,6 +545,7 @@ main() {
     link_theme
     seed_display
     write_info
+    "$A/scripts/aero-theme.py" register >/dev/null 2>&1 || true
     install_assets
     apply_look
     if [ "$WITH_GPU" = 0 ] && [ "${GPU_COUNT:-1}" -ge 2 ] && [ ! -f /usr/share/wayland-sessions/hyper-aero.desktop ]; then

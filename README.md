@@ -30,6 +30,11 @@ Glossy glass, bubbles, animated skies and a phone-shaped control center — the 
 | **TELEMETRY HUD** | A side panel with CPU, RAM, GPU, network and battery |
 | **Displays panel** | Windows-style *Win + P*: laptop only, duplicate, extend, external only, and drag to arrange — automatic on plug / unplug |
 | **Performance profiles** | *Full*, *Balanced* and *Lite*, switchable at any time |
+| **Aero effects** | Music-reactive window borders, water ripples on click, Aero Peek, Aero Shake, Flip 3D and a radial quick menu |
+| **Weather on the desktop** | Rain, drizzle, snow, fog and storms drawn over the wallpaper, following the real weather |
+| **Control Panel** | `SUPER + O`: every setting in one Vista-style window, plus a Welcome Center on the first start |
+| **Audio and dock** | Output / input switching with per-device and per-app volume in NEXUS, and apps you pin to the dock by dragging |
+| **Everyday tools** | Clipboard history, emoji picker, color picker, word-by-word lyrics, automatic game / battery mode |
 | **Bilingual** | English or Spanish interface: the installer asks, and `aero-lang en\|es` switches it later |
 | **Extras** | Lock screen, screensaver, alt-tab with previews, workspace overview, screenshots, screen recording, optional login screen |
 
@@ -72,6 +77,8 @@ Full guide, options and manual steps: [Install](docs/en/INSTALL.md).
 | `SUPER + T` | Day / night |
 | `SUPER + P` | Displays |
 | `SUPER + F2` | Performance profile |
+| `SUPER + O` | Control Panel |
+| `SUPER + Z` | Radial menu |
 
 All shortcuts: [Keybinds](docs/en/KEYBINDS.md).
 
@@ -99,7 +106,8 @@ HYPER·AERO has no telemetry and no AI features. It only goes online for:
 - `ipapi.co` — once, during install, to suggest your location for the day/night cycle (you can refuse or type it yourself).
 - `wttr.in` — weather for the widgets.
 - `lrclib.net` — song lyrics for the lyrics widget, only while it's on the desk.
-- GitHub — to download the wallpaper pack during install.
+- GitHub — to download the wallpaper pack during install, and once a day to check for a new version (turn it off in Control Panel → System).
+- `ipapi.co` again only if you press **Detect** in the Control Panel or the Welcome Center.
 
 ## Credits
 

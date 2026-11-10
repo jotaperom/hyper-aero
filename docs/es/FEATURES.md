@@ -65,6 +65,33 @@ Ocho pieles (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): abrí la pág
 
 Arrastrá una ventana con `SUPER + clic izquierdo` y mantenela en el borde de la pantalla, o soltala sobre uno de los escritorios de arriba, para mandarla a otro escritorio. Con varios monitores solo los bordes exteriores cambian de escritorio; los bordes entre pantallas solo pasan la ventana al otro lado. `SUPER + F` pone una ventana en pantalla completa.
 
+### Novedades de NEXUS (2.0)
+
+- **Audio**: en la página de control, tocá la flechita junto a *Volumen* (o clic derecho sobre el volumen de la barra). Elegí la salida y la entrada, ajustá el volumen de cada una y el de cada app que esté sonando, como en KDE.
+- **Dock**: mantené presionada una app y arrastrala al dock; arrastrá dentro del dock para reordenar, o sacala para quitarla. Clic derecho sobre cualquier app para *Anclar al dock*.
+- **Portapapeles** (`SUPER + SHIFT + V`), **Emojis** (`SUPER + .`, se buscan en español o inglés) y **Selector de color** (`SUPER + SHIFT + C`).
+
+### Letras palabra por palabra
+
+El widget LYRICS ilumina cada palabra mientras suena. Si la letra trae los tiempos de cada palabra, los usa; si no, reparte cada línea entre sus palabras según las sílabas, tipo karaoke.
+
+## Efectos Aero
+
+- **Bordes que reaccionan a la música**: mientras algo suena, la ventana activa brilla y una onda recorre sus bordes al ritmo.
+- **Aero Ripple**: anillos de agua alrededor del cursor en cada clic.
+- **Aero Peek**: pasá el mouse por la esquina inferior derecha (o mantené `SUPER + ,`) para ver el escritorio a través del contorno de vidrio de tus ventanas. Clic en la esquina para mostrar el escritorio.
+- **Aero Shake**: arrastrá una ventana con `SUPER` y sacudila para minimizar las demás; sacudila otra vez para traerlas.
+- **Flip 3D**: `SUPER + ALT + TAB` apila tus ventanas en 3D con vistas previas en vivo.
+- **Menú radial**: `SUPER + Z` o `SUPER + clic central` abre un anillo alrededor del cursor con apps, captura, reproducir/pausar, siguiente canción, Bluetooth, audio, temas y ajustes.
+
+## Clima en el escritorio
+
+Lluvia, llovizna, tormentas (con relámpagos), nieve, niebla y nubes entre el fondo y los widgets, según el clima real de tu ciudad. Cuando llueve, las gotas escurren por el vidrio.
+
+## Panel de control y Centro de bienvenida
+
+`SUPER + O` abre un Panel de control estilo Vista con todos los ajustes en un solo lugar. En el primer inicio, el **Centro de bienvenida** te guía por idioma, color, ubicación y los atajos principales.
+
 ## TELEMETRY HUD
 
 Un panel de eww con CPU (carga, frecuencia, temperatura), GPU integrada y dedicada (si hay), RAM, disco, batería, red y tiempo encendido. `SUPER + H` alterna entre completo y delgado.

@@ -255,6 +255,9 @@ Item {
                         pal: cc.pal
                         glyph: cc.backend && cc.backend.muted ? "\u{F075F}" : "\u{F057E}"
                         label: L.t("Volumen")
+                        hint: cc.backend && cc.backend.sink ? (cc.backend.sink.description || cc.backend.sink.nickname || "") : ""
+                        more: true
+                        onMoreClicked: cc.sub = "audio"
                         dim: cc.backend ? cc.backend.muted : false
                         value: cc.backend ? cc.backend.volume : 0
                         onMoved: function (v) {
@@ -277,9 +280,22 @@ Item {
                     }
                 }
 
+                Row {
+                    id: tools
+                    anchors.top: sliders.bottom
+                    anchors.topMargin: 10
+                    x: 14
+                    width: parent.width - 28
+                    spacing: 8
+                    readonly property real w: (width - spacing * 2) / 3
+                    ToolChip { width: tools.w; pal: cc.pal; glyph: "\u{F014C}"; label: L.t("Portapapeles"); onClicked: cc.sub = "clip" }
+                    ToolChip { width: tools.w; pal: cc.pal; glyph: "\u{F01F5}"; label: "Emojis"; onClicked: cc.sub = "emoji" }
+                    ToolChip { width: tools.w; pal: cc.pal; glyph: "\u{F0755}"; label: L.t("Color"); onClicked: { cc.act("color"); cc.closeRequested() } }
+                }
+
                 MediaCard {
                     id: media
-                    anchors.top: sliders.bottom
+                    anchors.top: tools.bottom
                     anchors.topMargin: 12
                     x: 14
                     width: parent.width - 28
@@ -360,6 +376,65 @@ Item {
         onBack: cc.sub = ""
         onAct: function (n) {
             cc.act(n);
+        }
+        Behavior on x {
+            NumberAnimation {
+                duration: 280
+                easing.type: Easing.OutCubic
+            }
+        }
+    }
+
+    AudioPanel {
+        width: cc.width
+        height: cc.height
+        x: cc.sub === "audio" ? 0 : cc.width
+        visible: x < cc.width - 1
+        pal: cc.pal
+        backend: cc.backend
+        live: cc.sub === "audio" && cc.live
+        onBack: cc.sub = ""
+        Behavior on x {
+            NumberAnimation {
+                duration: 280
+                easing.type: Easing.OutCubic
+            }
+        }
+    }
+
+    ClipPanel {
+        width: cc.width
+        height: cc.height
+        x: cc.sub === "clip" ? 0 : cc.width
+        visible: x < cc.width - 1
+        pal: cc.pal
+        backend: cc.backend
+        live: cc.sub === "clip" && cc.live
+        onBack: cc.sub = ""
+        onDone: {
+            cc.sub = ""
+            cc.closeRequested()
+        }
+        Behavior on x {
+            NumberAnimation {
+                duration: 280
+                easing.type: Easing.OutCubic
+            }
+        }
+    }
+
+    EmojiPanel {
+        width: cc.width
+        height: cc.height
+        x: cc.sub === "emoji" ? 0 : cc.width
+        visible: x < cc.width - 1
+        pal: cc.pal
+        backend: cc.backend
+        live: cc.sub === "emoji" && cc.live
+        onBack: cc.sub = ""
+        onDone: {
+            cc.sub = ""
+            cc.closeRequested()
         }
         Behavior on x {
             NumberAnimation {

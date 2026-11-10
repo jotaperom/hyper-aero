@@ -127,9 +127,24 @@ cd hyper-aero
 
 Tus respaldos están en `~/.local/share/hyper-aero/backups/`.
 
+## Apagar los efectos nuevos
+
+Panel de control (`SUPER + O`) → **Efectos** tiene un interruptor para cada uno: bordes que reaccionan a la música, ondas, Aero Peek, Aero Shake y clima. El perfil *Ligero* pausa los bordes y el clima solo.
+
+Para ver los efectos del clima sin esperar a que llueva:
+
+```bash
+aero-control.py set fx.weather.demo rain     # rain, drizzle, storm, snow, fog, cloudy
+aero-control.py set fx.weather.demo ""       # volver al clima real
+```
+
+(`~/.config/hyper-aero/scripts/aero-control.py` si el alias no está cargado.)
+
 ## Reportar un error
 
-Abrí un issue con:
+Corré **`aero-doctor`** (o Panel de control → Sistema → Diagnóstico). Revisa Hyprland, tus pantallas, el administrador de inicio de sesión y cada servicio de HYPER·AERO, guarda un reporte en tu carpeta personal y lo copia al portapapeles, sin tu nombre de usuario ni el de la compu. Pegalo en el issue.
+
+Incluí también:
 
 - `hyprctl version`
 - tu perfil (`aero-profile`)

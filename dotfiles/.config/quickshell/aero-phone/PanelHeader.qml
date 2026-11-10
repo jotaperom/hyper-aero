@@ -8,6 +8,7 @@ Item {
     property bool switchEnabled: true
     property bool spinning: false
     property bool showRefresh: true
+    property bool showSwitch: true
     signal back()
     signal refresh()
     signal toggled(bool value)
@@ -55,7 +56,7 @@ Item {
     Rectangle {
         id: refreshBtn
         visible: hd.showRefresh
-        anchors.right: toggle.left
+        anchors.right: hd.showSwitch ? toggle.left : parent.right
         anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
         width: 34; height: 34; radius: 17
@@ -92,6 +93,7 @@ Item {
 
     AeroSwitch {
         id: toggle
+        visible: hd.showSwitch
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         pal: hd.pal

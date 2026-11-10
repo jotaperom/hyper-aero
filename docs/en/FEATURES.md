@@ -65,6 +65,33 @@ Eight skins (iPhone, flip, Aqua, visor, slider, holo, PDA, orbit): open the cont
 
 Drag a window with `SUPER + left mouse` and hold it at the screen edge, or drop it on one of the desktop tiles at the top, to send it to another desktop. With several monitors, only the outer edges switch desktops; the edges between screens just move the window across. `SUPER + F` makes a window fullscreen.
 
+### New in NEXUS (2.0)
+
+- **Audio**: on the controls page, tap the arrow next to *Volume* (or right-click the volume on the bar). Pick the output and input device, set each one's volume, and set the volume of every app that is playing, KDE-style.
+- **Dock**: press and hold an app and drag it to the dock; drag inside the dock to reorder, or out of it to remove. Right-click any app for *Pin to dock*.
+- **Clipboard** (`SUPER + SHIFT + V`), **Emojis** (`SUPER + .`, search in English or Spanish) and **Color picker** (`SUPER + SHIFT + C`).
+
+### Word-by-word lyrics
+
+The LYRICS widget lights up each word as it is sung. When the lyrics include word timing it uses it; otherwise it spreads each line over its words by syllables, karaoke style.
+
+## Aero effects
+
+- **Music-reactive borders**: while something plays, the active window glows and a wave runs along its edges to the beat.
+- **Aero Ripple**: water rings around the cursor on every click.
+- **Aero Peek**: hover the bottom-right corner (or hold `SUPER + ,`) to see the desktop through glass outlines of your windows. Click the corner to show the desktop.
+- **Aero Shake**: drag a window with `SUPER` and shake it to minimize the others; shake again to bring them back.
+- **Flip 3D**: `SUPER + ALT + TAB` stacks your windows in 3D with live previews.
+- **Radial menu**: `SUPER + Z` or `SUPER + middle click` opens a ring around the cursor with apps, screenshot, play/pause, next song, Bluetooth, audio, themes and settings.
+
+## Weather on the desktop
+
+Rain, drizzle, storms (with lightning), snow, fog and clouds drawn between the wallpaper and the widgets, following the real weather of your city. Drops slide down the glass when it rains.
+
+## Control Panel and Welcome Center
+
+`SUPER + O` opens a Vista-style Control Panel with every setting in one place. On the first start, the **Welcome Center** walks you through language, color, location and the key shortcuts.
+
 ## TELEMETRY HUD
 
 An eww panel with CPU (load, frequency, temperature), integrated and dedicated GPU (when present), RAM, disk, battery, network and uptime. `SUPER + H` switches between full and slim.

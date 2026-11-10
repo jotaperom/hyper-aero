@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+. "$HOME/.config/hyper-aero/scripts/i18n.sh"
+
+A="$HOME/.config/hyper-aero"
+RUN="${XDG_RUNTIME_DIR:-/tmp}"
+out=""
+warns=0
+fails=0
+
+line() { out+="$1"$'\n'; }
+good() { line "  ✓ $1"; }
+warn() { line "  ! $1"; warns=$((warns + 1)); }
+bad() { line "  ✗ $1"; fails=$((fails + 1)); }
+head2() { line ""; line "◢ $1"; }
+
+clean() {
+    local s="$1"
+    s="${s//$HOME/\~}"
+    [ -n "$USER" ] && s="${s//$USER/<user>}"
+    local h
+    h=$(cat /proc/sys/kernel/hostname 2>/dev/null)
+    [ -n "$h" ] && s="${s//$h/<host>}"
+    printf '%s' "$s"
+}
+
+line "HYPER·AERO doctor  ·  $(date '+%Y-%m-%d %H:%M')"
+
+head2 "$(t "Sistema")"
+line "  $(. /etc/os-release 2>/dev/null; echo "${PRETTY_NAME:-Linux}")  ·  kernel $(uname -r)"
+line "  CPU: $(awk -F': ' '/model name/ { print $2; exit }' /proc/cpuinfo)  ·  RAM: $(awk '/MemTotal/ { printf "%.1f GB", $2 / 1048576 }' /proc/meminfo)"
+while read -r gpu; do line "  GPU: $gpu"; done < <(lspci 2>/dev/null | grep -iE "vga|3d|display" | sed 's/^[^ ]* //')
+
+head2 "Hyprland"
+if command -v hyprctl >/dev/null && [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+    ver=$(hyprctl -j version 2>/dev/null | jq -r '.tag // .version // "?"')
+    good "$(t "versión") $ver"
+    errs=$(hyprctl configerrors 2>/dev/null | grep -v '^$')
+    if [ -z "$errs" ] || [ "$errs" = "no errors" ]; then
+        good "$(t "sin errores de configuración")"
+    else
+        bad "$(t "errores de configuración:")"
+        while read -r e; do line "      $e"; done <<< "$errs"
+    fi
+    while read -r m; do line "  · $m"; done < <(hyprctl -j monitors all 2>/dev/null | jq -r '.[] | "\(.name)  \(.width)x\(.height)@\(.refreshRate | floor)Hz  scale \(.scale)  pos \(.x),\(.y)  \(if .disabled then "OFF" else "on" end)  \(.description)"')
+    kb=$(hyprctl -j devices 2>/dev/null | jq '.keyboards | length')
+    mice=$(hyprctl -j devices 2>/dev/null | jq '.mice | length')
+    if [ "${kb:-0}" -gt 0 ] && [ "${mice:-0}" -gt 0 ]; then
+        good "$(tf "%s teclados y %s mouse/touchpads detectados" "$kb" "$mice")"
+    else
+        bad "$(tf "Hyprland ve %s teclados y %s mouse/touchpads" "${kb:-0}" "${mice:-0}")"
+    fi
+else
+    bad "$(t "no estás dentro de Hyprland (o hyprctl no responde)")"
+fi
+
+head2 "$(t "Inicio de sesión")"
+dm=$(systemctl show -p Id --value display-manager.service 2>/dev/null)
+if [ -z "$dm" ] || [ "$dm" = "display-manager.service" ]; then
+    line "  $(t "sin administrador de inicio de sesión (inicio desde la terminal)")"
+elif [[ "$dm" == lightdm* ]]; then
+    warn "$dm  ·  $(t "LightDM puede dejar el mouse y el teclado sin respuesta al entrar")"
+else
+    good "$dm"
+fi
+line "  $(t "sesión"): ${XDG_SESSION_TYPE:-?} · ${XDG_CURRENT_DESKTOP:-?}"
+
+head2 "HYPER·AERO"
+ver=$(jq -r '.version // "?"' "$A/.install.json" 2>/dev/null)
+line "  $(t "versión") ${ver:-?}  ·  $(t "perfil") $(jq -r '.name // "?"' "$A/profile.json" 2>/dev/null)  ·  $(t "idioma") $(cat "$A/lang" 2>/dev/null || echo es)"
+check_proc() {
+    if pgrep -f "$2" >/dev/null; then good "$1"; else bad "$1 $(t "no está corriendo")"; fi
+}
+check_proc "NEXUS (aero-phone)" "qs -c aero-phone$"
+check_proc "$(t "escritorio") (aero-desk)" "qs -c aero-desk$"
+check_proc "$(t "efectos") (aero-fx)" "qs -c aero-fx$"
+check_proc "aero-snap" "qs -c aero-snap$"
+check_proc "$(t "pantallas") (aero-displays)" "aero-displays.py daemon"
+check_proc "NIGHT DECK" "night-deck.py daemon"
+check_proc "TELEMETRY (eww)" "eww"
+check_proc "AEROBAR (waybar)" "waybar"
+check_proc "SIGNAL (swaync)" "swaync"
+check_proc "$(t "fondo") (mpvpaper)" "mpvpaper"
+
+head2 "$(t "Programas")"
+miss=()
+for c in qs eww mpvpaper waybar swaync rofi kitty cava jq playerctl grim slurp wl-copy cliphist hyprpicker brightnessctl nmcli bluetoothctl ffmpeg; do
+    command -v "$c" >/dev/null || miss+=("$c")
+done
+if [ ${#miss[@]} -eq 0 ]; then good "$(t "todo instalado")"; else warn "$(t "faltan:") ${miss[*]}"; fi
+
+head2 "$(t "Registros recientes")"
+for f in "$RUN"/aero-*.log; do
+    [ -s "$f" ] || continue
+    last=$(tail -n 3 "$f" | tr -d '\r')
+    [ -n "$last" ] || continue
+    line "  $(basename "$f"):"
+    while read -r l; do line "      ${l:0:160}"; done <<< "$last"
+done
+
+line ""
+if [ "$fails" -eq 0 ] && [ "$warns" -eq 0 ]; then
+    line "$(t "Todo se ve bien.")"
+else
+    line "$(tf "%s problemas y %s avisos." "$fails" "$warns")"
+fi
+
+report=$(clean "$out")
+printf '%s\n' "$report"
+file="$HOME/aero-doctor-$(date +%Y%m%d-%H%M).txt"
+printf '%s\n' "$report" > "$file"
+echo
+echo "$(tf "Reporte guardado en %s" "~/${file#$HOME/}")"
+if command -v wl-copy >/dev/null && [ -n "$WAYLAND_DISPLAY" ]; then
+    printf '%s\n' "$report" | wl-copy && echo "$(t "También lo copié al portapapeles: pegalo en un issue de GitHub.")"
+fi

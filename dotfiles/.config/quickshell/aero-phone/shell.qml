@@ -45,6 +45,12 @@ ShellRoot {
         id: core
         property var st: ({ mode: "day", accent: "blue", wifi: false, ssid: "", bt: false, btAvail: true, btDev: "", warm: false, kelvin: 0, dnd: false, bri: 50, bat: -1, charging: false })
         property var usage: ({})
+        property var pins: []
+        property bool pinsSet: false
+        property bool dockHint: false
+        property var clips: []
+        property bool clipAvail: true
+        property var emojiRecent: []
         property int pendingBri: -1
         property var wifi: ({ radio: false, networks: [], ip: "" })
         property string wifiBusy: ""
@@ -259,6 +265,56 @@ ShellRoot {
             refreshSoon.restart()
         }
 
+        function clipRefresh() {
+            job(["sh", "-c", "command -v cliphist >/dev/null || exit 3; cliphist list | head -n 80"], null, function(code, text) {
+                if (code === 3) {
+                    clipAvail = false
+                    clips = []
+                    return
+                }
+                clipAvail = true
+                clips = String(text).split("\n").filter(function(l) { return l.length > 0 }).map(function(l) {
+                    var i = l.indexOf("\t")
+                    var t = i >= 0 ? l.slice(i + 1) : l
+                    return { line: l, text: t, image: /^\[\[ binary data/.test(t) }
+                })
+            })
+        }
+
+        function clipCopy(line) {
+            job(["sh", "-c", "printf '%s' \"$AERO_CLIP\" | cliphist decode | wl-copy"], { "AERO_CLIP": line }, null)
+        }
+
+        function clipDelete(line) {
+            job(["sh", "-c", "printf '%s' \"$AERO_CLIP\" | cliphist delete"], { "AERO_CLIP": line }, function() { clipRefresh() })
+        }
+
+        function clipWipe() {
+            job(["cliphist", "wipe"], null, function() { clipRefresh() })
+        }
+
+        function emojiCopy(e) {
+            var r = [e].concat(emojiRecent.filter(function(x) { return x !== e })).slice(0, 36)
+            emojiRecent = r
+            emojiFile.setText(JSON.stringify(r))
+            job(["wl-copy", e], null, null)
+            Quickshell.execDetached(["notify-send", "-a", "NEXUS", e + "  " + L.t("copiado"), L.t("Pegalo con CTRL + V")])
+        }
+
+        function setPins(list) {
+            var seen = {}
+            var out = []
+            for (var i = 0; i < list.length; i++) {
+                var k = String(list[i] || "")
+                if (!k.length || seen[k]) continue
+                seen[k] = true
+                out.push(k)
+            }
+            pins = out
+            pinsSet = true
+            pinsFile.setText(JSON.stringify({ version: 1, pins: out }, null, 2) + "\n")
+        }
+
         function setVolume(v) {
             if (!sink || !sink.audio) return
             if (v > 0 && sink.audio.muted) sink.audio.muted = false
@@ -374,6 +430,42 @@ ShellRoot {
     }
 
     FileView {
+        id: emojiFile
+        path: shell.home + "/.local/state/hyper-aero/emoji-recent.json"
+        printErrors: false
+        onLoaded: {
+            try {
+                var r = JSON.parse(text())
+                core.emojiRecent = Array.isArray(r) ? r : []
+            } catch (err) {
+                core.emojiRecent = []
+            }
+        }
+    }
+
+    FileView {
+        id: pinsFile
+        path: shell.home + "/.config/hyper-aero/dock.json"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: {
+            try {
+                var d = JSON.parse(text())
+                core.pins = Array.isArray(d.pins) ? d.pins : []
+                core.pinsSet = true
+            } catch (err) {
+                core.pins = []
+                core.pinsSet = false
+            }
+        }
+        onLoadFailed: {
+            core.pins = []
+            core.pinsSet = false
+        }
+    }
+
+    FileView {
         id: usageFile
         path: shell.usagePath
         printErrors: false
@@ -436,6 +528,23 @@ ShellRoot {
 
         function wifi(): void {
             shell.openPhone(1, "wifi")
+        }
+
+        function audio(): void {
+            shell.openPhone(1, "audio")
+        }
+
+        function clipboard(): void {
+            shell.openPhone(1, "clip")
+        }
+
+        function emoji(): void {
+            shell.openPhone(1, "emoji")
+        }
+
+        function dock(): void {
+            shell.openPhone(0)
+            core.dockHint = true
         }
 
         function today(): void {

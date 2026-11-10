@@ -109,9 +109,13 @@ def resident():
 def live():
     if not os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
         return
-    for name in ("aero-studio", "aero-carousel"):
+    panel = subprocess.run(["pgrep", "-f", "qs -c aero-control$"], capture_output=True).returncode == 0
+    for name in ("aero-studio", "aero-carousel", "aero-control"):
         run(["pkill", "-f", f"qs -c {name}$"])
-    for script in ("desk.sh", "displays.sh", "snap.sh"):
+    if panel:
+        mode = "show" if os.path.exists(os.path.join(AERO, "welcome-done")) else "welcome"
+        spawn([os.path.join(SCRIPTS, "control.sh"), mode])
+    for script in ("desk.sh", "displays.sh", "snap.sh", "fx.sh"):
         run([os.path.join(SCRIPTS, script), "restart"], timeout=20)
     for script in ("phone.sh", "veil.sh"):
         if resident():

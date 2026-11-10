@@ -53,6 +53,7 @@ ShellRoot {
         property bool night: false
         property string accent: "blue"
         property var queued: null
+        property int blanks: 0
 
         function set(args) {
             if (job.running) {
@@ -68,7 +69,17 @@ ShellRoot {
         function take(text) {
             try {
                 var d = JSON.parse(text)
-                if (d && typeof d === "object" && !d.error) st = d
+                if (d && typeof d === "object" && !d.error) {
+                    if (st.stamp && d.stamp && d.stamp < st.stamp) return
+                    var empty = !d.laptop && !d.external && !(d.screens && d.screens.length)
+                    var had = !!(st.laptop || st.external || (st.screens && st.screens.length))
+                    if (empty && had && blanks < 2) {
+                        blanks += 1
+                        return
+                    }
+                    blanks = 0
+                    st = d
+                }
                 else if (d && d.error) error = d.error
             } catch (err) {
             }

@@ -201,10 +201,11 @@ function W.press(super)
     if not super and W.drag and W.drag.super and not W.drag.moving then return end
     W.stop_timer()
     W.drag = nil
-    local win = try(hl.get_active_window)
-    if win and win.fullscreen and win.fullscreen > 0 then return end
     local c = try(hl.get_cursor_pos)
     if not c then return end
+    if aero_fx and aero_fx.click then try(aero_fx.click, c) end
+    local win = try(hl.get_active_window)
+    if win and win.fullscreen and win.fullscreen > 0 then return end
     W.drag = { super = super and true or false, cx = c.x, cy = c.y, lx = c.x, ly = c.y,
                probe = button_down() == true, up = 0, followed = false, slip = 0,
                moving = false, zone = nil, dwell = 0, away = 0, ticks = 0, flip = nil, tiles = {} }
@@ -267,6 +268,7 @@ function W.tick()
         end
     end
     d.wx, d.wy, d.lx, d.ly = wx, wy, c.x, c.y
+    if aero_fx and aero_fx.on_drag then try(aero_fx.on_drag, d, c, d.addr) end
     local mon = try(hl.get_monitor_at_cursor) or try(hl.get_active_monitor)
     if not mon then return end
     local area = W.area(mon)
