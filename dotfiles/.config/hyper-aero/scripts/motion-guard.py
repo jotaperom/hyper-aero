@@ -14,7 +14,8 @@ from aero_i18n import t as _t
 HOME = os.path.expanduser("~")
 AERO = os.path.join(HOME, ".config", "hyper-aero")
 PROFILE = os.path.join(AERO, "profile.json")
-RUN = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
+RUN = os.environ.get("XDG_RUNTIME_DIR") or os.path.join(os.path.expanduser("~"), ".cache", "hyper-aero")
+os.makedirs(RUN, exist_ok=True)
 SOCK = os.path.join(RUN, "aero-motion.sock")
 MANUAL = os.path.join(RUN, "aero-motion.manual")
 SAVER = os.path.join(RUN, "aero-saver.on")

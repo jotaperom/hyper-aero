@@ -165,7 +165,7 @@ def main(argv):
         out(key, "none")
         return 0
     os.makedirs(CACHE, exist_ok=True)
-    cpath = os.path.join(CACHE, hashlib.sha1(f"{artist.lower()}|{title.lower()}|{round(length)}".encode()).hexdigest() + ".json")
+    cpath = os.path.join(CACHE, hashlib.sha256(f"{artist.lower()}|{title.lower()}|{round(length)}".encode()).hexdigest() + ".json")
     try:
         with open(cpath, encoding="utf-8") as f:
             c = json.load(f)

@@ -19,7 +19,8 @@ except ImportError:
 
 HOME = os.path.expanduser("~")
 THEME = os.path.join(HOME, ".config", "hyper-aero", "theme")
-RUN = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
+RUN = os.environ.get("XDG_RUNTIME_DIR") or os.path.join(os.path.expanduser("~"), ".cache", "hyper-aero")
+os.makedirs(RUN, exist_ok=True)
 OUT = os.path.join(RUN, "aero-sky")
 W, H = 338, 120
 SS = 4

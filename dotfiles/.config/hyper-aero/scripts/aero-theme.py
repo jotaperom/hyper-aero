@@ -99,7 +99,7 @@ def cmd_export_all():
 
 
 def digest(path):
-    h = hashlib.sha1()
+    h = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)

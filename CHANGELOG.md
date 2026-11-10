@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.7
+
+**Security**
+
+- CI workflow runs with read-only permissions, pins its actions to exact commits and doesn't keep the checkout token.
+- Theme fingerprints and the lyrics cache use SHA-256 instead of SHA-1.
+- Python helpers no longer fall back to the shared `/tmp` folder when `XDG_RUNTIME_DIR` is missing; they use `~/.cache/hyper-aero`.
+
 ## 2.0.6
 
 **Changed**

@@ -29,7 +29,8 @@ STATE = os.path.join(THEME, "state.json")
 CONFIG = os.path.join(THEME, "config.json")
 SCRIPTS = os.path.join(AERO, "scripts")
 WALL = os.path.join(AERO, "wallpapers")
-RUN = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
+RUN = os.environ.get("XDG_RUNTIME_DIR") or os.path.join(os.path.expanduser("~"), ".cache", "hyper-aero")
+os.makedirs(RUN, exist_ok=True)
 LOG = os.path.join(RUN, "night-deck.log")
 
 DEFAULTS = {"lat": 0.0, "lon": round(-time.timezone / 3600.0 * 15.0, 2), "warm_kelvin": 4200, "warm_enabled": True,
