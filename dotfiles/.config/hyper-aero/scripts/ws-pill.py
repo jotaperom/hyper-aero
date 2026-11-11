@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Stream a workspace pill until Waybar closes its pipe or Hyprland exits."""
-
 import json
 import os
 import select
@@ -38,7 +36,6 @@ def emit(workspace):
         "class": state,
         "tooltip": f"Workspace {workspace} · {windows} windows",
     }
-    # No buffered stdout or interpreter-shutdown flush after a broken pipe.
     os.write(1, (json.dumps(payload, ensure_ascii=False) + "\n").encode())
 
 
@@ -55,8 +52,6 @@ def main():
             events.connect(path)
             poller = select.poll()
             poller.register(events, select.POLLIN | select.POLLHUP | select.POLLERR)
-            # A pipe's write end reports POLLERR when its reader (Waybar) exits.
-            # Watch it even when the compositor sends no matching events.
             poller.register(1, select.POLLERR | select.POLLHUP | select.POLLNVAL)
             emit(workspace)
             pending = b""

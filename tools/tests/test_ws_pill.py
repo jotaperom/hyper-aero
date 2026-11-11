@@ -1,4 +1,3 @@
-"""Run with python3 -m unittest discover -s tests -v; no compositor needed."""
 import json
 import os
 from pathlib import Path
@@ -12,7 +11,7 @@ import threading
 import time
 import unittest
 
-HELPER = Path(os.environ.get('WSPILL_HELPER', Path(__file__).resolve().parents[1] /
+HELPER = Path(os.environ.get('WSPILL_HELPER', Path(__file__).resolve().parents[2] /
               'dotfiles/.config/hyper-aero/scripts/ws-pill.sh'))
 
 
@@ -125,8 +124,6 @@ class WorkspacePillTest(unittest.TestCase):
         self.assertEqual(child.wait(timeout=2), 0)
 
     def test_repeated_panel_death_does_not_leave_helpers(self):
-        # This parent owns each helper's read pipe, just like Waybar. Killing it
-        # must stop all helpers even when no compositor event follows.
         owner_code = (
             'import json,subprocess,sys,signal\n'
             "children=[subprocess.Popen(['bash',sys.argv[1],str(i)],stdout=subprocess.PIPE,"

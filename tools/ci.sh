@@ -67,6 +67,9 @@ step "i18n"
 python3 tools/i18n-check.py | tail -n 1
 python3 tools/i18n-check.py | grep -q ' 0 missing' || oops "faltan traducciones"
 
+step "python tests"
+python3 tools/tests/test_ws_pill.py >/dev/null 2>&1 || oops "ws-pill"
+
 step "lua tests"
 if python3 -c "import lupa" 2>/dev/null; then
     python3 tools/tests/deskmove.py dotfiles/.config/hypr/aero-deskmove.lua | tail -n 1 | grep -q "ALL OK" || oops "aero-deskmove"

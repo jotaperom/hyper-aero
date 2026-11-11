@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.10
+
+**Fixed**
+
+- Workspace pills (01–05) no longer leave helper processes behind when Waybar restarts; each helper now exits as soon as the bar closes it. Thanks to @Pix3lM0on (#4).
+- The pill helper test runs in CI (`tools/tests/test_ws_pill.py`).
+
 ## 2.0.9
 
 **Security**
