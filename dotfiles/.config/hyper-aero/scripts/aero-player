@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+pick() {
+    local spot="" play="" first="" p st
+    while read -r p; do
+        [ -n "$p" ] || continue
+        st=$(playerctl -p "$p" status 2>/dev/null)
+        case "$p" in
+            spotify*)
+                if [ "$st" = Playing ]; then
+                    printf '%s\n' "$p"
+                    return
+                fi
+                [ -n "$spot" ] || spot="$p"
+                ;;
+        esac
+        [ "$st" = Playing ] && [ -z "$play" ] && play="$p"
+        [ -n "$first" ] || first="$p"
+    done < <(playerctl -l 2>/dev/null)
+    printf '%s\n' "${play:-${spot:-$first}}"
+}
+
+p=$(pick)
+if [ $# -eq 0 ]; then
+    printf '%s\n' "$p"
+    exit 0
+fi
+[ -n "$p" ] || exit 0
+exec playerctl -p "$p" "$@"

@@ -225,13 +225,20 @@ ShellRoot {
         }
 
         function pickPlayer(list) {
+            var spot = null
+            var playing = null
             var first = null
             for (var i = 0; i < list.length; i++) {
-                if (!list[i]) continue
-                if (list[i].isPlaying) return list[i]
-                if (!first) first = list[i]
+                var p = list[i]
+                if (!p) continue
+                var id = String((p.identity || "") + " " + (p.desktopEntry || "") + " " + (p.dbusName || "")).toLowerCase()
+                var isSpot = id.indexOf("spotify") >= 0
+                if (isSpot && p.isPlaying) return p
+                if (isSpot && !spot) spot = p
+                if (p.isPlaying && !playing) playing = p
+                if (!first) first = p
             }
-            return first
+            return playing || spot || first
         }
 
         function refresh() {

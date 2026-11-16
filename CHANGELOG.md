@@ -1,5 +1,54 @@
 # Changelog
 
+## 2.0.16
+
+**Fixed**
+
+- The terminal title keeps its full glow on the left. The image now starts at the window edge, with two columns of room built in, so the first letter still lines up with the text below.
+
+## 2.0.15
+
+**Fixed**
+
+- The terminal title now lines up on the left with the text below it. The image starts right at the first letter, and the glow fades out on that side.
+
+## 2.0.14
+
+**Changed**
+
+- New terminals open with a large HYPER·AERO title set in Tenor Sans with a soft glow, drawn as an image in kitty and tinted to match your theme and day/night mode. Other terminals, and kitty inside tmux, keep the text title. The font ships in `~/.config/hyper-aero/fonts` under the SIL Open Font License.
+
+**Fixed**
+
+- `hw-info.sh` wasn't executable, so the terminal banner and TELEMETRY couldn't read the CPU and GPU names.
+
+## 2.0.13
+
+**Changed**
+
+- TELEMETRY's PULSE wave is now a still line that ripples outward from the center with the music, with a warm glow in the middle like the window outline. It no longer scrolls like a graph. When nothing is playing it rests flat.
+
+## 2.0.12
+
+**Changed**
+
+- Spotify comes first. When Spotify is playing it is always the player shown and controlled. When something else is playing (a YouTube video, say) and Spotify isn't, that player is used so you can pause it. When nothing is playing, play/resume goes to Spotify. This applies to the media keys, TELEMETRY's PULSE card, the PULSE-X widget, the phone, the lyrics and the radial menu. The new `aero-player` script makes the choice.
+
+**Fixed**
+
+- TELEMETRY's wave stayed flat when a paused browser tab was listed before the music player.
+
+## 2.0.11
+
+**Fixed**
+
+- Bar hover effects (workspace pills, power button, AERO and night-deck buttons) work again on Waybar 0.16, which moved the module name onto the inner label. The old selectors stay for older Waybar.
+- The PULSE-X music widget's spectrum bars move with the music again even when the separate Visualizer widget isn't on the desk.
+
+**Changed**
+
+- TELEMETRY's PULSE card shows a single smooth wave that grows with the music, like the window outline, instead of block characters.
+
 ## 2.0.10
 
 **Fixed**

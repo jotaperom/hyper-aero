@@ -41,7 +41,8 @@ tooltip label {
     border-right: 1px solid rgba(139, 151, 171, 0.28);
 }
 
-#custom-aero:hover {
+#custom-aero:hover,
+box:hover > #custom-aero {
     color: #6fd3ff;
 }
 
@@ -63,10 +64,15 @@ tooltip label {
 }
 
 #custom-ws1:hover,
+box:hover > #custom-ws1,
 #custom-ws2:hover,
+box:hover > #custom-ws2,
 #custom-ws3:hover,
+box:hover > #custom-ws3,
 #custom-ws4:hover,
-#custom-ws5:hover {
+box:hover > #custom-ws4,
+#custom-ws5:hover,
+box:hover > #custom-ws5 {
     background: rgba(61, 155, 233, 0.20);
     border: 1px solid rgba(111, 211, 255, 0.50);
     color: #6fd3ff;
@@ -115,7 +121,8 @@ tooltip label {
     border-left: 1px solid rgba(139, 151, 171, 0.25);
 }
 
-#custom-nightdeck:hover {
+#custom-nightdeck:hover,
+box:hover > #custom-nightdeck {
     color: #ffffff;
     background: rgba(61, 155, 233, 0.20);
 }

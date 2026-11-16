@@ -44,7 +44,41 @@ row() {
     sleep 0.03
 }
 
-printf "\n  ${cobalt}${bold}◢ HYPER·AERO${reset}  ${graph}DECK TERMINAL · v1${reset}                ${blue}[ SYS ONLINE ]${reset}\n"
+title_image() {
+    [ -n "${KITTY_WINDOW_ID:-}" ] && [ -z "${TMUX:-}" ] || return 1
+    local mode key file w h data n i=0 m chunk first=1 rows=4
+    mode=$(cat "$HOME/.config/hyper-aero/theme/mode" 2>/dev/null)
+    [ "$mode" = night ] || mode=day
+    key=${cobalt#*38;2;}
+    key=${key%m}
+    file="$HOME/.cache/hyper-aero/deck-title3-$mode-${key//;/-}.b64"
+    if [ ! -s "$file" ]; then
+        file=$(python3 "$HOME/.config/hyper-aero/scripts/deck-title.py" "$mode" "$key" 2>/dev/null) || return 1
+    fi
+    { read -r w h; read -r data; } < "$file"
+    [ -n "$data" ] || return 1
+    n=${#data}
+    printf '\n'
+    while [ "$i" -lt "$n" ]; do
+        chunk=${data:i:4096}
+        i=$((i + 4096))
+        m=1
+        [ "$i" -lt "$n" ] || m=0
+        if [ "$first" = 1 ]; then
+            printf '\e_Gf=100,a=T,q=2,C=1,r=%d,m=%d;%s\e\\' "$rows" "$m" "$chunk"
+            first=0
+        else
+            printf '\e_Gm=%d;%s\e\\' "$m" "$chunk"
+        fi
+    done
+    printf '\n%.0s' $(seq 1 "$rows")
+}
+
+if title_image; then
+    printf "  ${graph}DECK TERMINAL · v1${reset}%30s${blue}[ SYS ONLINE ]${reset}\n" ""
+else
+    printf "\n  ${cobalt}${bold}◢ HYPER·AERO${reset}  ${graph}DECK TERMINAL · v1${reset}                ${blue}[ SYS ONLINE ]${reset}\n"
+fi
 printf "  ${rule}%s${reset}\n" "$line"
 sleep 0.03
 row "HOST"  "$host"      "KERNEL" "$kernel" "UPTIME" "${bold}${uptime_fmt}${reset}"

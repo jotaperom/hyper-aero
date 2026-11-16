@@ -58,8 +58,8 @@ Scope {
         var cmd = null
         if (id === "apps") cmd = [S + "/phone.sh", "open"]
         else if (id === "shot") cmd = ["sh", "-c", "sleep 0.35; exec \"$1\" region", "sh", S + "/screenshot.sh"]
-        else if (id === "play") cmd = ["playerctl", "play-pause"]
-        else if (id === "next") cmd = ["playerctl", "next"]
+        else if (id === "play") cmd = [S + "/aero-player", "play-pause"]
+        else if (id === "next") cmd = [S + "/aero-player", "next"]
         else if (id === "bt") cmd = [S + "/phone.sh", "bluetooth"]
         else if (id === "audio") cmd = [S + "/phone.sh", "audio"]
         else if (id === "themes") cmd = [S + "/carousel.sh"]

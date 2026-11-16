@@ -75,7 +75,8 @@ tooltip label {
     border-right: 1px solid rgba(90, 98, 112, 0.35);
 }
 
-#custom-aero:hover {
+#custom-aero:hover,
+box:hover > #custom-aero {
     color: @cobalt;
 }
 
@@ -121,10 +122,15 @@ tooltip label {
 }
 
 #custom-ws1:hover,
+box:hover > #custom-ws1,
 #custom-ws2:hover,
+box:hover > #custom-ws2,
 #custom-ws3:hover,
+box:hover > #custom-ws3,
 #custom-ws4:hover,
-#custom-ws5:hover {
+box:hover > #custom-ws4,
+#custom-ws5:hover,
+box:hover > #custom-ws5 {
     background: rgba(227, 238, 249, 0.9);
     border: 1px solid rgba(20, 70, 194, 0.35);
     color: @cobalt;
@@ -207,7 +213,7 @@ window#waybar.empty #window {
 }
 
 @keyframes aero-alert {
-    to {
+to {
         background-color: rgba(196, 40, 59, 0.0);
     }
 }
@@ -240,7 +246,8 @@ window#waybar.empty #window {
     margin: 5px 3px 5px 8px;
 }
 
-#custom-power:hover {
+#custom-power:hover,
+box:hover > #custom-power {
     background-image: linear-gradient(to bottom,
         #ff9aa6 0%,
         #e5484d 45%,

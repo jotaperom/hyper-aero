@@ -6,6 +6,10 @@
   :initial '{"status":"","title":"","artist":"","art":""}'
   `__HOME__/.config/hyper-aero/scripts/hud-media.sh`)
 
+(deflisten vizwave
+  :initial ""
+  `__HOME__/.config/hyper-aero/scripts/hud-wave.py`)
+
 (deflisten viz
   :initial "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁"
   `__HOME__/.config/hyper-aero/scripts/hud-visualizer.sh`)
@@ -13,7 +17,7 @@
 (defpoll media_pos
   :interval "1s"
   :initial ""
-  `playerctl metadata --format '{{duration(position)}} / {{duration(mpris:length)}}' 2>/dev/null || true`)
+  `__HOME__/.config/hyper-aero/scripts/aero-player metadata --format '{{duration(position)}} / {{duration(mpris:length)}}' 2>/dev/null || true`)
 
 (defwidget card [title code]
   (box :class "card" :orientation "v" :space-evenly false :spacing 6
@@ -92,11 +96,11 @@
         (label :class "track" :xalign 0 :limit-width 20 :text {media.title != "" ? media.title : "No signal"})
         (label :class "artist" :xalign 0 :limit-width 24 :text {media.artist != "" ? media.artist : "awaiting transmission"})
         (label :class "media-pos" :xalign 0 :text media_pos)))
-    (label :class "viz" :text viz)
+    (image :class "wave" :path vizwave :image-width 232 :image-height 34)
     (box :class "controls" :space-evenly false :halign "center" :spacing 8
-      (button :class "ctl" :onclick "playerctl previous" "󰒮")
-      (button :class "ctl play" :onclick "playerctl play-pause" {media.status == "Playing" ? "󰏤" : "󰐊"})
-      (button :class "ctl" :onclick "playerctl next" "󰒭"))))
+      (button :class "ctl" :onclick "__HOME__/.config/hyper-aero/scripts/aero-player previous" "󰒮")
+      (button :class "ctl play" :onclick "__HOME__/.config/hyper-aero/scripts/aero-player play-pause" {media.status == "Playing" ? "󰏤" : "󰐊"})
+      (button :class "ctl" :onclick "__HOME__/.config/hyper-aero/scripts/aero-player next" "󰒭"))))
 
 (defwidget telemetry []
   (box :class "hud" :orientation "v" :space-evenly false :spacing 7
